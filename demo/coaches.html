@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gaines Boxing Coaches</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#c14e01",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#111111",
+                        "neutral-dark": "#1a1a1a",
+                        "card-dark": "#1a1a1a",
+                        "accent-dark": "#2a1b12",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "sans": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>body {
+    font-family: "Lexend", sans-serif
+    }
+.glow-accent {
+    box-shadow: 0 0 15px rgba(193, 78, 1, 0.3)
+    }</style>
+<link rel="stylesheet" href="modal.css"/>
+</head>
+<body class="bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen selection:bg-primary/30 selection:text-primary">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<header class="absolute top-0 z-50 w-full border-b border-primary bg-background-dark/95 backdrop-blur-md px-6 md:px-20 py-4">
+<div class="max-w-7xl mx-auto flex items-center justify-between">
+<div class="flex items-center gap-3">
+<a href="index.html" class="flex gap-1 items-center hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-primary text-3xl">sports_martial_arts</span>
+<h2 class="font-display text-xl font-extrabold tracking-tighter uppercase italic text-white">Gaines <span class="text-primary">Boxing</span></h2>
+</a>
+</div>
+<nav class="hidden md:flex items-center gap-10">
+<a class="text-sm font-medium text-slate-400 hover:text-primary transition-colors" href="index.html">Home</a>
+<a class="text-sm font-medium text-slate-400 hover:text-primary transition-colors" href="legacy.html">Legacy</a>
+<a class="text-sm font-semibold text-primary border-b-2 border-primary pb-1" href="coaches.html">Coaches</a>
+<a class="text-sm font-medium text-slate-400 hover:text-primary transition-colors" href="philosophy.html">Philosophy</a>
+<a class="text-sm font-medium text-slate-400 hover:text-primary transition-colors" href="schedule.html">Schedule</a>
+</nav>
+<div class="flex items-center gap-4">
+<a onclick="openJoinModal(); return false;" href="#" class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-bold text-sm tracking-wide uppercase transition-all glow-accent cursor-pointer">
+                        Join Club
+                    </a>
+</div>
+</div>
+</header>
+<main class="flex flex-1 flex-col items-center pt-[104px]">
+<section class="w-full relative h-[70vh] flex items-center justify-center overflow-hidden bg-background-dark border-b border-primary/20">
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent"></div>
+<div class="relative z-10 text-center px-4 max-w-4xl">
+<span class="text-primary font-bold tracking-[0.3em] uppercase mb-4 block">The Vanguard</span>
+<h1 class="text-6xl md:text-8xl font-black tracking-tighter text-white mb-6 uppercase italic leading-none">
+    Meet the <br/><span class="text-primary">Coaches</span>
+</h1>
+<p class="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed">
+    Elite leadership continuing the legacy of Sam Gaines with high-contrast expertise, raw power, and the wisdom of the ring.
+</p>
+</div>
+</section>
+<section class="w-full bg-neutral-dark py-24 px-6 lg:px-20 border-y border-white/5">
+<div class="mx-auto max-w-6xl flex flex-col gap-12">
+<div class="flex items-center gap-4">
+<h2 class="text-white text-3xl font-extrabold tracking-tight">The Leadership</h2>
+<div class="flex-1 h-[1px] bg-slate-800"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="group relative flex flex-col gap-6 rounded-xl bg-card-dark p-1 border border-primary/20 hover:border-primary/50 transition-all duration-500 shadow-2xl">
+<div class="relative overflow-hidden rounded-lg aspect-[4/3]">
+<div class="absolute inset-0 bg-gradient-to-t from-card-dark via-transparent to-transparent z-10"></div>
+<img alt="Head coach Steve Thompson" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" src="C:\Users\ponde\.gemini\antigravity\brain\c0dc7ad7-901c-48e6-b5c6-8e2191c1c102\coach_steve_1772309778880.png"/>
+</div>
+<div class="px-6 pb-8 flex flex-col gap-4">
+<div>
+<div class="flex justify-between items-center mb-1">
+<p class="text-primary text-sm font-bold tracking-widest uppercase">Master Elite</p>
+<span class="material-symbols-outlined text-primary/40">military_tech</span>
+</div>
+<h3 class="text-white text-3xl font-black uppercase italic group-hover:text-primary transition-colors">Steve Thompson</h3>
+<p class="text-slate-400 text-sm font-medium mt-1">Head Coach | Physical Prowess &amp; Skill Development</p>
+</div>
+<p class="text-slate-300 text-base leading-relaxed font-light">
+                                    With over 20 years in the heavy-weight circuit, Steve brings a scientific approach to raw power. His training regimens are legendary for building both the body and the unbreakable spirit required for the championship rounds.
+                                </p>
+<button onclick="openBioModal('steve')" class="flex items-center gap-2 text-white font-bold text-sm uppercase tracking-wider group/btn w-fit mt-2 cursor-pointer">
+                                    View Full Bio 
+                                    <span class="material-symbols-outlined text-primary group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+<div class="absolute -bottom-1 -right-1 w-24 h-24 bg-primary/10 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="group relative flex flex-col gap-6 rounded-xl bg-card-dark p-1 border border-primary/20 hover:border-primary/50 transition-all duration-500 shadow-2xl">
+<div class="relative overflow-hidden rounded-lg aspect-[4/3]">
+<div class="absolute inset-0 bg-gradient-to-t from-card-dark via-transparent to-transparent z-10"></div>
+<img alt="Legacy coach Jesse Bryan" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" src="C:\Users\ponde\.gemini\antigravity\brain\c0dc7ad7-901c-48e6-b5c6-8e2191c1c102\coach_jesse_1772309795975.png"/>
+</div>
+<div class="px-6 pb-8 flex flex-col gap-4">
+<div>
+<div class="flex justify-between items-center mb-1">
+<p class="text-primary text-sm font-bold tracking-widest uppercase">Legacy Coach</p>
+<span class="material-symbols-outlined text-primary/40">history_edu</span>
+</div>
+<h3 class="text-white text-3xl font-black uppercase italic group-hover:text-primary transition-colors">Jesse Bryan</h3>
+<p class="text-slate-400 text-sm font-medium mt-1">Technical Lead | The Sweet Science</p>
+</div>
+<p class="text-slate-300 text-base leading-relaxed font-light">
+                                    A direct protégé of Sam Gaines, Jesse is the guardian of the "Gaines Style." His focus is on the intricate dance of footwork and the precision of the counter-punch, keeping the club's technical DNA alive for the next generation.
+                                </p>
+<button onclick="openBioModal('jesse')" class="flex items-center gap-2 text-white font-bold text-sm uppercase tracking-wider group/btn w-fit mt-2 cursor-pointer">
+                                    View Full Bio 
+                                    <span class="material-symbols-outlined text-primary group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+<div class="absolute -bottom-1 -right-1 w-24 h-24 bg-primary/10 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+</div>
+</div>
+</section>
+<section class="w-full bg-background-dark py-24 px-6 lg:px-20 text-center">
+<div class="max-w-4xl mx-auto">
+<div class="p-10 rounded-2xl bg-gradient-to-b from-primary/10 to-transparent border border-primary/10 relative overflow-hidden">
+<div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-primary/20 blur-[80px]"></div>
+<h4 class="text-white text-2xl font-bold mb-4 italic">"True champions are built in the shadows."</h4>
+<p class="text-slate-400 mb-8">— Sam Gaines</p>
+<button class="bg-white text-background-dark px-10 py-4 rounded-lg font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-xl">
+                            Train with the best
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-[#0c0806] border-t border-white/5 pt-20 pb-10">
+<div class="max-w-7xl mx-auto px-6">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+<div class="md:col-span-2">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-3xl text-primary" style="font-variation-settings: 'FILL' 1">sports_martial_arts</span>
+<h2 class="font-display text-2xl font-black uppercase tracking-tighter text-white">Gaines <span class="text-primary">Boxing</span></h2>
+</div>
+<p class="text-slate-500 max-w-sm mb-8 italic font-sans text-sm">"Building legacy through discipline, grit, and the relentless pursuit of excellence in the underground boxing circuit."</p>
+<div class="flex items-center gap-4">
+<a class="size-10 bg-white/5 hover:bg-primary rounded flex items-center justify-center transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">share</span>
+</a>
+<a class="size-10 bg-white/5 hover:bg-primary rounded flex items-center justify-center transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">group</span>
+</a>
+<a class="size-10 bg-white/5 hover:bg-primary rounded flex items-center justify-center transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">photo_camera</span>
+</a>
+</div>
+</div>
+<div>
+<h5 class="text-white font-display font-bold uppercase tracking-widest text-sm mb-6">Navigation</h5>
+<ul class="space-y-4 font-sans">
+<li><a class="text-slate-500 hover:text-primary text-sm font-medium transition-colors" href="legacy.html">Legacy History</a></li>
+<li><a class="text-slate-500 hover:text-primary text-sm font-medium transition-colors" href="coaches.html">Coaching Team</a></li>
+<li><a class="text-slate-500 hover:text-primary text-sm font-medium transition-colors" href="philosophy.html">Our Philosophy</a></li>
+<li><a class="text-slate-500 hover:text-primary text-sm font-medium transition-colors" href="schedule.html">Class Schedule</a></li>
+</ul>
+</div>
+<div>
+<h5 class="text-white font-display font-bold uppercase tracking-widest text-sm mb-6">Contact</h5>
+<ul class="space-y-4 font-sans">
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-lg">location_on</span>
+<span class="text-slate-500 text-sm">124 Industrial Way, North District</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-lg">call</span>
+<span class="text-slate-500 text-sm">(555) 012-GBC-LIONS</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-lg">mail</span>
+<span class="text-slate-500 text-sm">frontdesk@gainesboxing.club</span>
+</li>
+</ul>
+</div>
+</div>
+<div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-slate-600 font-sans text-[10px] font-bold uppercase tracking-[0.2em]">© 2024 GAINES BOXING CLUB. ALL RIGHTS RESERVED.</p>
+<div class="flex gap-6 font-sans">
+<a class="text-slate-600 hover:text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]" href="#">Privacy</a>
+<a class="text-slate-600 hover:text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]" href="#">Terms</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+</div>
+<script src="modal.js"></script>
+<script src="site-scripts.js"></script>
+<script>
+function openBioModal(coach) {
+    const bios = {
+        steve: {
+            subtitle: 'Head Coach',
+            title: 'Steve <span style="color:#c14e01">Thompson</span>',
+            body: `
+                <p style="margin-bottom:1rem;">With over 20 years in the heavy-weight circuit, Steve Thompson brings a scientific approach to raw power. His training regimens are legendary for building both the body and the unbreakable spirit required for the championship rounds.</p>
+                <p style="margin-bottom:1rem;">Steve began his boxing career at age 14 in the Southside amateur leagues, quickly rising through the ranks to become a two-time regional Golden Gloves finalist. After a brief professional career (12-2), he transitioned to coaching under the mentorship of Sam Gaines himself.</p>
+                <p style="margin-bottom:1rem;">Today, Steve leads all advanced striking sessions and personal development programs at Gaines Boxing Club. His philosophy centers on the belief that physical prowess is inseparable from mental discipline.</p>
+                <div style="border-top:1px solid rgba(255,255,255,0.05);padding-top:1rem;margin-top:1.5rem;">
+                    <p style="color:#c14e01;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:0.5rem;">Certifications &amp; Honors</p>
+                    <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.4rem;">
+                        <li style="display:flex;align-items:center;gap:0.5rem;"><span class="material-symbols-outlined" style="font-size:16px;color:#c14e01;">verified</span> USA Boxing Level 3 Coach</li>
+                        <li style="display:flex;align-items:center;gap:0.5rem;"><span class="material-symbols-outlined" style="font-size:16px;color:#c14e01;">verified</span> 2x Regional Golden Gloves Finalist</li>
+                        <li style="display:flex;align-items:center;gap:0.5rem;"><span class="material-symbols-outlined" style="font-size:16px;color:#c14e01;">verified</span> NSCA Certified Strength Coach</li>
+                    </ul>
+                </div>
+            `,
+        },
+        jesse: {
+            subtitle: 'Legacy Coach',
+            title: 'Jesse <span style="color:#c14e01">Bryan</span>',
+            body: `
+                <p style="margin-bottom:1rem;">A direct protégé of Sam Gaines, Jesse Bryan is the guardian of the "Gaines Style." His focus is on the intricate dance of footwork and the precision of the counter-punch, keeping the club's technical DNA alive for the next generation.</p>
+                <p style="margin-bottom:1rem;">Jesse grew up in the gym, first walking through the doors at age 10. Sam Gaines saw something special in his timing and footwork, and personally mentored him for over 15 years. Jesse competed in 47 amateur bouts (41-6) before dedicating himself fully to coaching.</p>
+                <p style="margin-bottom:1rem;">As the Technical Lead, Jesse oversees all fundamentals classes, youth programs, and the club's signature "Sweet Science" curriculum — a training methodology that emphasizes reading opponents, ring generalship, and the art of the counter-punch.</p>
+                <div style="border-top:1px solid rgba(255,255,255,0.05);padding-top:1rem;margin-top:1.5rem;">
+                    <p style="color:#c14e01;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:0.5rem;">Certifications &amp; Honors</p>
+                    <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.4rem;">
+                        <li style="display:flex;align-items:center;gap:0.5rem;"><span class="material-symbols-outlined" style="font-size:16px;color:#c14e01;">verified</span> USA Boxing Level 2 Coach</li>
+                        <li style="display:flex;align-items:center;gap:0.5rem;"><span class="material-symbols-outlined" style="font-size:16px;color:#c14e01;">verified</span> 41-6 Amateur Record</li>
+                        <li style="display:flex;align-items:center;gap:0.5rem;"><span class="material-symbols-outlined" style="font-size:16px;color:#c14e01;">verified</span> Sam Gaines Personal Protégé</li>
+                    </ul>
+                </div>
+            `,
+        },
+    };
+    const data = bios[coach];
+    if (!data) return;
+    GBCModal.open({ ...data, size: 'lg' });
+}
+</script>
+</body></html>
