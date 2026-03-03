@@ -1,0 +1,264 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-primary: #c14e01;
+  --color-background-light: #f8f7f5;
+  --color-background-dark: #111111;
+  --color-neutral-dark: #1a1a1a;
+  --color-card-dark: #1a1a1a;
+  --color-accent-dark: #2a1b12;
+  --color-footer-dark: #0c0806;
+
+  --font-display: "Lexend", sans-serif;
+  --font-sans: "Lexend", sans-serif;
+
+  --radius-DEFAULT: 0.5rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Lexend", sans-serif;
+}
+
+::selection {
+  background: rgba(193, 78, 1, 0.3);
+}
+
+.glow-accent {
+  box-shadow: 0 0 15px rgba(193, 78, 1, 0.3);
+}
+
+/* ── Gaines Boxing Club Modal ── */
+.gbc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+  padding: 1.5rem;
+}
+
+.gbc-modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.gbc-modal {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  box-shadow:
+    0 0 40px rgba(193, 78, 1, 0.15),
+    0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  transform: translateY(24px) scale(0.96);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gbc-modal-overlay.active .gbc-modal {
+  transform: translateY(0) scale(1);
+}
+
+.gbc-modal::-webkit-scrollbar {
+  width: 6px;
+}
+.gbc-modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+.gbc-modal::-webkit-scrollbar-thumb {
+  background: rgba(193, 78, 1, 0.3);
+  border-radius: 3px;
+}
+
+.gbc-modal::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #c14e01, transparent);
+  border-radius: 0.75rem 0.75rem 0 0;
+  z-index: 1;
+}
+
+.gbc-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  background: rgba(17, 17, 17, 0.8);
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gbc-modal-close:hover {
+  background: #c14e01;
+  border-color: #c14e01;
+  color: #fff;
+}
+
+.gbc-modal-header {
+  padding: 2rem 2rem 1rem;
+}
+
+.gbc-modal-header h2 {
+  font-family: "Lexend", sans-serif;
+  font-size: 1.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.gbc-modal-header .modal-subtitle {
+  font-family: "Lexend", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #c14e01;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.gbc-modal-body {
+  padding: 0 2rem 2rem;
+  color: #94a3b8;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.gbc-modal-footer {
+  padding: 1.25rem 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+/* ── Form Styles ── */
+.gbc-form-group {
+  margin-bottom: 1.25rem;
+}
+
+.gbc-form-group label {
+  display: block;
+  font-family: "Lexend", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #cbd5e1;
+  margin-bottom: 0.5rem;
+}
+
+.gbc-form-group input,
+.gbc-form-group select,
+.gbc-form-group textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #111111;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+  color: #e2e8f0;
+  font-family: "Lexend", sans-serif;
+  font-size: 0.875rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  outline: none;
+}
+
+.gbc-form-group input::placeholder,
+.gbc-form-group textarea::placeholder {
+  color: #475569;
+}
+
+.gbc-form-group input:focus,
+.gbc-form-group select:focus,
+.gbc-form-group textarea:focus {
+  border-color: #c14e01;
+  box-shadow: 0 0 0 3px rgba(193, 78, 1, 0.15);
+}
+
+.gbc-form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.gbc-btn-primary {
+  font-family: "Lexend", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 0.875rem 2rem;
+  background: #c14e01;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 15px rgba(193, 78, 1, 0.3);
+}
+
+.gbc-btn-primary:hover {
+  background: #a84300;
+  transform: scale(1.03);
+}
+
+.gbc-btn-secondary {
+  font-family: "Lexend", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.875rem 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gbc-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.gbc-modal.modal-lg {
+  max-width: 720px;
+}
+
+.gbc-modal.modal-sm {
+  max-width: 400px;
+}
