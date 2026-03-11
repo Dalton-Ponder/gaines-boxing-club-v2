@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@payloadcms/plugin-mcp": "^3.79.0"
+  }
+}
