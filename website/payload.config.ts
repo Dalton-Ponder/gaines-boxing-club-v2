@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url'
 import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import sharp from 'sharp'
 
 const filename = fileURLToPath(import.meta.url)
@@ -41,7 +42,18 @@ export default buildConfig({
       ],
     },
   ],
-
+  plugins: [
+    mcpPlugin({
+      collections: {
+        posts: {
+          enabled: true,
+        },
+      },
+      globals: {
+        'site-settings': { enabled: { find: true, update: true } },
+      },
+    }),
+  ],
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

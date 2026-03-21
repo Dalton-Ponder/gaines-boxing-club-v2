@@ -1,0 +1,17 @@
+services:
+  # Next.js Frontend
+  website:
+    # Uses the image built and published by your GitHub Actions workflow
+    image: ghcr.io/dalton-ponder/gaines-boxing-club-v2:latest
+    container_name: gaines-boxing-club-v2-website
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - coolify
+
+networks:
+  coolify:
+    external: true
