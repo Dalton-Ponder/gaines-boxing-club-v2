@@ -13,10 +13,15 @@ export default async function Footer() {
   const tagline = siteSettings.tagline || 'Building legacy through discipline, grit, and the relentless pursuit of excellence in the underground boxing circuit.';
   
   // Format phone for href="tel:..."
+  // NOTE: The fallback vanity number "(555) 012-GBC-LIONS" maps to the
+  // numeric equivalent +15550124225466 when letters are stripped by /\D/g.
+  // If the CMS provides a value the same stripping applies, which works
+  // correctly for purely numeric phone numbers.
   const phoneHref = siteSettings.phone 
     ? `tel:+1${siteSettings.phone.replace(/\D/g, '')}`
     : "tel:+15550124225466";
   
+  // Display keeps the vanity letters for branding
   const phoneDisplay = siteSettings.phone || "(555) 012-GBC-LIONS";
   const emailDisplay = siteSettings.email || "frontdesk@gainesboxing.club";
   const addressDisplay = siteSettings.address || "124 Industrial Way, North District";

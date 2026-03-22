@@ -13,6 +13,24 @@ async function getPayloadClient() {
   return getPayload({ config: configPromise })
 }
 
+// ---------------------------------------------------------------------------
+// Image URL Helper
+// ---------------------------------------------------------------------------
+// Payload's upload/relationship fields can be a string ID (unpopulated) or
+// an object with url/alt (populated). This helper safely extracts the URL
+// and alt text, returning a consistent shape for all page components.
+// ---------------------------------------------------------------------------
+export function getImageUrl(
+  image: unknown,
+  fallback: string
+): { url: string; alt?: string } {
+  if (image && typeof image === 'object' && 'url' in image) {
+    const img = image as { url?: string; alt?: string }
+    return { url: img.url || fallback, alt: img.alt }
+  }
+  return { url: fallback }
+}
+
 // -- Site Settings --
 // F4 fix: React cache() deduplicates calls within the same request lifecycle,
 // so generateMetadata() and the page component share a single DB query.

@@ -178,6 +178,7 @@ export function generateEventSchema(event: EventData, organizationName = 'Gaines
     name: event.title,
     description: event.description || '',
     startDate: event.date,
+    ...(event.endDate && { endDate: event.endDate }),
     ...(imageUrl && { image: imageUrl }),
     location: event.location
       ? {

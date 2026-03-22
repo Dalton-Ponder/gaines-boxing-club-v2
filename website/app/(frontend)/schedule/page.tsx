@@ -75,7 +75,7 @@ export default async function SchedulePage() {
               </div>
             </div>
             <div className="w-full md:w-auto">
-              <button className="w-full md:w-auto bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest px-10 py-5 rounded-lg transition-all flex items-center justify-center gap-3">
+              <button type="button" className="w-full md:w-auto bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest px-10 py-5 rounded-lg transition-all flex items-center justify-center gap-3">
                 Book a Session
                 <span className="material-symbols-outlined">trending_flat</span>
               </button>
@@ -90,12 +90,23 @@ export default async function SchedulePage() {
           <div className="max-w-7xl mx-auto px-6">
             <div className="relative overflow-hidden rounded-lg group min-h-[400px]">
               {(() => {
-                const eventImage = featuredEvent.image && typeof featuredEvent.image === 'object' && 'url' in featuredEvent.image ? (featuredEvent.image as { url?: string }).url : null;
+                const rawUrl = featuredEvent.image && typeof featuredEvent.image === 'object' && 'url' in featuredEvent.image ? (featuredEvent.image as { url?: string }).url : null;
+                let eventImage = '/images/event_main.png';
+                if (rawUrl) {
+                  try {
+                    const parsed = new URL(rawUrl, 'http://localhost');
+                    if (['http:', 'https:'].includes(parsed.protocol) || rawUrl.startsWith('/')) {
+                      eventImage = rawUrl;
+                    }
+                  } catch {
+                    // Invalid URL -- use fallback
+                  }
+                }
                 return (
                   <div 
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" 
                     style={{ 
-                      backgroundImage: `linear-gradient(to right, rgba(18, 11, 7, 1) 20%, rgba(18, 11, 7, 0.4) 100%), url('${eventImage || "/images/event_main.png"}')` 
+                      backgroundImage: `linear-gradient(to right, rgba(18, 11, 7, 1) 20%, rgba(18, 11, 7, 0.4) 100%), url('${eventImage}')` 
                     }}
                   ></div>
                 );
@@ -123,7 +134,7 @@ export default async function SchedulePage() {
                     {featuredEvent.ctaText || 'Register to Attend'}
                   </a>
                 ) : (
-                  <button className="bg-white hover:bg-slate-200 text-black font-black uppercase tracking-widest px-8 py-4 rounded transition-all">
+                  <button type="button" className="bg-white hover:bg-slate-200 text-black font-black uppercase tracking-widest px-8 py-4 rounded transition-all">
                     {featuredEvent.ctaText || 'Register to Attend'}
                   </button>
                 )}
@@ -142,7 +153,7 @@ export default async function SchedulePage() {
                 <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Fight Card</h2>
                 <p className="text-slate-500 font-medium">Upcoming local matches and sparring sessions</p>
               </div>
-              <button className="text-primary text-sm font-bold uppercase tracking-widest flex items-center gap-2 hover:gap-4 transition-all cursor-pointer">
+              <button type="button" className="text-primary text-sm font-bold uppercase tracking-widest flex items-center gap-2 hover:gap-4 transition-all cursor-pointer">
                 View Archive <span className="material-symbols-outlined">east</span>
               </button>
             </div>
@@ -175,7 +186,7 @@ export default async function SchedulePage() {
                             {event.ctaText || 'Details'}
                           </a>
                         ) : (
-                          <button className="w-full border border-white/10 hover:border-primary hover:text-primary py-2 text-xs font-black uppercase tracking-widest transition-all cursor-pointer">
+                          <button type="button" className="w-full border border-white/10 hover:border-primary hover:text-primary py-2 text-xs font-black uppercase tracking-widest transition-all cursor-pointer">
                             {event.ctaText || 'Details'}
                           </button>
                         )}

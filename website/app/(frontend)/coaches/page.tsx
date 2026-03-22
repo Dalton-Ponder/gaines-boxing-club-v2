@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { Metadata } from "next";
-import { getCoaches, getQuotes, getPage, getForm, getSiteSettings } from "@/lib/payload";
+import { getCoaches, getQuotes, getPage, getForm, getSiteSettings, getImageUrl } from "@/lib/payload";
 import { JoinClubButton } from "@/components/JoinClubButton";
 import { CoachBioModalButton } from "@/components/CoachBioModalButton";
 import { generateWebPageSchema, generatePersonSchema, jsonLdScript } from "@/lib/structured-data";
@@ -69,16 +69,16 @@ export default async function CoachesPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {coaches.map((coach) => {
-              const coachImage = coach.image && typeof coach.image === 'object' && 'url' in coach.image ? coach.image as { url?: string; alt?: string } : null;
+              const coachImage = getImageUrl(coach.image, '/images/coach_steve.png');
               
               return (
                 <div key={coach.id} className="group relative flex flex-col gap-6 rounded-xl bg-card-dark p-1 border border-primary/20 hover:border-primary/50 transition-all duration-500 shadow-2xl">
                   <div className="relative overflow-hidden rounded-lg aspect-4/3">
                     <div className="absolute inset-0 bg-linear-to-t from-card-dark via-transparent to-transparent z-10"></div>
                     <Image
-                      alt={coachImage?.alt || coach.name}
+                      alt={coachImage.alt || coach.name}
                       className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
-                      src={coachImage?.url || "/images/coach_steve.png"}
+                      src={coachImage.url}
                       fill
                       sizes="(max-width: 768px) 100vw, 50vw"
                     />

@@ -43,7 +43,7 @@ The local Payload CMS instance at `http://localhost:3000` exposes a full REST AP
 
 1. **Use the environment variable for all local API calls.** Every request to `http://localhost:3000/api/...` must include the header:
 
-   ```
+   ```text
    Authorization: Bearer $PAYLOAD_MCP_API_KEY
    ```
 

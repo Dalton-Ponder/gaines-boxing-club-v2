@@ -106,6 +106,7 @@ export function DynamicForm({
         </p>
         {onClose && (
           <button
+            type="button"
             onClick={onClose}
             className="mt-6 bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-bold text-sm uppercase tracking-widest transition-all cursor-pointer"
           >

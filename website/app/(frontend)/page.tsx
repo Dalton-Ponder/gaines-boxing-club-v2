@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getCoaches, getQuotes, getPhilosophyPillars, getSiteSettings, getPage, getForm, getMedia } from "@/lib/payload";
+import { getCoaches, getQuotes, getPhilosophyPillars, getSiteSettings, getPage, getForm, getMedia, getImageUrl } from "@/lib/payload";
 import { JoinClubButton } from "@/components/JoinClubButton";
 import { generateWebPageSchema, generatePersonSchema, jsonLdScript } from "@/lib/structured-data";
 
@@ -147,14 +147,14 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {coaches.map((coach) => {
-              const coachImage = coach.image && typeof coach.image === 'object' && 'url' in coach.image ? coach.image as { url?: string; alt?: string } : null;
+              const coachImage = getImageUrl(coach.image, '/images/coach_steve.png');
               return (
                 <div key={coach.id} className="group relative overflow-hidden rounded-xl border border-white/5 bg-neutral-dark p-6 transition-all hover:border-primary/50">
                   <div className="aspect-4/5 overflow-hidden rounded-lg mb-6">
                     <Image
-                      alt={coachImage?.alt || coach.name}
+                      alt={coachImage.alt || coach.name}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      src={coachImage?.url || "/images/coach_steve.png"}
+                      src={coachImage.url}
                       width={500}
                       height={625}
                     />
