@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { Metadata } from "next";
-import { getEvents, getTrainingSchedule, getPage, getSiteSettings } from "@/lib/payload";
+import { getEvents, getTrainingSchedule, getPage, getSiteSettings, getSafeImageUrl } from "@/lib/payload";
 import { generateWebPageSchema, generateEventSchema, jsonLdScript } from "@/lib/structured-data";
 
 export const dynamic = 'force-dynamic';
@@ -159,13 +159,13 @@ export default async function SchedulePage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {regularEvents.map((event) => {
-                const eventImage = event.image && typeof event.image === 'object' && 'url' in event.image ? (event.image as { url?: string; alt?: string }) : null;
+                const safeUrl = getSafeImageUrl(event.image, "/images/placeholder.png");
                 return (
                   <div key={event.id} className="bg-card-dark border border-white/5 hover:border-primary/40 rounded-lg overflow-hidden flex flex-col transition-all group">
                     <div className="h-48 overflow-hidden relative">
                       <Image 
                         className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" 
-                        src={eventImage?.url || "/images/placeholder.png"} 
+                        src={safeUrl} 
                         alt={event.title} 
                         fill 
                         sizes="(max-width: 768px) 100vw, 33vw" 

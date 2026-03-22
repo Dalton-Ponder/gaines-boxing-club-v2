@@ -84,7 +84,7 @@ export default async function HomePage() {
                 <Image
                   alt={samGainesImage?.alt || "Sam Gaines Legacy"}
                   className="w-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
-                  src={samGainesImage?.url || "/images/sam_gaines.png"}
+                  src={getImageUrl(samGainesImage, "/images/sam_gaines.png").url}
                   width={600}
                   height={600}
                   priority

@@ -2,11 +2,25 @@ import Link from "next/link";
 import { navLinks } from "@/lib/navigation";
 import { getSiteSettings } from "@/lib/payload";
 
+function sanitizeUrl(url: string, fallback = "#") {
+  if (!url) return fallback;
+  try {
+    const parsed = new URL(url, 'http://localhost');
+    if (['http:', 'https:', 'mailto:'].includes(parsed.protocol) || url.startsWith('/')) {
+      return url;
+    }
+    return fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export default async function Footer() {
   let siteSettings;
   try {
     siteSettings = await getSiteSettings();
-  } catch {
+  } catch (err) {
+    console.error("getSiteSettings failed:", err);
     siteSettings = {};
   }
 
@@ -18,7 +32,9 @@ export default async function Footer() {
   // If the CMS provides a value the same stripping applies, which works
   // correctly for purely numeric phone numbers.
   const phoneHref = siteSettings.phone 
-    ? `tel:+1${siteSettings.phone.replace(/\D/g, '')}`
+    ? (siteSettings.phone.startsWith('+') 
+        ? `tel:+${siteSettings.phone.replace(/\D/g, '')}`
+        : `tel:+1${siteSettings.phone.replace(/\D/g, '')}`)
     : "tel:+15550124225466";
   
   // Display keeps the vanity letters for branding
@@ -47,16 +63,22 @@ export default async function Footer() {
               &quot;{tagline}&quot;
             </p>
             <div className="flex items-center gap-4">
-              {siteSettings.socialLinks && siteSettings.socialLinks.map((link: { platform: string; url: string; iconName: string }, idx: number) => (
-                <a
-                  key={idx}
-                  className="size-10 bg-white/5 hover:bg-primary rounded flex items-center justify-center transition-colors"
-                  href={link.url || "#"}
-                  aria-label={link.platform}
-                >
-                  <span className="material-symbols-outlined text-xl" aria-hidden="true">{link.iconName}</span>
-                </a>
-              ))}
+              {siteSettings.socialLinks && siteSettings.socialLinks.map((link: { platform: string; url: string; iconName: string }, idx: number) => {
+                const safeUrl = sanitizeUrl(link.url);
+                const isExternal = safeUrl.startsWith('http');
+                return (
+                  <a
+                    key={idx}
+                    className="size-10 bg-white/5 hover:bg-primary rounded flex items-center justify-center transition-colors"
+                    href={safeUrl}
+                    aria-label={link.platform}
+                    target={isExternal ? "_blank" : undefined}
+                    rel={isExternal ? "noopener noreferrer" : undefined}
+                  >
+                    <span className="material-symbols-outlined text-xl" aria-hidden="true">{link.iconName}</span>
+                  </a>
+                );
+              })}
             </div>
           </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 type FormField = {
   name: string;
@@ -34,6 +34,14 @@ export function DynamicForm({
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (isSubmitted && form?.confirmationType === 'redirect' && form?.redirect?.url) {
+      if (typeof window !== 'undefined') {
+        window.location.href = form.redirect.url;
+      }
+    }
+  }, [isSubmitted, form?.confirmationType, form?.redirect?.url]);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -48,7 +56,17 @@ export function DynamicForm({
     setError(null);
 
     try {
-      const submissionData = Object.entries(formState).map(
+      const initialValues: Record<string, string> = {};
+      form.fields.forEach(field => {
+        if (field.blockType === "checkbox" && field.defaultValue === 'true') {
+          initialValues[field.name] = "true";
+        } else if (field.defaultValue) {
+          initialValues[field.name] = field.defaultValue;
+        }
+      });
+      const finalValues = { ...initialValues, ...formState };
+
+      const submissionData = Object.entries(finalValues).map(
         ([field, value]) => ({
           field,
           value,
@@ -81,9 +99,6 @@ export function DynamicForm({
   if (isSubmitted) {
     // Honor CMS-controlled confirmation behavior
     if (form?.confirmationType === 'redirect' && form?.redirect?.url) {
-      if (typeof window !== 'undefined') {
-        window.location.href = form.redirect.url;
-      }
       return null;
     }
 

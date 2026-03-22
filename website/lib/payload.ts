@@ -31,6 +31,27 @@ export function getImageUrl(
   return { url: fallback }
 }
 
+export function getSafeImageUrl(
+  image: unknown,
+  fallback: string
+): string {
+  if (image && typeof image === 'object' && 'url' in image) {
+    const img = image as { url?: string };
+    const rawUrl = img.url;
+    if (rawUrl) {
+      try {
+        const parsed = new URL(rawUrl, 'http://localhost');
+        if (['http:', 'https:'].includes(parsed.protocol) || rawUrl.startsWith('/')) {
+          return rawUrl;
+        }
+      } catch {
+        // Fallthrough to fallback
+      }
+    }
+  }
+  return fallback;
+}
+
 // -- Site Settings --
 // F4 fix: React cache() deduplicates calls within the same request lifecycle,
 // so generateMetadata() and the page component share a single DB query.
