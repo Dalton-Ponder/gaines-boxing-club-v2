@@ -11,7 +11,8 @@ export default function LegacyPage() {
   const openJoinModal = () => {
     open({
       subtitle: "Become a Member",
-      title: <>Join the <span style={{color:'#c14e01'}}>Club</span></>,
+      title: <>Join the <span className="text-primary">Club</span></>,
+
       body: <JoinModalBody onClose={close} />,
     });
   };
@@ -97,7 +98,8 @@ export default function LegacyPage() {
                 onClick={() => {
                   open({
                     subtitle: "The Founder",
-                    title: <>Sam <span style={{color:'#c14e01'}}>Gaines</span></>,
+                    title: <>Sam <span className="text-primary">Gaines</span></>,
+
                     body: (
                       <div>
                         <p style={{ marginBottom: "1rem" }}>

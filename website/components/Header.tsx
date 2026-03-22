@@ -6,13 +6,7 @@ import { usePathname } from "next/navigation";
 import { useModal } from "./ModalProvider";
 import JoinModalBody from "./JoinModalBody";
 
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/legacy", label: "Legacy" },
-  { href: "/coaches", label: "Coaches" },
-  { href: "/philosophy", label: "Philosophy" },
-  { href: "/schedule", label: "Schedule" },
-];
+import { navLinks } from "@/lib/navigation";
 
 export default function Header() {
   const pathname = usePathname();
@@ -22,7 +16,7 @@ export default function Header() {
   const openJoinModal = () => {
     open({
       subtitle: "Become a Member",
-      title: <>Join the <span style={{color:'#c14e01'}}>Club</span></>,
+      title: <>Join the <span className="text-primary">Club</span></>,
       body: <JoinModalBody onClose={close} />,
     });
   };

@@ -1,12 +1,5 @@
 import Link from "next/link";
-
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/legacy", label: "Legacy" },
-  { href: "/coaches", label: "Coaches" },
-  { href: "/philosophy", label: "Philosophy" },
-  { href: "/schedule", label: "Schedule" },
-];
+import { navLinks } from "@/lib/navigation";
 
 export default function Footer() {
   return (
@@ -111,24 +104,10 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="border-t border-white/5 pt-8 flex items-center">
           <p className="text-slate-600 font-sans text-[10px] font-bold uppercase tracking-[0.2em]">
             &copy; {new Date().getFullYear()} GAINES BOXING CLUB. ALL RIGHTS RESERVED.
           </p>
-          <div className="flex gap-6 font-sans">
-            <a
-              className="text-slate-600 hover:text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]"
-              href="#"
-            >
-              Privacy
-            </a>
-            <a
-              className="text-slate-600 hover:text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]"
-              href="#"
-            >
-              Terms
-            </a>
-          </div>
         </div>
       </div>
     </footer>
