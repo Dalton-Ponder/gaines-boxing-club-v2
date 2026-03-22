@@ -2,224 +2,234 @@
 
 import Image from "next/image";
 import { useModal } from "@/components/ModalProvider";
+import JoinModalBody from "@/components/JoinModalBody";
+
+const BIOS = {
+  steve: {
+    subtitle: "Head Coach",
+    title: <>Steve <span style={{color:'#c14e01'}}>Thompson</span></>,
+    body: (
+      <div>
+        <p style={{ marginBottom: "1rem" }}>
+          With over 20 years in the heavy-weight circuit, Steve Thompson
+          brings a scientific approach to raw power. His training regimens
+          are legendary for building both the body and the unbreakable
+          spirit required for the championship rounds.
+        </p>
+        <p style={{ marginBottom: "1rem" }}>
+          Steve began his boxing career at age 14 in the Southside amateur
+          leagues, quickly rising through the ranks to become a two-time
+          regional Golden Gloves finalist. After a brief professional career
+          (12-2), he transitioned to coaching under the mentorship of Sam
+          Gaines himself.
+        </p>
+        <p style={{ marginBottom: "1rem" }}>
+          Today, Steve leads all advanced striking sessions and personal
+          development programs at Gaines Boxing Club. His philosophy centers
+          on the belief that physical prowess is inseparable from mental
+          discipline.
+        </p>
+        <div
+          style={{
+            borderTop: "1px solid rgba(255,255,255,0.05)",
+            paddingTop: "1rem",
+            marginTop: "1.5rem",
+          }}
+        >
+          <p
+            style={{
+              color: "#c14e01",
+              fontSize: "0.75rem",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.15em",
+              marginBottom: "0.5rem",
+            }}
+          >
+            Certifications &amp; Honors
+          </p>
+          <ul
+            style={{
+              listStyle: "none",
+              padding: 0,
+              margin: 0,
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.4rem",
+            }}
+          >
+            <li
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: "16px", color: "#c14e01" }}
+              >
+                verified
+              </span>{" "}
+              USA Boxing Level 3 Coach
+            </li>
+            <li
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: "16px", color: "#c14e01" }}
+              >
+                verified
+              </span>{" "}
+              2x Regional Golden Gloves Finalist
+            </li>
+            <li
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: "16px", color: "#c14e01" }}
+              >
+                verified
+              </span>{" "}
+              NSCA Certified Strength Coach
+            </li>
+          </ul>
+        </div>
+      </div>
+    ),
+    size: "lg" as const,
+  },
+  jesse: {
+    subtitle: "Legacy Coach",
+    title: <>Jesse <span style={{color:'#c14e01'}}>Bryan</span></>,
+    body: (
+      <div>
+        <p style={{ marginBottom: "1rem" }}>
+          A direct prot&eacute;g&eacute; of Sam Gaines, Jesse Bryan is the
+          guardian of the &quot;Gaines Style.&quot; His focus is on the
+          intricate dance of footwork and the precision of the
+          counter-punch, keeping the club&apos;s technical DNA alive for the
+          next generation.
+        </p>
+        <p style={{ marginBottom: "1rem" }}>
+          Jesse grew up in the gym, first walking through the doors at age
+          10. Sam Gaines saw something special in his timing and footwork,
+          and personally mentored him for over 15 years. Jesse competed in
+          47 amateur bouts (41-6) before dedicating himself fully to
+          coaching.
+        </p>
+        <p style={{ marginBottom: "1rem" }}>
+          As the Technical Lead, Jesse oversees all fundamentals classes,
+          youth programs, and the club&apos;s signature &quot;Sweet
+          Science&quot; curriculum &mdash; a training methodology that
+          emphasizes reading opponents, ring generalship, and the art of
+          the counter-punch.
+        </p>
+        <div
+          style={{
+            borderTop: "1px solid rgba(255,255,255,0.05)",
+            paddingTop: "1rem",
+            marginTop: "1.5rem",
+          }}
+        >
+          <p
+            style={{
+              color: "#c14e01",
+              fontSize: "0.75rem",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.15em",
+              marginBottom: "0.5rem",
+            }}
+          >
+            Certifications &amp; Honors
+          </p>
+          <ul
+            style={{
+              listStyle: "none",
+              padding: 0,
+              margin: 0,
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.4rem",
+            }}
+          >
+            <li
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: "16px", color: "#c14e01" }}
+              >
+                verified
+              </span>{" "}
+              USA Boxing Level 2 Coach
+            </li>
+            <li
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: "16px", color: "#c14e01" }}
+              >
+                verified
+              </span>{" "}
+              41-6 Amateur Record
+            </li>
+            <li
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: "16px", color: "#c14e01" }}
+              >
+                verified
+              </span>{" "}
+              Sam Gaines Personal Prot&eacute;g&eacute;
+            </li>
+          </ul>
+        </div>
+      </div>
+    ),
+    size: "lg" as const,
+  },
+} as const;
 
 export default function CoachesPage() {
-  const { open } = useModal();
+  const { open, close } = useModal();
+
+  const openJoinModal = () => {
+    open({
+      subtitle: "Become a Member",
+      title: <>Join the <span style={{color:'#c14e01'}}>Club</span></>,
+      body: <JoinModalBody onClose={close} />,
+    });
+  };
 
   const openBioModal = (coach: "steve" | "jesse") => {
-    const bios = {
-      steve: {
-        subtitle: "Head Coach",
-        title: <>Steve <span style={{color:'#c14e01'}}>Thompson</span></>,
-        body: (
-          <div>
-            <p style={{ marginBottom: "1rem" }}>
-              With over 20 years in the heavy-weight circuit, Steve Thompson
-              brings a scientific approach to raw power. His training regimens
-              are legendary for building both the body and the unbreakable
-              spirit required for the championship rounds.
-            </p>
-            <p style={{ marginBottom: "1rem" }}>
-              Steve began his boxing career at age 14 in the Southside amateur
-              leagues, quickly rising through the ranks to become a two-time
-              regional Golden Gloves finalist. After a brief professional career
-              (12-2), he transitioned to coaching under the mentorship of Sam
-              Gaines himself.
-            </p>
-            <p style={{ marginBottom: "1rem" }}>
-              Today, Steve leads all advanced striking sessions and personal
-              development programs at Gaines Boxing Club. His philosophy centers
-              on the belief that physical prowess is inseparable from mental
-              discipline.
-            </p>
-            <div
-              style={{
-                borderTop: "1px solid rgba(255,255,255,0.05)",
-                paddingTop: "1rem",
-                marginTop: "1.5rem",
-              }}
-            >
-              <p
-                style={{
-                  color: "#c14e01",
-                  fontSize: "0.75rem",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.15em",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Certifications &amp; Honors
-              </p>
-              <ul
-                style={{
-                  listStyle: "none",
-                  padding: 0,
-                  margin: 0,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.4rem",
-                }}
-              >
-                <li
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: "16px", color: "#c14e01" }}
-                  >
-                    verified
-                  </span>{" "}
-                  USA Boxing Level 3 Coach
-                </li>
-                <li
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: "16px", color: "#c14e01" }}
-                  >
-                    verified
-                  </span>{" "}
-                  2x Regional Golden Gloves Finalist
-                </li>
-                <li
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: "16px", color: "#c14e01" }}
-                  >
-                    verified
-                  </span>{" "}
-                  NSCA Certified Strength Coach
-                </li>
-              </ul>
-            </div>
-          </div>
-        ),
-        size: "lg" as const,
-      },
-      jesse: {
-        subtitle: "Legacy Coach",
-        title: <>Jesse <span style={{color:'#c14e01'}}>Bryan</span></>,
-        body: (
-          <div>
-            <p style={{ marginBottom: "1rem" }}>
-              A direct prot&eacute;g&eacute; of Sam Gaines, Jesse Bryan is the
-              guardian of the &quot;Gaines Style.&quot; His focus is on the
-              intricate dance of footwork and the precision of the
-              counter-punch, keeping the club&apos;s technical DNA alive for the
-              next generation.
-            </p>
-            <p style={{ marginBottom: "1rem" }}>
-              Jesse grew up in the gym, first walking through the doors at age
-              10. Sam Gaines saw something special in his timing and footwork,
-              and personally mentored him for over 15 years. Jesse competed in
-              47 amateur bouts (41-6) before dedicating himself fully to
-              coaching.
-            </p>
-            <p style={{ marginBottom: "1rem" }}>
-              As the Technical Lead, Jesse oversees all fundamentals classes,
-              youth programs, and the club&apos;s signature &quot;Sweet
-              Science&quot; curriculum &mdash; a training methodology that
-              emphasizes reading opponents, ring generalship, and the art of
-              the counter-punch.
-            </p>
-            <div
-              style={{
-                borderTop: "1px solid rgba(255,255,255,0.05)",
-                paddingTop: "1rem",
-                marginTop: "1.5rem",
-              }}
-            >
-              <p
-                style={{
-                  color: "#c14e01",
-                  fontSize: "0.75rem",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.15em",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Certifications &amp; Honors
-              </p>
-              <ul
-                style={{
-                  listStyle: "none",
-                  padding: 0,
-                  margin: 0,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.4rem",
-                }}
-              >
-                <li
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: "16px", color: "#c14e01" }}
-                  >
-                    verified
-                  </span>{" "}
-                  USA Boxing Level 2 Coach
-                </li>
-                <li
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: "16px", color: "#c14e01" }}
-                  >
-                    verified
-                  </span>{" "}
-                  41-6 Amateur Record
-                </li>
-                <li
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: "16px", color: "#c14e01" }}
-                  >
-                    verified
-                  </span>{" "}
-                  Sam Gaines Personal Prot&eacute;g&eacute;
-                </li>
-              </ul>
-            </div>
-          </div>
-        ),
-        size: "lg" as const,
-      },
-    };
-    const data = bios[coach];
+    const data = BIOS[coach];
     if (!data) return;
     open(data);
   };
@@ -363,7 +373,10 @@ export default function CoachesPage() {
               &quot;True champions are built in the shadows.&quot;
             </h4>
             <p className="text-slate-400 mb-8">&mdash; Sam Gaines</p>
-            <button className="bg-white text-background-dark px-10 py-4 rounded-lg font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-xl">
+            <button
+              onClick={openJoinModal}
+              className="bg-white text-background-dark px-10 py-4 rounded-lg font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-xl cursor-pointer"
+            >
               Train with the best
             </button>
           </div>

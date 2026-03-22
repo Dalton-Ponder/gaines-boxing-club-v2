@@ -34,20 +34,23 @@ export default function Footer() {
               <a
                 className="size-10 bg-white/5 hover:bg-primary rounded flex items-center justify-center transition-colors"
                 href="#"
+                aria-label="Share"
               >
-                <span className="material-symbols-outlined text-xl">share</span>
+                <span className="material-symbols-outlined text-xl" aria-hidden="true">share</span>
               </a>
               <a
                 className="size-10 bg-white/5 hover:bg-primary rounded flex items-center justify-center transition-colors"
                 href="#"
+                aria-label="Community"
               >
-                <span className="material-symbols-outlined text-xl">group</span>
+                <span className="material-symbols-outlined text-xl" aria-hidden="true">group</span>
               </a>
               <a
                 className="size-10 bg-white/5 hover:bg-primary rounded flex items-center justify-center transition-colors"
                 href="#"
+                aria-label="Photo gallery"
               >
-                <span className="material-symbols-outlined text-xl">
+                <span className="material-symbols-outlined text-xl" aria-hidden="true">
                   photo_camera
                 </span>
               </a>
@@ -91,17 +94,17 @@ export default function Footer() {
                 <span className="material-symbols-outlined text-primary text-lg">
                   call
                 </span>
-                <span className="text-slate-500 text-sm">
+                <a href="tel:+15550124225466" className="text-slate-500 hover:text-primary text-sm transition-colors">
                   (555) 012-GBC-LIONS
-                </span>
+                </a>
               </li>
               <li className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-primary text-lg">
                   mail
                 </span>
-                <span className="text-slate-500 text-sm">
+                <a href="mailto:frontdesk@gainesboxing.club" className="text-slate-500 hover:text-primary text-sm transition-colors">
                   frontdesk@gainesboxing.club
-                </span>
+                </a>
               </li>
             </ul>
           </div>

@@ -1,8 +1,15 @@
 import pg from 'pg';
 
 const { Client } = pg;
+
+const dbUri = process.env.DATABASE_URI;
+if (!dbUri || typeof dbUri !== 'string' || dbUri.trim() === '') {
+  console.error('Error: DATABASE_URI environment variable is not set or is empty.');
+  process.exit(1);
+}
+
 const client = new Client({
-  connectionString: process.env.DATABASE_URI
+  connectionString: dbUri
 });
 
 function escapeIdentifier(identifier) {
@@ -39,6 +46,7 @@ async function run() {
 
   } catch (e) {
     console.error('Error:', e.message);
+    process.exit(1);
   } finally {
     await client.end();
   }
