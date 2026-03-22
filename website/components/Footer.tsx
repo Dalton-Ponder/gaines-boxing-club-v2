@@ -1,7 +1,21 @@
 import Link from "next/link";
 import { navLinks } from "@/lib/navigation";
+import { getSiteSettings } from "@/lib/payload";
 
-export default function Footer() {
+export default async function Footer() {
+  const siteSettings = await getSiteSettings();
+
+  const tagline = siteSettings.tagline || 'Building legacy through discipline, grit, and the relentless pursuit of excellence in the underground boxing circuit.';
+  
+  // Format phone for href="tel:..."
+  const phoneHref = siteSettings.phone 
+    ? `tel:+1${siteSettings.phone.replace(/\D/g, '')}`
+    : "tel:+15550124225466";
+  
+  const phoneDisplay = siteSettings.phone || "(555) 012-GBC-LIONS";
+  const emailDisplay = siteSettings.email || "frontdesk@gainesboxing.club";
+  const addressDisplay = siteSettings.address || "124 Industrial Way, North District";
+
   return (
     <footer className="bg-footer-dark border-t border-white/5 pt-20 pb-10">
       <div className="max-w-7xl mx-auto px-6">
@@ -20,33 +34,19 @@ export default function Footer() {
               </h2>
             </div>
             <p className="text-slate-500 max-w-sm mb-8 italic font-sans text-sm">
-              &quot;Building legacy through discipline, grit, and the relentless
-              pursuit of excellence in the underground boxing circuit.&quot;
+              &quot;{tagline}&quot;
             </p>
             <div className="flex items-center gap-4">
-              <a
-                className="size-10 bg-white/5 hover:bg-primary rounded flex items-center justify-center transition-colors"
-                href="#"
-                aria-label="Share"
-              >
-                <span className="material-symbols-outlined text-xl" aria-hidden="true">share</span>
-              </a>
-              <a
-                className="size-10 bg-white/5 hover:bg-primary rounded flex items-center justify-center transition-colors"
-                href="#"
-                aria-label="Community"
-              >
-                <span className="material-symbols-outlined text-xl" aria-hidden="true">group</span>
-              </a>
-              <a
-                className="size-10 bg-white/5 hover:bg-primary rounded flex items-center justify-center transition-colors"
-                href="#"
-                aria-label="Photo gallery"
-              >
-                <span className="material-symbols-outlined text-xl" aria-hidden="true">
-                  photo_camera
-                </span>
-              </a>
+              {siteSettings.socialLinks && siteSettings.socialLinks.map((link: { platform: string; url: string; iconName: string }, idx: number) => (
+                <a
+                  key={idx}
+                  className="size-10 bg-white/5 hover:bg-primary rounded flex items-center justify-center transition-colors"
+                  href={link.url || "#"}
+                  aria-label={link.platform}
+                >
+                  <span className="material-symbols-outlined text-xl" aria-hidden="true">{link.iconName}</span>
+                </a>
+              ))}
             </div>
           </div>
 
@@ -80,23 +80,23 @@ export default function Footer() {
                   location_on
                 </span>
                 <span className="text-slate-500 text-sm">
-                  124 Industrial Way, North District
+                  {addressDisplay}
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-primary text-lg">
                   call
                 </span>
-                <a href="tel:+15550124225466" className="text-slate-500 hover:text-primary text-sm transition-colors">
-                  (555) 012-GBC-LIONS
+                <a href={phoneHref} className="text-slate-500 hover:text-primary text-sm transition-colors">
+                  {phoneDisplay}
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-primary text-lg">
                   mail
                 </span>
-                <a href="mailto:frontdesk@gainesboxing.club" className="text-slate-500 hover:text-primary text-sm transition-colors">
-                  frontdesk@gainesboxing.club
+                <a href={`mailto:${emailDisplay}`} className="text-slate-500 hover:text-primary text-sm transition-colors">
+                  {emailDisplay}
                 </a>
               </li>
             </ul>
@@ -106,7 +106,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-white/5 pt-8 flex items-center">
           <p className="text-slate-600 font-sans text-[10px] font-bold uppercase tracking-[0.2em]">
-            &copy; {new Date().getFullYear()} GAINES BOXING CLUB. ALL RIGHTS RESERVED.
+            &copy; {new Date().getFullYear()} {siteSettings.siteName?.toUpperCase() || "GAINES BOXING CLUB"}. ALL RIGHTS RESERVED.
           </p>
         </div>
       </div>

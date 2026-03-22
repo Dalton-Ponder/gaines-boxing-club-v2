@@ -1,46 +1,65 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useModal } from "@/components/ModalProvider";
-import JoinModalBody from "@/components/JoinModalBody";
+import type { Metadata } from "next";
+import { getCoaches, getQuotes, getPhilosophyPillars, getSiteSettings, getPage, getForm } from "@/lib/payload";
+import { JoinClubButton } from "@/components/JoinClubButton";
+import { generateWebPageSchema, generatePersonSchema, jsonLdScript } from "@/lib/structured-data";
 
-export default function HomePage() {
-  const { open, close } = useModal();
+export const dynamic = 'force-dynamic';
 
-  const openJoinModal = () => {
-    open({
-      subtitle: "Become a Member",
-      title: <>Join the <span style={{color:'#c14e01'}}>Club</span></>,
-      body: <JoinModalBody onClose={close} />,
-    });
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPage('/');
+  if (!page) return {};
+  return {
+    title: page.seoTitle || 'Gaines Boxing Club',
+    description: page.seoDescription || 'Experience the elite training of a 3-time Golden Gloves champion. Where your boxing journey truly begins.',
+    openGraph: page.ogImage && typeof page.ogImage === 'object' && 'url' in page.ogImage
+      ? { images: [{ url: (page.ogImage as { url: string }).url }] }
+      : undefined,
   };
+}
+
+export default async function HomePage() {
+  const [siteSettings, quotes, coaches, pillars, joinForm, pageData] = await Promise.all([
+    getSiteSettings(),
+    getQuotes(1),
+    getCoaches(2),
+    getPhilosophyPillars(3),
+    getForm('Join the Club'),
+    getPage('/'),
+  ]);
+
+  const tagline = siteSettings.tagline || 'Building legacy through discipline, grit, and the relentless pursuit of excellence in the underground boxing circuit.';
+  const quote = quotes[0];
+
+  const pageSchema = generateWebPageSchema(pageData, siteSettings, '/', 'Home');
+  const coachSchemas = coaches.map((c) => generatePersonSchema(c));
+  const pageJsonLd = jsonLdScript([pageSchema, ...coachSchemas]);
 
   return (
     <>
+      {pageJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: pageJsonLd }}
+        />
+      )}
       {/* Hero Section */}
       <section className="relative flex min-h-[85vh] w-full flex-col items-center justify-center px-6 text-center">
         <div className="absolute inset-0 z-0 overflow-hidden bg-background-dark"></div>
         <div className="relative z-20 max-w-4xl space-y-8">
           <span className="inline-block rounded-full bg-primary/20 border border-primary/30 px-4 py-1.5 font-display text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
-            Est. 1994 &bull; Elite Underground Training
+            Est. 1974 &bull; Elite Underground Training
           </span>
           <h1 className="font-display text-5xl font-black uppercase leading-[1.1] tracking-tighter text-white sm:text-7xl lg:text-8xl">
             Where Your Boxing <br />
             <span className="text-primary italic">Journey Truly Begins</span>
           </h1>
           <p className="mx-auto max-w-2xl font-sans text-lg text-slate-400 leading-relaxed">
-            Experience the elite training of a 3-time Golden Gloves champion in
-            a premium, high-stakes environment designed for those who seek
-            mastery over themselves.
+            {tagline}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <button
-              onClick={openJoinModal}
-              className="w-full sm:w-auto min-w-[200px] h-14 rounded-lg bg-primary px-8 font-display text-sm font-black uppercase tracking-widest text-white hover:scale-105 transition-transform glow-accent cursor-pointer"
-            >
-              Join the Club
-            </button>
+            <JoinClubButton formData={joinForm} />
             <Link
               href="/schedule"
               className="w-full sm:w-auto min-w-[200px] h-14 rounded-lg border border-white/10 bg-white/5 px-8 font-display text-sm font-black uppercase tracking-widest text-white hover:bg-white/10 transition-colors backdrop-blur-sm flex items-center justify-center"
@@ -86,7 +105,7 @@ export default function HomePage() {
                 </h3>
               </div>
               <p className="font-sans text-lg text-slate-400 leading-relaxed">
-                Rooted in the raw grit of the mid-90s boxing scene, Sam Gaines
+                Rooted in the raw grit of the mid-70s boxing scene, Sam Gaines
                 founded this club with a singular vision: to translate the
                 discipline of the ring into the architecture of a better life.
               </p>
@@ -95,15 +114,17 @@ export default function HomePage() {
                 how to stand your ground. Our training is a dialogue between the
                 body and the mind, refined over decades of professional combat.
               </p>
-              <div className="pt-6 border-t border-white/10">
-                <blockquote className="font-display text-xl font-medium italic text-slate-200">
-                  &quot;The sweet science isn&apos;t about the fight you see.
-                  It&apos;s about the discipline you don&apos;t.&quot;
-                </blockquote>
-                <p className="mt-2 font-display text-sm font-bold uppercase tracking-widest text-primary">
-                  &mdash; Sam Gaines
-                </p>
-              </div>
+              
+              {quote && (
+                <div className="pt-6 border-t border-white/10">
+                  <blockquote className="font-display text-xl font-medium italic text-slate-200">
+                    &quot;{quote.text}&quot;
+                  </blockquote>
+                  <p className="mt-2 font-display text-sm font-bold uppercase tracking-widest text-primary">
+                    &mdash; {quote.attribution}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -121,52 +142,44 @@ export default function HomePage() {
             </h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="group relative overflow-hidden rounded-xl border border-white/5 bg-neutral-dark p-6 transition-all hover:border-primary/50">
-              <div className="aspect-[4/5] overflow-hidden rounded-lg mb-6">
-                <Image
-                  alt="Steve Thompson"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  src="/images/coach_steve.png"
-                  width={500}
-                  height={625}
-                />
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-display text-2xl font-black uppercase text-white">
-                  Steve Thompson
-                </h4>
-                <p className="font-display text-xs font-bold uppercase tracking-widest text-primary">
-                  Head Technical Coach
-                </p>
-                <p className="font-sans text-sm text-slate-500 leading-relaxed">
-                  20 years of technical expertise. Specializing in defensive
-                  maneuvers and counter-punching strategy.
-                </p>
-              </div>
-            </div>
-            <div className="group relative overflow-hidden rounded-xl border border-white/5 bg-neutral-dark p-6 transition-all hover:border-primary/50">
-              <div className="aspect-[4/5] overflow-hidden rounded-lg mb-6">
-                <Image
-                  alt="Jesse Bryan"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  src="/images/coach_jesse.png"
-                  width={500}
-                  height={625}
-                />
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-display text-2xl font-black uppercase text-white">
-                  Jesse Bryan
-                </h4>
-                <p className="font-display text-xs font-bold uppercase tracking-widest text-primary">
-                  Strength &amp; Conditioning
-                </p>
-                <p className="font-sans text-sm text-slate-500 leading-relaxed">
-                  Performance specialist focused on explosive power, agility,
-                  and metabolic conditioning.
-                </p>
-              </div>
-            </div>
+            {coaches.map((coach) => {
+              const coachImage = coach.image && typeof coach.image === 'object' && 'url' in coach.image ? coach.image as { url?: string; alt?: string } : null;
+              return (
+                <div key={coach.id} className="group relative overflow-hidden rounded-xl border border-white/5 bg-neutral-dark p-6 transition-all hover:border-primary/50">
+                  <div className="aspect-4/5 overflow-hidden rounded-lg mb-6">
+                    <Image
+                      alt={coachImage?.alt || coach.name}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      src={coachImage?.url || "/images/coach_steve.png"}
+                      width={500}
+                      height={625}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="font-display text-2xl font-black uppercase text-white">
+                      {coach.name}
+                    </h4>
+                    <p className="font-display text-xs font-bold uppercase tracking-widest text-primary">
+                      {coach.subtitle || coach.role}
+                    </p>
+                    <p className="font-sans text-sm text-slate-500 leading-relaxed line-clamp-2">
+                      {coach.shortBio}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-12 text-center">
+            <Link
+              href="/coaches"
+              className="inline-flex items-center gap-2 font-display text-sm font-bold uppercase tracking-widest text-white hover:text-primary transition-colors"
+            >
+              Learn more about our team
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
           </div>
         </div>
       </section>
@@ -184,34 +197,28 @@ export default function HomePage() {
               </p>
             </div>
             <div className="space-y-6">
-              <div className="space-y-2">
-                <h4 className="font-display text-lg font-bold text-white">
-                  Discipline is Freedom
-                </h4>
-                <p className="text-slate-400">
-                  Our philosophy centers on the idea that true freedom comes
-                  through the mastery of self-control and routine.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-display text-lg font-bold text-white">
-                  Mental Fortitude
-                </h4>
-                <p className="text-slate-400">
-                  The ring is a mirror. It reveals who you are when things get
-                  tough. We train you to embrace the challenge.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-display text-lg font-bold text-white">
-                  Technical Precision
-                </h4>
-                <p className="text-slate-400">
-                  Power without control is wasted energy. We obsess over the
-                  details that make the difference.
-                </p>
-              </div>
+              {pillars.map((pillar) => (
+                <div key={pillar.id} className="space-y-2">
+                  <h4 className="font-display text-lg font-bold text-white flex items-center gap-2">
+                    {pillar.title}
+                  </h4>
+                  <p className="text-slate-400">
+                    {pillar.description}
+                  </p>
+                </div>
+              ))}
             </div>
+          </div>
+          <div className="mt-12 text-center lg:text-left">
+            <Link
+              href="/philosophy"
+              className="inline-flex items-center gap-2 font-display text-sm font-bold uppercase tracking-widest text-primary hover:text-white transition-colors"
+            >
+              Read our full philosophy
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
           </div>
         </div>
       </section>

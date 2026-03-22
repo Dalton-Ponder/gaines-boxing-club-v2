@@ -450,10 +450,15 @@ As Payload CMS is integrated into multiple projects, some collections, globals, 
 
 These are collections and globals that have been implemented in at least one project and are candidates for inclusion in future Payload CMS projects as a generic base set.
 
-| Name    | Type       | Description                                         | First Used In            |
-|---------|------------|-----------------------------------------------------|---------------------------|
-| `users` | Collection | Authentication-enabled user accounts (Payload built-in) | gaines_boxing_club_v2 |
-| `media` | Collection | File and image upload management (Payload built-in) | gaines_boxing_club_v2 |
+| Name               | Type       | Description                                                     | First Used In         | Status      |
+|--------------------|------------|-----------------------------------------------------------------|-----------------------|-------------|
+| `users`            | Collection | Authentication-enabled user accounts (Payload built-in)         | gaines_boxing_club_v2 | Implemented |
+| `media`            | Collection | File and image upload management (Payload built-in)             | gaines_boxing_club_v2 | Implemented |
+| `pages`            | Collection | Route metadata + SEO fields (`seoTitle`, `seoDescription`, `ogImage`) | gaines_boxing_club_v2 | Implemented |
+| `quotes`           | Collection | Motivational or testimonial quotes with attribution             | gaines_boxing_club_v2 | Implemented |
+| `site-settings`    | Global     | Site name, tagline, contact info, social links, structured data | gaines_boxing_club_v2 | Implemented |
+| `forms`            | Collection | Dynamic form definitions (via `@payloadcms/plugin-form-builder`) | gaines_boxing_club_v2 | Implemented |
+| `form-submissions` | Collection | Form submission records (via `@payloadcms/plugin-form-builder`)  | gaines_boxing_club_v2 | Implemented |
 
 **Candidates for future implementation** (identified as highly reusable, not yet built):
 
@@ -465,17 +470,38 @@ These are collections and globals that have been implemented in at least one pro
 | `news`          | Collection             | News/press items, similar to blog but with source attribution               |
 | `seo`           | Field Group            | Meta title, description, OG image -- embeddable in other collections        |
 | `navigation`    | Global                 | Site-wide nav links, structured for header and footer rendering             |
-| `site-settings` | Global                 | Global site config: site name, contact info, social links                   |
+
+### Reusable Plugins Registry
+
+| Plugin                              | Description                                     | First Used In         |
+|-------------------------------------|------------------------------------------------|-----------------------|
+| `@payloadcms/plugin-form-builder`   | Dynamic form creation and submission handling  | gaines_boxing_club_v2 |
+| `@payloadcms/plugin-mcp`           | MCP plugin for AI agent access to CMS data      | gaines_boxing_club_v2 |
 
 ### Project-Specific Collections Registry
 
 These collections are unique to the project they were built in and should not be treated as generic base collections for new projects.
 
-| Name       | Type       | Project                  | Description                           |
-|------------|------------|--------------------------|---------------------------------------|
-| `trainers` | Collection | gaines_boxing_club_v2    | Trainer profiles for the boxing gym   |
-| `classes`  | Collection | gaines_boxing_club_v2    | Class schedule and class type catalog |
-| `programs` | Collection | gaines_boxing_club_v2    | Structured training programs offered  |
+| Name                 | Type       | Project               | Description                                              |
+|----------------------|------------|------------------------|----------------------------------------------------------|
+| `coaches`            | Collection | gaines_boxing_club_v2  | Coach profiles with bio, certifications, images          |
+| `events`             | Collection | gaines_boxing_club_v2  | Boxing events with date, featured flag, images           |
+| `timeline-milestones`| Collection | gaines_boxing_club_v2  | Historical milestones for the club's legacy timeline     |
+| `philosophy-pillars` | Collection | gaines_boxing_club_v2  | Core training philosophy principles                      |
+| `training-schedule`  | Collection | gaines_boxing_club_v2  | Weekly training windows with day, time, description      |
+
+### Reusable Structured Data Schemas
+
+JSON-LD schema generators in `lib/structured-data.ts` that can be reused across projects:
+
+| Schema              | Schema.org Type                                             | Scope     | Description                                              |
+|---------------------|-------------------------------------------------------------|-----------|----------------------------------------------------------|
+| Organization        | `Organization`, `LocalBusiness`, `SportsActivityLocation`   | Global    | Business info, address, geo, hours, social links         |
+| WebSite             | `WebSite`                                                   | Global    | Site name, URL, search action                            |
+| WebPage             | `WebPage`                                                   | Per-page  | Page title, description, URL, breadcrumb                 |
+| BreadcrumbList      | `BreadcrumbList`                                            | Per-page  | Navigation path from Home to current page                |
+| Event               | `Event`                                                      | Per-item  | Event name, date, location, organizer                    |
+| Person              | `Person`                                                     | Per-item  | Coach/staff name, role, bio, worksFor                    |
 
 ### Updating This Registry
 
@@ -483,6 +509,7 @@ When implementing a new collection or global:
 1. Classify it as reusable or project-specific using the rules above.
 2. Add a row to the appropriate table above.
 3. If it is reusable, note whether it is fully implemented or still a candidate.
+
 
 ---
 
@@ -594,3 +621,4 @@ app/
 | 2026-03-22 | Added Reusable vs. Project-Specific Collections section with classification rules, reusable registry (including candidates for future implementation), and project-specific registry for Gaines Boxing Club (`trainers`, `classes`, `programs`). |
 | 2026-03-22 | Standardized all tenant ID slugs to use underscores instead of hyphens throughout the guide and `payload.config.ts`. Updated schemas (`gaines_boxing_club__cms`), SQL examples, and collection registries. |
 | 2026-03-22 | Resolved `/admin` 500 errors. Fixed `app/(payload)/layout.tsx` with proper `serverFunction`/`handleServerFunctions` wiring. Restructured app router into `(frontend)` + `(payload)` route groups (multiple root layouts) to resolve hydration conflict caused by nested `html/body` elements. |
+| 2026-03-22 | Stories 4-6: Added `lib/sync-pages.ts` for nav-to-pages auto-sync. Added `lib/structured-data.ts` with 6 JSON-LD schema generators (Organization, WebSite, WebPage, BreadcrumbList, Event, Person). Injected global schemas in `layout.tsx`, per-page schemas in all 5 pages. Updated registries: promoted `pages`, `quotes`, `site-settings`, `forms`, `form-submissions` to Reusable; added actual project-specific collections (`coaches`, `events`, `timeline-milestones`, `philosophy-pillars`, `training-schedule`); added Plugins and Structured Data Schemas registries. |

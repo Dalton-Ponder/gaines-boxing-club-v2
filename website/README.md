@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app), integrated with [Payload CMS](https://payloadcms.com/) for content management.
 
 ## Getting Started
 
@@ -6,28 +6,68 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## CMS Admin
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Access the Payload CMS admin panel at [http://localhost:3000/admin](http://localhost:3000/admin).
+
+## Pages Auto-Sync
+
+Navigation links defined in `lib/navigation.ts` are automatically synchronized with the `pages` collection in Payload CMS. This ensures that every route has a corresponding CMS page entry for SEO metadata management.
+
+**How it works:**
+
+1. `lib/sync-pages.ts` reads `navLinks` from `lib/navigation.ts`.
+2. For each link, it checks if a `pages` document exists for that route.
+3. If missing, it creates a page with default SEO title (`Page Name | Gaines Boxing Club`).
+4. If the label changed, only the label is updated -- SEO fields edited in the admin panel are never overwritten.
+
+**Triggering a sync:**
+
+- The sync runs automatically when you call the seed endpoint: `GET /api/seed?key=<API_KEY>`
+- To add a new page: add the route to `navLinks` in `lib/navigation.ts`, then run the seed endpoint or call `syncPages()` programmatically.
+
+## JSON-LD Structured Data
+
+Every page outputs Schema.org JSON-LD structured data for search engine optimization:
+
+- **Global (in `layout.tsx`):** Organization, LocalBusiness, SportsActivityLocation, WebSite
+- **Per-page:** WebPage, BreadcrumbList
+- **Coaches page:** Person schema per coach
+- **Schedule page:** Event schema per event
+
+Data is sourced from the `site-settings` global (`structuredData` field group) in Payload CMS. Update the Organization name, address, geo coordinates, business hours, and logo in the admin panel to customize the structured data output.
+
+## Testing & Verification
+
+### Seeding Content
+
+```bash
+# Seed all CMS data (including pages sync)
+curl "http://localhost:3000/api/seed?key=<YOUR_API_KEY>"
+```
+
+### Verifying Structured Data
+
+1. Start the dev server: `npm run dev`
+2. Open any page and view source (Ctrl+U)
+3. Search for `application/ld+json` to find the JSON-LD script tags
+4. Copy the page URL and paste it into [Schema.org Validator](https://validator.schema.org/) or [Google Rich Results Test](https://search.google.com/test/rich-results)
+
+### TypeScript Check
+
+```bash
+npx tsc --noEmit
+```
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [Payload CMS Documentation](https://payloadcms.com/docs) - learn about Payload CMS.
+- [Schema.org](https://schema.org/) - reference for structured data types.
 
 ## Deploy on Vercel
 

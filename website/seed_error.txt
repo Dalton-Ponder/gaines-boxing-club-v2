@@ -1,0 +1,14 @@
+Debugger listening on ws://127.0.0.1:57164/98f1dd73-b873-4df9-a345-ec3f6508a02a
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger attached.
+=== Gaines Boxing Club Content Seed ===
+Target: http://localhost:3000
+
+--- Uploading Images ---
+Seed failed: Error: API GET /media?where[filename][equals]=sam_gaines.png&limit=1 -> 403: {"errors":[{"message":"You are not allowed to perform this action."}]}
+    at api (C:\Repos\gaines-boxing-club-v2\website\scripts\seed-content.ts:44:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async uploadImage (C:\Repos\gaines-boxing-club-v2\website\scripts\seed-content.ts:75:20)
+    at async seedMedia (C:\Repos\gaines-boxing-club-v2\website\scripts\seed-content.ts:126:24)
+    at async main (C:\Repos\gaines-boxing-club-v2\website\scripts\seed-content.ts:518:18)
+Waiting for the debugger to disconnect...

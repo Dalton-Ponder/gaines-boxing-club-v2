@@ -1,27 +1,44 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useModal } from "@/components/ModalProvider";
-import JoinModalBody from "@/components/JoinModalBody";
+import type { Metadata } from "next";
+import { getTimeline, getPage, getForm, getSiteSettings } from "@/lib/payload";
+import { JoinClubButton } from "@/components/JoinClubButton";
+import { FounderBioModalButton } from "@/components/FounderBioModalButton";
+import { generateWebPageSchema, jsonLdScript } from "@/lib/structured-data";
 
-export default function LegacyPage() {
-  const { open, close } = useModal();
+export const dynamic = 'force-dynamic';
 
-  const openJoinModal = () => {
-    open({
-      subtitle: "Become a Member",
-      title: <>Join the <span className="text-primary">Club</span></>,
-
-      body: <JoinModalBody onClose={close} />,
-    });
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPage('/legacy');
+  if (!page) return { title: 'Legacy | Gaines Boxing Club' };
+  return {
+    title: page.seoTitle || 'Legacy | Gaines Boxing Club',
+    description: page.seoDescription || 'Forged in the underground. Hardened by the streets. Built on grit, sweat, and the absolute pursuit of greatness.',
   };
+}
+
+export default async function LegacyPage() {
+  const [milestones, joinForm, siteSettings, pageData] = await Promise.all([
+    getTimeline(),
+    getForm('Join the Club'),
+    getSiteSettings(),
+    getPage('/legacy'),
+  ]);
+
+  const pageSchema = generateWebPageSchema(pageData, siteSettings, '/legacy', 'Legacy');
+  const pageJsonLd = jsonLdScript([pageSchema]);
 
   return (
     <>
+      {pageJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: pageJsonLd }}
+        />
+      )}
       {/* Hero */}
       <section className="relative h-[70vh] flex items-center justify-center overflow-hidden bg-background-dark">
-        <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-linear-to-t from-background-dark via-transparent to-transparent"></div>
         <div className="relative z-10 text-center px-4 max-w-4xl">
           <span className="text-primary font-bold tracking-[0.3em] uppercase mb-4 block">
             Established 1974
@@ -43,7 +60,7 @@ export default function LegacyPage() {
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="w-full lg:w-1/2 relative">
               <div className="absolute -inset-2 border-2 border-primary rounded-lg opacity-50"></div>
-              <div className="aspect-[4/5] bg-card-dark rounded-lg overflow-hidden border border-white/10 relative">
+              <div className="aspect-4/5 bg-card-dark rounded-lg overflow-hidden border border-white/10 relative">
                 <Image
                   alt="Sam Gaines Legacy"
                   className="w-full h-full object-cover grayscale contrast-125"
@@ -51,7 +68,7 @@ export default function LegacyPage() {
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
                 />
-                <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black to-transparent">
+                <div className="absolute bottom-0 left-0 right-0 p-8 bg-linear-to-t from-black to-transparent">
                   <h3 className="text-3xl font-bold italic">Sam Gaines</h3>
                   <p className="text-primary font-semibold tracking-widest uppercase text-sm">
                     The Founder
@@ -94,58 +111,12 @@ export default function LegacyPage() {
                   <p className="text-slate-500 text-xs">Coaching</p>
                 </div>
               </div>
-              <button
-                onClick={() => {
-                  open({
-                    subtitle: "The Founder",
-                    title: <>Sam <span className="text-primary">Gaines</span></>,
-
-                    body: (
-                      <div>
-                        <p style={{ marginBottom: "1rem" }}>
-                          Before the lights and the professional rings, there was a
-                          Southside basement with a single heavy bag and a vision. Sam
-                          Gaines didn&apos;t just teach boxing; he taught survival.
-                        </p>
-                        <p style={{ marginBottom: "1rem" }}>
-                          Born in 1948, Sam grew up in the toughest neighborhoods of
-                          the Southside. Boxing was his way out &mdash; and he made the
-                          most of it. After winning two consecutive Golden Gloves titles
-                          (1967-69) and compiling a flawless professional record of
-                          24-0-2, Sam turned his attention to building something that
-                          would outlast any championship belt.
-                        </p>
-                        <p style={{ marginBottom: "1rem" }}>
-                          In 1974, he opened the doors to a 400-square-foot basement
-                          gym. No heat, no frills &mdash; just heart, heavy bags, and a
-                          promise: anyone willing to work would find a home here.
-                        </p>
-                        <p style={{ marginBottom: "1rem" }}>
-                          Over the next four decades, Sam trained hundreds of amateur
-                          and professional fighters, producing a National Golden Gloves
-                          champion in 1988 and three world-title contenders by 2005. His
-                          philosophy &mdash; that discipline in the ring translates to
-                          discipline in life &mdash; became the bedrock of Gaines Boxing
-                          Club&apos;s identity.
-                        </p>
-                        <p>
-                          Today, Sam&apos;s legacy lives on through the coaches he
-                          mentored and the community he built. The gym has grown from
-                          that 400sq ft basement into a state-of-the-art facility, but
-                          the gritty philosophy of 1974 remains unchanged.
-                        </p>
-                      </div>
-                    ),
-                    size: "lg",
-                  });
-                }}
-                className="flex items-center gap-2 text-white font-bold bg-white/5 hover:bg-primary border border-white/10 hover:border-primary px-8 py-4 rounded-lg transition-all w-fit cursor-pointer"
-              >
+              <FounderBioModalButton className="flex items-center gap-2 text-white font-bold bg-white/5 hover:bg-primary border border-white/10 hover:border-primary px-8 py-4 rounded-lg transition-all w-fit cursor-pointer">
                 <span>Read Full Biography</span>
                 <span className="material-symbols-outlined">
                   arrow_right_alt
                 </span>
-              </button>
+              </FounderBioModalButton>
             </div>
           </div>
         </div>
@@ -163,88 +134,29 @@ export default function LegacyPage() {
           <div className="relative">
             <div className="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 h-full w-px bg-white/10"></div>
             <div className="relative z-10 space-y-24">
-              {/* 1974 */}
-              <div className="flex flex-col md:flex-row items-center gap-8">
-                <div className="flex-1 md:text-right">
-                  <span className="text-primary text-4xl font-black italic">
-                    1974
-                  </span>
-                  <h4 className="text-xl font-bold mt-2">The Basement Era</h4>
-                  <p className="text-slate-400 mt-2">
-                    Opened in a 400sq ft basement in the Southside. No heaters,
-                    just heart.
-                  </p>
-                </div>
-                <div className="size-10 bg-primary rounded-full flex items-center justify-center glow-accent border-4 border-background-dark">
-                  <span className="material-symbols-outlined text-white text-sm">
-                    home
-                  </span>
-                </div>
-                <div className="flex-1 hidden md:block"></div>
-              </div>
-              {/* 1988 */}
-              <div className="flex flex-col md:flex-row-reverse items-center gap-8">
-                <div className="flex-1 text-left">
-                  <span className="text-primary text-4xl font-black italic">
-                    1988
-                  </span>
-                  <h4 className="text-xl font-bold mt-2">
-                    Regional Domination
-                  </h4>
-                  <p className="text-slate-400 mt-2">
-                    Produced first National Golden Gloves champion. The gym
-                    moves to a warehouse facility.
-                  </p>
-                </div>
-                <div className="size-10 bg-primary rounded-full flex items-center justify-center glow-accent border-4 border-background-dark">
-                  <span className="material-symbols-outlined text-white text-sm">
-                    workspace_premium
-                  </span>
-                </div>
-                <div className="flex-1 hidden md:block"></div>
-              </div>
-              {/* 2005 */}
-              <div className="flex flex-col md:flex-row items-center gap-8">
-                <div className="flex-1 md:text-right">
-                  <span className="text-primary text-4xl font-black italic">
-                    2005
-                  </span>
-                  <h4 className="text-xl font-bold mt-2">
-                    The Pro Transition
-                  </h4>
-                  <p className="text-slate-400 mt-2">
-                    Gaines Boxing becomes the official training ground for three
-                    world-title contenders.
-                  </p>
-                </div>
-                <div className="size-10 bg-primary rounded-full flex items-center justify-center glow-accent border-4 border-background-dark">
-                  <span className="material-symbols-outlined text-white text-sm">
-                    sports_kabaddi
-                  </span>
-                </div>
-                <div className="flex-1 hidden md:block"></div>
-              </div>
-              {/* Today */}
-              <div className="flex flex-col md:flex-row-reverse items-center gap-8">
-                <div className="flex-1 text-left">
-                  <span className="text-primary text-4xl font-black italic">
-                    Today
-                  </span>
-                  <h4 className="text-xl font-bold mt-2">
-                    The Modern Institution
-                  </h4>
-                  <p className="text-slate-400 mt-2">
-                    A state-of-the-art facility maintaining the same gritty
-                    philosophy of 1974.
-                  </p>
-                </div>
-                <div className="size-10 bg-primary rounded-full flex items-center justify-center glow-accent border-4 border-background-dark">
-                  <span className="material-symbols-outlined text-white text-sm">
-                    location_city
-                  </span>
-                </div>
-                <div className="flex-1 hidden md:block"></div>
-              </div>
+              {milestones.map((milestone, index) => {
+                const isEven = index % 2 === 0;
+                
+                return (
+                  <div key={milestone.id} className={`flex flex-col items-center gap-8 ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                    <div className={`flex-1 ${isEven ? 'md:text-right' : 'text-left'}`}>
+                      <span className="text-primary text-4xl font-black italic">
+                        {milestone.year}
+                      </span>
+                      <h4 className="text-xl font-bold mt-2">{milestone.title}</h4>
+                      <p className="text-slate-400 mt-2">
+                        {milestone.description}
+                      </p>
+                    </div>
+                    <div className="size-10 bg-primary rounded-full flex items-center justify-center glow-accent border-4 border-background-dark z-10 mx-auto md:mx-0">
+                      <span className="material-symbols-outlined text-white text-sm">
+                        {milestone.icon || "star"}
+                      </span>
+                    </div>
+                    <div className="flex-1 hidden md:block"></div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -262,12 +174,12 @@ export default function LegacyPage() {
             the elite today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <button
-              onClick={openJoinModal}
+            <JoinClubButton
+              formData={joinForm}
               className="bg-primary text-white px-10 py-4 rounded-lg font-black uppercase tracking-widest hover:scale-105 transition-transform glow-accent cursor-pointer"
             >
               Start Training
-            </button>
+            </JoinClubButton>
             <Link
               href="/schedule"
               className="bg-white/5 border border-white/10 text-white px-10 py-4 rounded-lg font-black uppercase tracking-widest hover:bg-white/10 transition-colors inline-block"

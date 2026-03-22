@@ -2,7 +2,7 @@
 title: 'Static Content Migration to Payload CMS'
 slug: 'static-content-migration-payload-cms'
 created: '2026-03-22'
-status: 'ready-for-dev'
+status: 'in-progress'
 stepsCompleted: [1, 2, 3, 4]
 tech_stack: ['Next.js 16', 'Payload CMS v3.80+', 'PostgreSQL', '@payloadcms/plugin-form-builder', 'schema-ld / JSON-LD']
 files_to_modify:

@@ -1,0 +1,115 @@
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
+import { cache } from 'react'
+
+// ---------------------------------------------------------------------------
+// Centralized Payload Data Fetching Helpers
+// ---------------------------------------------------------------------------
+// All Server Components should use these helpers instead of inline getPayload()
+// calls. This ensures consistent depth, sorting, and error handling.
+// ---------------------------------------------------------------------------
+
+async function getPayloadClient() {
+  return getPayload({ config: configPromise })
+}
+
+// -- Site Settings --
+// F4 fix: React cache() deduplicates calls within the same request lifecycle,
+// so generateMetadata() and the page component share a single DB query.
+export const getSiteSettings = cache(async () => {
+  const payload = await getPayloadClient()
+  return payload.findGlobal({ slug: 'site-settings' })
+})
+
+// -- Pages --
+export async function getPage(route: string) {
+  const payload = await getPayloadClient()
+  const result = await payload.find({
+    collection: 'pages',
+    where: { route: { equals: route } },
+    limit: 1,
+    depth: 1,
+  })
+  return result.docs[0] ?? null
+}
+
+// -- Coaches --
+export async function getCoaches(limit = 10) {
+  const payload = await getPayloadClient()
+  const result = await payload.find({
+    collection: 'coaches',
+    limit,
+    sort: 'sortOrder',
+    depth: 1,
+  })
+  return result.docs
+}
+
+// -- Events --
+export async function getEvents() {
+  const payload = await getPayloadClient()
+  const all = await payload.find({
+    collection: 'events',
+    limit: 20,
+    sort: 'date',
+    depth: 1,
+  })
+  const featured = all.docs.find((e) => e.isFeatured) ?? null
+  const regular = all.docs.filter((e) => !e.isFeatured)
+  return { featured, regular, all: all.docs }
+}
+
+// -- Quotes --
+export async function getQuotes(limit = 10) {
+  const payload = await getPayloadClient()
+  const result = await payload.find({
+    collection: 'quotes',
+    limit,
+    sort: 'sortOrder',
+  })
+  return result.docs
+}
+
+// -- Timeline Milestones --
+export async function getTimeline() {
+  const payload = await getPayloadClient()
+  const result = await payload.find({
+    collection: 'timeline-milestones',
+    limit: 20,
+    sort: 'sortOrder',
+  })
+  return result.docs
+}
+
+// -- Philosophy Pillars --
+export async function getPhilosophyPillars(limit = 10) {
+  const payload = await getPayloadClient()
+  const result = await payload.find({
+    collection: 'philosophy-pillars',
+    limit,
+    sort: 'sortOrder',
+  })
+  return result.docs
+}
+
+// -- Training Schedule --
+export async function getTrainingSchedule() {
+  const payload = await getPayloadClient()
+  const result = await payload.find({
+    collection: 'training-schedule',
+    limit: 10,
+    sort: 'sortOrder',
+  })
+  return result.docs
+}
+
+// -- Forms --
+export async function getForm(title: string) {
+  const payload = await getPayloadClient()
+  const result = await payload.find({
+    collection: 'forms',
+    where: { title: { equals: title } },
+    limit: 1,
+  })
+  return result.docs[0] ?? null
+}

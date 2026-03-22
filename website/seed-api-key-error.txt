@@ -1,0 +1,22 @@
+Debugger listening on ws://127.0.0.1:26611/ce7d8db3-8065-41d6-8779-d2d8925a6455
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger attached.
+Waiting for the debugger to disconnect...
+C:\Repos\gaines-boxing-club-v2\website\node_modules\payload\dist\bin\loadEnv.js:3
+const { loadEnvConfig } = nextEnvImport;
+        ^
+
+
+TypeError: Cannot destructure property 'loadEnvConfig' of 'import_env.default' as it is undefined.
+    at loadedEnvFiles (C:\Repos\gaines-boxing-club-v2\website\node_modules\payload\dist\bin\loadEnv.js:3:9)
+    at Object.<anonymous> (C:\Repos\gaines-boxing-club-v2\website\node_modules\payload\dist\bin\loadEnv.js:6:21)
+    at Module._compile (node:internal/modules/cjs/loader:1565:14)
+    at Object.transformer (C:\Repos\gaines-boxing-club-v2\website\node_modules\tsx\dist\register-D46fvsV_.cjs:3:1104)
+    at Module.load (node:internal/modules/cjs/loader:1318:32)
+    at Function._load (node:internal/modules/cjs/loader:1128:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:219:24)
+    at Module.require (node:internal/modules/cjs/loader:1340:12)
+    at require (node:internal/modules/helpers:138:16)
+
+Node.js v22.12.0
