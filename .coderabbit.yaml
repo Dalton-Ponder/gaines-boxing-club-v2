@@ -1,0 +1,11 @@
+# .coderabbit.yaml
+reviews:
+  path_filters:
+    - "!_bmad/**" # exclude _bmad directory
+    - "!_bmad-output/**" # exclude _bmad-output directory
+    - "!.agent/**" # exclude agent directory
+    - "!.claude/**" # exclude claude directory
+    - "!docs/**" # exclude docs directory
+    - "!website/node_modules/**" # exclude website node_modules directory
+    - "!website/.next/**" # exclude website .next directory
+    - "**" # include everything else

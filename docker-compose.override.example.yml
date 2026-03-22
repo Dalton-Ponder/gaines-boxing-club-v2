@@ -1,0 +1,50 @@
+# ─────────────────────────────────────────────────────────
+#  Local Development Overrides
+#
+#  To use: copy this file to docker-compose.override.yml
+#    cp docker-compose.override.example.yml docker-compose.override.yml
+#
+#  Docker Compose automatically merges docker-compose.override.yml
+#  on top of docker-compose.yml when you run:
+#    docker compose up -d --build
+#
+#  The override file replaces pre-built ghcr.io images with local
+#  source builds, switches to development mode, and connects the
+#  website to the shared-local-dev network so it can communicate
+#  with other local Docker Compose stacks.
+#
+#  PREREQUISITE: Create the shared network once before first use:
+#    docker network create shared
+# ─────────────────────────────────────────────────────────
+
+services:
+  website:
+    # Override: build from local source instead of pulling from ghcr.io
+    # target: deps stops at the dependency-install stage, skipping next build
+    image: !reset null
+    build:
+      context: ./website
+      dockerfile: Dockerfile
+      target: deps
+    container_name: gaines-boxing-club-v2-website-local
+    env_file:
+      - .env.compose
+    environment:
+      - NODE_ENV=development
+      # Polling-based file watcher — required for Docker volume mounts from Windows
+      - WATCHPACK_POLLING=true
+      # Example local connection strings:
+      # - PAYLOAD_SECRET=local_secret_development_key_12345
+      # - DATABASE_URI=postgresql://postgres:postgres@postgres:5432/gaines-boxing-club
+    # Hot-reloading: mount local source; anonymous volume preserves container node_modules
+    volumes:
+      - ./website:/app
+      - /app/node_modules
+    # Run the Next.js dev server with webpack (Turbopack panics with Docker volume mounts)
+    command: ["npx", "next", "dev", "--webpack"]
+    networks:
+      - shared
+
+networks:
+  shared:
+    external: true

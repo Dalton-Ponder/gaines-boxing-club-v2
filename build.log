@@ -1,0 +1,56 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 592B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 2.30kB done
+#2 DONE 0.0s
+
+#3 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#3 DONE 0.8s
+
+#4 docker-image://docker.io/docker/dockerfile:1@sha256:4a43a54dd1fedceb30ba47e76cfcf2b47304f4161c0caeac2db1c61804ea3c91
+#4 resolve docker.io/docker/dockerfile:1@sha256:4a43a54dd1fedceb30ba47e76cfcf2b47304f4161c0caeac2db1c61804ea3c91 0.0s done
+#4 CACHED
+
+#5 [internal] load metadata for docker.io/library/node:20-alpine
+#5 DONE 0.9s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 178B done
+#6 DONE 0.0s
+
+#7 [base 1/1] FROM docker.io/library/node:20-alpine@sha256:b88333c42c23fbd91596ebd7fd10de239cedab9617de04142dde7315e3bc0afa
+#7 resolve docker.io/library/node:20-alpine@sha256:b88333c42c23fbd91596ebd7fd10de239cedab9617de04142dde7315e3bc0afa 0.0s done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 72B done
+#8 DONE 0.0s
+
+#9 [deps 1/4] RUN apk add --no-cache libc6-compat
+#9 CACHED
+
+#10 [deps 2/4] WORKDIR /app
+#10 CACHED
+
+#11 [deps 3/4] COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
+#11 CACHED
+
+#12 [deps 4/4] RUN   if [ -f package-lock.json ]; then npm ci --legacy-peer-deps;   elif [ -f yarn.lock ]; then yarn --frozen-lockfile;   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile;   else echo "Lockfile not found." && exit 1;   fi
+#12 CACHED
+
+#13 exporting to image
+#13 exporting layers done
+#13 exporting manifest sha256:83e271e2e36d134089eb89dbf6a33db218d099079d526b3e8ad7932badfebb08 done
+#13 exporting config sha256:fb94b2ed408b12f5cbe5d36701c316d5b78b9dba63102d1cd3afb9d3e2895322 done
+#13 exporting attestation manifest sha256:24ce7b1e63805ed97c7750d6f5d061d7b15707fead0f52d2b079411992938f10
+#13 exporting attestation manifest sha256:24ce7b1e63805ed97c7750d6f5d061d7b15707fead0f52d2b079411992938f10 0.0s done
+#13 exporting manifest list sha256:42cfde04d15d308e710b30dee68ec8df5c5cc5e478f260a0593a16b3e213a49b 0.0s done
+#13 naming to docker.io/library/gaines-boxing-club-v2-website:latest done
+#13 unpacking to docker.io/library/gaines-boxing-club-v2-website:latest done
+#13 DONE 0.1s
+
+#14 resolving provenance for metadata file
+#14 DONE 0.0s
+ gaines-boxing-club-v2-website  Built
