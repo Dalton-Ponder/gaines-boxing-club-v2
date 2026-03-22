@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import React from "react";
 import { Lexend } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";

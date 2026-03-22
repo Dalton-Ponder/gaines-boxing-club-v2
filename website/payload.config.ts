@@ -26,6 +26,7 @@ export default buildConfig({
     pool: {
       connectionString: DATABASE_URI,
     },
+    schemaName: 'gaines_boxing_club__cms',
   }),
 
   editor: lexicalEditor(),
