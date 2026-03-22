@@ -57,7 +57,7 @@ export function FounderBioModalButton({
   };
 
   return (
-    <button onClick={openBioModal} className={className}>
+    <button type="button" onClick={openBioModal} className={className}>
       {children}
     </button>
   );

@@ -25,7 +25,7 @@ type PayloadForm = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type FormDataProp = PayloadForm | Record<string, any> | null;
+export type FormDataProp = PayloadForm | Record<string, any> | null;
 
 export function JoinClubButton({
   className,

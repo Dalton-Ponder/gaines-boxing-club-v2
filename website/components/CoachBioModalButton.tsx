@@ -48,13 +48,16 @@ export function CoachBioModalButton({
       bioContent = <p style={{ marginBottom: "1.5rem" }}>{coach.shortBio}</p>;
     }
 
+    const fullName = coach?.name ?? '';
+    const nameParts = fullName.split(' ');
+
     open({
       subtitle: coach.role,
       title: (
         <>
-          {coach.name.split(" ")[0]}{" "}
+          {nameParts[0]}{" "}
           <span style={{ color: "#c14e01" }}>
-            {coach.name.split(" ").slice(1).join(" ")}
+            {nameParts.slice(1).join(" ")}
           </span>
         </>
       ),
@@ -120,7 +123,7 @@ export function CoachBioModalButton({
   };
 
   return (
-    <button onClick={openBioModal} className={className}>
+    <button type="button" onClick={openBioModal} className={className}>
       {children}
     </button>
   );

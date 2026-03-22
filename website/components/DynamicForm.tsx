@@ -79,13 +79,27 @@ export function DynamicForm({
   };
 
   if (isSubmitted) {
+    // Honor CMS-controlled confirmation behavior
+    if (form?.confirmationType === 'redirect' && form?.redirect?.url) {
+      if (typeof window !== 'undefined') {
+        window.location.href = form.redirect.url;
+      }
+      return null;
+    }
+
+    const confirmationText = (form?.confirmationType === 'message' && form?.confirmationMessage)
+      ? (typeof form.confirmationMessage === 'string'
+          ? form.confirmationMessage
+          : 'Thank you for your interest in Gaines Boxing Club!')
+      : 'Thank you for your interest in Gaines Boxing Club!';
+
     return (
       <div className="text-center py-8">
         <span className="material-symbols-outlined text-primary text-5xl mb-4 block">
           check_circle
         </span>
         <p className="text-lg font-semibold text-white mb-2">
-          Thank you for your interest in Gaines Boxing Club!
+          {confirmationText}
         </p>
         <p className="text-slate-400 text-sm">
           We will be in touch shortly.
@@ -168,6 +182,9 @@ export function DynamicForm({
                     type="checkbox"
                     id={field.name}
                     name={field.name}
+                    required={field.required}
+                    defaultChecked={field.defaultValue === 'true'}
+                    aria-required={field.required || undefined}
                     className="accent-primary w-4 h-4"
                     onChange={(e) =>
                       setFormState((prev) => ({

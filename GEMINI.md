@@ -37,20 +37,14 @@ The file `docs/payload-cms-integration-guide.md` is a **living document** that m
 
 ## Payload CMS REST API Access
 
-The local Payload CMS instance at `http://localhost:3000` exposes a full REST API. An MCP-generated API key is stored below and must be used for all programmatic content operations against the local environment.
-
-### API Key
-
-```
-PAYLOAD_MCP_API_KEY=d47109a7-d749-44af-8e88-8a71e6b1bac8
-```
+The local Payload CMS instance at `http://localhost:3000` exposes a full REST API. The API key is stored in the project's `.env` file (gitignored) under the `PAYLOAD_MCP_API_KEY` variable. See `website/.env.example` for reference.
 
 ### Rules
 
-1. **Use this key for all local API calls.** Every request to `http://localhost:3000/api/...` must include the header:
+1. **Use the environment variable for all local API calls.** Every request to `http://localhost:3000/api/...` must include the header:
 
    ```
-   Authorization: Bearer d47109a7-d749-44af-8e88-8a71e6b1bac8
+   Authorization: Bearer $PAYLOAD_MCP_API_KEY
    ```
 
 2. **Prefer the REST API over browser automation** when creating, updating, or seeding content. Use `Invoke-RestMethod` in PowerShell or `curl` commands.

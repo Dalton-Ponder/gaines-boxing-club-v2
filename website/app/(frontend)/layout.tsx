@@ -38,6 +38,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const joinForm = await getForm("Join the Club");
+  const settings = await getSiteSettings();
 
   const orgSchema = generateOrganizationSchema(settings);
   const webSiteSchema = generateWebSiteSchema(settings);

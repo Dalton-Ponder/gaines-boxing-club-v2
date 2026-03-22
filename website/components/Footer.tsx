@@ -3,7 +3,12 @@ import { navLinks } from "@/lib/navigation";
 import { getSiteSettings } from "@/lib/payload";
 
 export default async function Footer() {
-  const siteSettings = await getSiteSettings();
+  let siteSettings;
+  try {
+    siteSettings = await getSiteSettings();
+  } catch {
+    siteSettings = {};
+  }
 
   const tagline = siteSettings.tagline || 'Building legacy through discipline, grit, and the relentless pursuit of excellence in the underground boxing circuit.';
   

@@ -5,9 +5,10 @@
 // All URLs are absolute, using NEXT_PUBLIC_SITE_URL.
 // ---------------------------------------------------------------------------
 
-// F1 fix: Read env at call time, not module scope
+// F1 fix: Read env at call time, not module scope. Strip trailing slash.
 function getSiteUrl(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const url = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  return url.replace(/\/+$/, '')
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,8 +69,8 @@ export function generateOrganizationSchema(settings: SiteSettings) {
     }
   }
 
-  // Geo
-  if (sd.latitude && sd.longitude) {
+  // Geo -- use explicit null checks to preserve valid zero coordinates
+  if (sd.latitude != null && sd.longitude != null) {
     schema.geo = {
       '@type': 'GeoCoordinates',
       latitude: sd.latitude,
@@ -219,10 +220,20 @@ export function generatePersonSchema(coach: CoachData, organizationName = 'Gaine
 }
 
 // ---------------------------------------------------------------------------
-// Helper: Render schemas to a JSON-LD script tag string
+// Helper: Render schemas to a sanitized JSON-LD string
 // ---------------------------------------------------------------------------
 export function jsonLdScript(schemas: Record<string, unknown>[]) {
   if (schemas.length === 0) return null
   const merged = schemas.length === 1 ? schemas[0] : schemas
-  return JSON.stringify(merged)
+  let json = JSON.stringify(merged)
+
+  // Sanitize: prevent script-breakout XSS and Unicode line-separator issues
+  json = json
+    .replace(/<\/script/gi, '<\\/script')
+    .replace(/<!--/g, '<\\!--')
+    .replace(/-->/g, '--\\>')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029')
+
+  return json
 }

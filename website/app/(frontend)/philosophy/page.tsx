@@ -37,11 +37,11 @@ export default async function PhilosophyPage() {
         <div className="absolute inset-0 z-0 bg-background-dark"></div>
         <div className="relative z-20 text-center max-w-4xl px-6">
           <span className="inline-block text-primary font-bold tracking-[0.4em] uppercase mb-4 text-sm">
-            {pageData?.heroTagline || "Established MCMXCIV"}
+            {pageData?.heroTagline || "Established MCMLXXIV"}
           </span>
           <h1 className="text-white text-6xl md:text-8xl font-black leading-tight tracking-tighter uppercase mb-6">
             {pageData?.heroHeading ? (
-              <span dangerouslySetInnerHTML={{ __html: pageData.heroHeading }} />
+              <span>{pageData.heroHeading}</span>
             ) : (
               <>The Sweet <br /><span className="text-primary italic">Science</span></>
             )}

@@ -7,6 +7,7 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { getPayload } from 'payload'
+import type { BasePayload } from 'payload'
 import config from '../payload.config'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -17,15 +18,16 @@ const IMAGES_DIR = path.resolve(__dirname, '..', 'public', 'images')
 // Helpers
 // ---------------------------------------------------------------------------
 
-async function clearCollection(payload: any, slug: string): Promise<void> {
+async function clearCollection(payload: BasePayload, slug: string): Promise<void> {
   try {
     await payload.delete({
       collection: slug,
       where: { id: { exists: true } },
     })
     console.log(`  [cleared] ${slug}`)
-  } catch {
-    console.log(`  [skip-clear] ${slug} (may already be empty)`)
+  } catch (err) {
+    console.error(`  [clear-error] ${slug}:`, err)
+    throw err
   }
 }
 

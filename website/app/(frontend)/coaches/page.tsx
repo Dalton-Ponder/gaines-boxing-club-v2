@@ -47,7 +47,7 @@ export default async function CoachesPage() {
           </span>
           <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white mb-6 uppercase italic leading-none">
             {pageData?.heroHeading ? (
-              <span dangerouslySetInnerHTML={{ __html: pageData.heroHeading }} />
+              <span>{pageData.heroHeading}</span>
             ) : (
               <>Meet the <br /><span className="text-primary">Coaches</span></>
             )}

@@ -43,7 +43,7 @@ export default async function SchedulePage() {
           </span>
           <h1 className="text-5xl md:text-7xl font-black text-white uppercase tracking-tighter leading-none mb-6">
             {pageData?.heroHeading ? (
-              <span dangerouslySetInnerHTML={{ __html: pageData.heroHeading }} />
+              <span>{pageData.heroHeading}</span>
             ) : (
               <>Schedule <span className="text-primary">&amp;</span> Events</>
             )}
@@ -118,9 +118,15 @@ export default async function SchedulePage() {
                     <span className="text-xl font-bold text-white uppercase">{featuredEvent.location}</span>
                   </div>
                 </div>
-                <button className="bg-white hover:bg-slate-200 text-black font-black uppercase tracking-widest px-8 py-4 rounded transition-all">
-                  {featuredEvent.ctaText || 'Register to Attend'}
-                </button>
+                {featuredEvent.ctaLink ? (
+                  <a href={featuredEvent.ctaLink} className="bg-white hover:bg-slate-200 text-black font-black uppercase tracking-widest px-8 py-4 rounded transition-all inline-block">
+                    {featuredEvent.ctaText || 'Register to Attend'}
+                  </a>
+                ) : (
+                  <button className="bg-white hover:bg-slate-200 text-black font-black uppercase tracking-widest px-8 py-4 rounded transition-all">
+                    {featuredEvent.ctaText || 'Register to Attend'}
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -164,9 +170,15 @@ export default async function SchedulePage() {
                       <h4 className="text-xl font-bold text-white uppercase mb-2">{event.title}</h4>
                       <p className="text-slate-500 text-sm mb-6 line-clamp-2">{event.description}</p>
                       <div className="mt-auto">
-                        <button className="w-full border border-white/10 hover:border-primary hover:text-primary py-2 text-xs font-black uppercase tracking-widest transition-all cursor-pointer">
-                          {event.ctaText || 'Details'}
-                        </button>
+                        {event.ctaLink ? (
+                          <a href={event.ctaLink} className="w-full border border-white/10 hover:border-primary hover:text-primary py-2 text-xs font-black uppercase tracking-widest transition-all block text-center">
+                            {event.ctaText || 'Details'}
+                          </a>
+                        ) : (
+                          <button className="w-full border border-white/10 hover:border-primary hover:text-primary py-2 text-xs font-black uppercase tracking-widest transition-all cursor-pointer">
+                            {event.ctaText || 'Details'}
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

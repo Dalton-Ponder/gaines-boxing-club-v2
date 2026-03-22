@@ -46,7 +46,7 @@ export default async function LegacyPage() {
           </span>
           <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white mb-6 uppercase italic leading-none">
             {pageData?.heroHeading ? (
-              <span dangerouslySetInnerHTML={{ __html: pageData.heroHeading }} />
+              <span>{pageData.heroHeading}</span>
             ) : (
               <>A 50-Year <br /><span className="text-primary">Legacy</span></>
             )}

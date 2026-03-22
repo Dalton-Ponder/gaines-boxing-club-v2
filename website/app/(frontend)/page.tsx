@@ -54,7 +54,7 @@ export default async function HomePage() {
           </span>
           <h1 className="font-display text-5xl font-black uppercase leading-[1.1] tracking-tighter text-white sm:text-7xl lg:text-8xl">
             {pageData?.heroHeading ? (
-              <span dangerouslySetInnerHTML={{ __html: pageData.heroHeading }} />
+              <span>{pageData.heroHeading}</span>
             ) : (
               <>Where Your Boxing <br /><span className="text-primary italic">Journey Truly Begins</span></>
             )}

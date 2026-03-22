@@ -163,6 +163,11 @@ export default buildConfig({
         { name: 'description', type: 'textarea' },
         { name: 'image', type: 'upload', relationTo: 'media' },
         { name: 'ctaText', type: 'text', defaultValue: 'Details' },
+        {
+          name: 'ctaLink',
+          type: 'text',
+          admin: { description: 'URL for the CTA button. Leave empty if no link is needed.' },
+        },
         { name: 'isFeatured', type: 'checkbox', defaultValue: false },
       ],
     },
@@ -438,7 +443,14 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   onInit: async (payload) => {
-    const apiKey = 'd47109a7-d749-44af-8e88-8a71e6b1bac8'
+    // Only seed the MCP API key when explicitly enabled via env var
+    if (process.env.SEED_MCP_KEY !== 'true') return
+
+    const apiKey = process.env.PAYLOAD_MCP_API_KEY
+    if (!apiKey) {
+      payload.logger.warn('SEED_MCP_KEY is true but PAYLOAD_MCP_API_KEY is not set. Skipping API key seed.')
+      return
+    }
     try {
       const existing = await payload.find({
         collection: 'payload-mcp-api-keys',
@@ -473,7 +485,7 @@ export default buildConfig({
             'site-settings_find': true, 'site-settings_update': true,
           }
         })
-        payload.logger.info('✅ Successfully seeded Gemini Local Seed Key')
+        payload.logger.info('Successfully seeded Gemini Local Seed Key')
       }
     } catch (err) {
       payload.logger.error('Failed to seed API key in onInit:')

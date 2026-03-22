@@ -4,10 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { navLinks } from "@/lib/navigation";
-import { JoinClubButton } from "@/components/JoinClubButton";
+import { JoinClubButton, type FormDataProp } from "@/components/JoinClubButton";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function Header({ formData }: { formData?: any }) {
+export default function Header({ formData }: { formData?: FormDataProp }) {
   const pathname = usePathname();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
