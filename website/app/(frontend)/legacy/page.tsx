@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getTimeline, getPage, getForm, getSiteSettings } from "@/lib/payload";
+import { getTimeline, getPage, getForm, getSiteSettings, getMedia } from "@/lib/payload";
 import { JoinClubButton } from "@/components/JoinClubButton";
 import { FounderBioModalButton } from "@/components/FounderBioModalButton";
 import { generateWebPageSchema, jsonLdScript } from "@/lib/structured-data";
@@ -18,11 +18,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function LegacyPage() {
-  const [milestones, joinForm, siteSettings, pageData] = await Promise.all([
+  const [milestones, joinForm, siteSettings, pageData, samGainesImage] = await Promise.all([
     getTimeline(),
     getForm('Join the Club'),
     getSiteSettings(),
     getPage('/legacy'),
+    getMedia('sam_gaines.png'),
   ]);
 
   const pageSchema = generateWebPageSchema(pageData, siteSettings, '/legacy', 'Legacy');
@@ -41,15 +42,17 @@ export default async function LegacyPage() {
         <div className="absolute inset-0 bg-linear-to-t from-background-dark via-transparent to-transparent"></div>
         <div className="relative z-10 text-center px-4 max-w-4xl">
           <span className="text-primary font-bold tracking-[0.3em] uppercase mb-4 block">
-            Established 1974
+            {pageData?.heroTagline || "Established 1974"}
           </span>
           <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white mb-6 uppercase italic leading-none">
-            A 50-Year <br />
-            <span className="text-primary">Legacy</span>
+            {pageData?.heroHeading ? (
+              <span dangerouslySetInnerHTML={{ __html: pageData.heroHeading }} />
+            ) : (
+              <>A 50-Year <br /><span className="text-primary">Legacy</span></>
+            )}
           </h1>
           <p className="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed">
-            Forged in the underground. Hardened by the streets. Built on grit,
-            sweat, and the absolute pursuit of greatness.
+            {pageData?.heroSubheading || "Forged in the underground. Hardened by the streets. Built on grit, sweat, and the absolute pursuit of greatness."}
           </p>
         </div>
       </section>
@@ -62,9 +65,9 @@ export default async function LegacyPage() {
               <div className="absolute -inset-2 border-2 border-primary rounded-lg opacity-50"></div>
               <div className="aspect-4/5 bg-card-dark rounded-lg overflow-hidden border border-white/10 relative">
                 <Image
-                  alt="Sam Gaines Legacy"
+                  alt={samGainesImage?.alt || "Sam Gaines Legacy"}
                   className="w-full h-full object-cover grayscale contrast-125"
-                  src="/images/sam_gaines.png"
+                  src={samGainesImage?.url || "/images/sam_gaines.png"}
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
                 />

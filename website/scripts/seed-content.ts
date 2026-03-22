@@ -83,7 +83,7 @@ async function seedMedia(payload: any): Promise<Record<string, any>> {
   return images
 }
 
-async function seedGlobals(payload: any): Promise<void> {
+async function seedGlobals(payload: any, images: Record<string, any>): Promise<void> {
   console.log('\n--- Seeding Site Settings ---')
 
   const settings = {
@@ -114,7 +114,9 @@ async function seedGlobals(payload: any): Promise<void> {
         { dayOfWeek: 'Thursday', opens: '18:00', closes: '20:00' },
       ],
       priceRange: '$$',
+      organizationLogo: images['gbc_logo.png']?.id,
     },
+
   }
 
   await payload.updateGlobal({
@@ -173,7 +175,7 @@ async function main(): Promise<void> {
   await payload.create({ collection: 'training-schedule', data: { day: 'Thursdays', startTime: '6PM', endTime: '8PM', sortOrder: 2 } })
   console.log('  [created] Training Schedule')
 
-  await seedGlobals(payload)
+  await seedGlobals(payload, images)
 
   console.log('\n=== Seed Complete ===')
   process.exit(0)

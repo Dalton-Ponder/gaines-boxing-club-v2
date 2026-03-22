@@ -43,15 +43,17 @@ export default async function CoachesPage() {
         <div className="absolute inset-0 bg-linear-to-t from-background-dark via-transparent to-transparent"></div>
         <div className="relative z-10 text-center px-4 max-w-4xl">
           <span className="text-primary font-bold tracking-[0.3em] uppercase mb-4 block">
-            The Vanguard
+            {pageData?.heroTagline || "The Vanguard"}
           </span>
           <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white mb-6 uppercase italic leading-none">
-            Meet the <br />
-            <span className="text-primary">Coaches</span>
+            {pageData?.heroHeading ? (
+              <span dangerouslySetInnerHTML={{ __html: pageData.heroHeading }} />
+            ) : (
+              <>Meet the <br /><span className="text-primary">Coaches</span></>
+            )}
           </h1>
           <p className="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed">
-            Elite leadership continuing the legacy of Sam Gaines with
-            high-contrast expertise, raw power, and the wisdom of the ring.
+            {pageData?.heroSubheading || "Elite leadership continuing the legacy of Sam Gaines with high-contrast expertise, raw power, and the wisdom of the ring."}
           </p>
         </div>
       </section>

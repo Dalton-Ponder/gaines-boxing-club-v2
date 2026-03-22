@@ -3,23 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useModal } from "./ModalProvider";
-import JoinModalBody from "./JoinModalBody";
-
 import { navLinks } from "@/lib/navigation";
+import { JoinClubButton } from "@/components/JoinClubButton";
 
-export default function Header() {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function Header({ formData }: { formData?: any }) {
   const pathname = usePathname();
-  const { open, close } = useModal();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-
-  const openJoinModal = () => {
-    open({
-      subtitle: "Become a Member",
-      title: <>Join the <span className="text-primary">Club</span></>,
-      body: <JoinModalBody onClose={close} />,
-    });
-  };
 
   return (
     <header className="fixed top-0 z-50 w-full border-b border-primary bg-background-dark/95 backdrop-blur-md px-6 md:px-20 py-4">
@@ -56,12 +46,12 @@ export default function Header() {
           })}
         </nav>
         <div className="flex items-center gap-4">
-          <button
-            onClick={openJoinModal}
+          <JoinClubButton
+            formData={formData}
             className="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-bold text-sm tracking-wide uppercase transition-all glow-accent cursor-pointer"
           >
             Join Club
-          </button>
+          </JoinClubButton>
           {/* Mobile hamburger button */}
           <button
             className="md:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg border border-white/10 bg-white/5 cursor-pointer"

@@ -36,12 +36,18 @@ export default async function PhilosophyPage() {
       <section className="relative flex min-h-[70vh] items-center justify-center px-4 overflow-hidden">
         <div className="absolute inset-0 z-0 bg-background-dark"></div>
         <div className="relative z-20 text-center max-w-4xl px-6">
-          <span className="inline-block text-primary font-bold tracking-[0.4em] uppercase mb-4 text-sm">Established MCMXCIV</span>
+          <span className="inline-block text-primary font-bold tracking-[0.4em] uppercase mb-4 text-sm">
+            {pageData?.heroTagline || "Established MCMXCIV"}
+          </span>
           <h1 className="text-white text-6xl md:text-8xl font-black leading-tight tracking-tighter uppercase mb-6">
-            The Sweet <br /><span className="text-primary italic">Science</span>
+            {pageData?.heroHeading ? (
+              <span dangerouslySetInnerHTML={{ __html: pageData.heroHeading }} />
+            ) : (
+              <>The Sweet <br /><span className="text-primary italic">Science</span></>
+            )}
           </h1>
           <p className="text-slate-300 text-lg md:text-xl font-light leading-relaxed max-w-2xl mx-auto mb-10">
-            Beyond the ring, we forge character. Discover the uncompromising training standards that define Gaines Boxing Club.
+            {pageData?.heroSubheading || "Beyond the ring, we forge character. Discover the uncompromising training standards that define Gaines Boxing Club."}
           </p>
           <div className="flex justify-center gap-4">
             <Link href="/schedule" className="bg-primary text-white px-8 py-4 rounded-lg font-bold uppercase tracking-widest text-sm hover:scale-105 transition-transform inline-block">Start Your Journey</Link>

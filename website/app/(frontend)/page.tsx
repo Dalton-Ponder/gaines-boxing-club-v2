@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getCoaches, getQuotes, getPhilosophyPillars, getSiteSettings, getPage, getForm } from "@/lib/payload";
+import { getCoaches, getQuotes, getPhilosophyPillars, getSiteSettings, getPage, getForm, getMedia } from "@/lib/payload";
 import { JoinClubButton } from "@/components/JoinClubButton";
 import { generateWebPageSchema, generatePersonSchema, jsonLdScript } from "@/lib/structured-data";
 
@@ -20,13 +20,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [siteSettings, quotes, coaches, pillars, joinForm, pageData] = await Promise.all([
+  const [siteSettings, quotes, coaches, pillars, joinForm, pageData, samGainesImage] = await Promise.all([
     getSiteSettings(),
     getQuotes(1),
     getCoaches(2),
     getPhilosophyPillars(3),
     getForm('Join the Club'),
     getPage('/'),
+    getMedia('sam_gaines.png'),
   ]);
 
   const tagline = siteSettings.tagline || 'Building legacy through discipline, grit, and the relentless pursuit of excellence in the underground boxing circuit.';
@@ -49,14 +50,17 @@ export default async function HomePage() {
         <div className="absolute inset-0 z-0 overflow-hidden bg-background-dark"></div>
         <div className="relative z-20 max-w-4xl space-y-8">
           <span className="inline-block rounded-full bg-primary/20 border border-primary/30 px-4 py-1.5 font-display text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
-            Est. 1974 &bull; Elite Underground Training
+            {pageData?.heroTagline || "Est. 1974 \u2022 Elite Underground Training"}
           </span>
           <h1 className="font-display text-5xl font-black uppercase leading-[1.1] tracking-tighter text-white sm:text-7xl lg:text-8xl">
-            Where Your Boxing <br />
-            <span className="text-primary italic">Journey Truly Begins</span>
+            {pageData?.heroHeading ? (
+              <span dangerouslySetInnerHTML={{ __html: pageData.heroHeading }} />
+            ) : (
+              <>Where Your Boxing <br /><span className="text-primary italic">Journey Truly Begins</span></>
+            )}
           </h1>
           <p className="mx-auto max-w-2xl font-sans text-lg text-slate-400 leading-relaxed">
-            {tagline}
+            {pageData?.heroSubheading || tagline}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <JoinClubButton formData={joinForm} />
@@ -78,9 +82,9 @@ export default async function HomePage() {
               <div className="absolute -top-4 -left-4 w-24 h-24 border-t-2 border-l-2 border-primary"></div>
               <div className="overflow-hidden rounded-xl border border-white/10">
                 <Image
-                  alt="Sam Gaines Legacy"
+                  alt={samGainesImage?.alt || "Sam Gaines Legacy"}
                   className="w-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
-                  src="/images/sam_gaines.png"
+                  src={samGainesImage?.url || "/images/sam_gaines.png"}
                   width={600}
                   height={600}
                   priority

@@ -38,12 +38,18 @@ export default async function SchedulePage() {
       <section className="relative w-full py-32 lg:py-40 flex items-center justify-center overflow-hidden bg-background-dark">
         <div className="absolute inset-0 z-0 bg-background-dark"></div>
         <div className="relative z-10 text-center px-4 max-w-4xl">
-          <span className="text-primary font-bold uppercase tracking-[0.3em] text-sm mb-4 block">Gaines Club Calendar</span>
+          <span className="text-primary font-bold uppercase tracking-[0.3em] text-sm mb-4 block">
+            {pageData?.heroTagline || "Gaines Club Calendar"}
+          </span>
           <h1 className="text-5xl md:text-7xl font-black text-white uppercase tracking-tighter leading-none mb-6">
-            Schedule <span className="text-primary">&amp;</span> Events
+            {pageData?.heroHeading ? (
+              <span dangerouslySetInnerHTML={{ __html: pageData.heroHeading }} />
+            ) : (
+              <>Schedule <span className="text-primary">&amp;</span> Events</>
+            )}
           </h1>
           <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed">
-            Experience the raw grit and underground prestige of Gaines Boxing. From professional training windows to high-stakes match nights.
+            {pageData?.heroSubheading || "Experience the raw grit and underground prestige of Gaines Boxing. From professional training windows to high-stakes match nights."}
           </p>
         </div>
       </section>

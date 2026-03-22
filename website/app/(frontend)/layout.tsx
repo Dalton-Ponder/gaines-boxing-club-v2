@@ -11,6 +11,7 @@ import {
   generateWebSiteSchema,
   jsonLdScript,
 } from "@/lib/structured-data";
+import { getForm } from "@/lib/payload";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -36,7 +37,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const settings = await getSiteSettings();
+  const joinForm = await getForm("Join the Club");
 
   const orgSchema = generateOrganizationSchema(settings);
   const webSiteSchema = generateWebSiteSchema(settings);
@@ -62,7 +63,7 @@ export default async function RootLayout({
       >
         <ModalProvider>
           <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
-            <Header />
+            <Header formData={joinForm} />
             <main className="flex-1 pt-[104px]">{children}</main>
             <Footer />
           </div>

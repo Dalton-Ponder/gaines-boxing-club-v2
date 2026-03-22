@@ -113,3 +113,14 @@ export async function getForm(title: string) {
   })
   return result.docs[0] ?? null
 }
+
+// -- Media --
+export async function getMedia(filename: string) {
+  const payload = await getPayloadClient()
+  const result = await payload.find({
+    collection: 'media',
+    where: { filename: { equals: filename } },
+    limit: 1,
+  })
+  return result.docs[0] ?? null
+}
