@@ -64,7 +64,7 @@ export default function SchedulePage() {
               <div className="flex flex-wrap items-center gap-8 mb-10">
                 <div className="flex flex-col">
                   <span className="text-slate-500 text-xs font-bold uppercase tracking-widest">Date</span>
-                  <span className="text-xl font-bold text-white uppercase">OCT 24, 2024</span>
+                  <span className="text-xl font-bold text-white uppercase">OCT 24, 2026</span>
                 </div>
                 <div className="w-px h-10 bg-white/10"></div>
                 <div className="flex flex-col">

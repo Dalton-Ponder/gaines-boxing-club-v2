@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useModal } from "./ModalProvider";
@@ -16,11 +17,12 @@ const navLinks = [
 export default function Header() {
   const pathname = usePathname();
   const { open, close } = useModal();
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const openJoinModal = () => {
     open({
       subtitle: "Become a Member",
-      title: 'Join the <span style="color:#c14e01">Club</span>',
+      title: <>Join the <span style={{color:'#c14e01'}}>Club</span></>,
       body: <JoinModalBody onClose={close} />,
     });
   };
@@ -66,8 +68,50 @@ export default function Header() {
           >
             Join Club
           </button>
+          {/* Mobile hamburger button */}
+          <button
+            className="md:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg border border-white/10 bg-white/5 cursor-pointer"
+            onClick={() => setIsMobileOpen(!isMobileOpen)}
+            aria-expanded={isMobileOpen}
+            aria-controls="mobile-nav"
+            aria-label="Toggle navigation menu"
+          >
+            <span
+              className="material-symbols-outlined text-white text-xl"
+            >
+              {isMobileOpen ? "close" : "menu"}
+            </span>
+          </button>
         </div>
       </div>
+
+      {/* Mobile navigation drawer */}
+      {isMobileOpen && (
+        <nav
+          id="mobile-nav"
+          className="md:hidden absolute top-full left-0 right-0 bg-background-dark/98 backdrop-blur-md border-b border-primary/30 px-6 py-6"
+        >
+          <div className="flex flex-col gap-4">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsMobileOpen(false)}
+                  className={
+                    isActive
+                      ? "text-base font-semibold text-primary border-l-2 border-primary pl-4 py-2"
+                      : "text-base font-medium text-slate-400 hover:text-primary transition-colors pl-4 py-2"
+                  }
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+      )}
     </header>
   );
 }

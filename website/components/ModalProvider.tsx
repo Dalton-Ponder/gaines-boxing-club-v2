@@ -1,9 +1,9 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 
 interface ModalOptions {
-  title?: string;
+  title?: React.ReactNode;
   subtitle?: string;
   body?: React.ReactNode;
   footer?: React.ReactNode;
@@ -43,6 +43,15 @@ export default function ModalProvider({
     document.body.style.overflow = "";
   }, []);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, close]);
+
   return (
     <ModalContext.Provider value={{ open, close }}>
       {children}
@@ -53,9 +62,6 @@ export default function ModalProvider({
         aria-modal="true"
         onClick={(e) => {
           if (e.target === e.currentTarget) close();
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Escape") close();
         }}
       >
         <div
@@ -79,7 +85,7 @@ export default function ModalProvider({
                 <span className="modal-subtitle">{options.subtitle}</span>
               )}
               {options.title && (
-                <h2 dangerouslySetInnerHTML={{ __html: options.title }} />
+                <h2>{options.title}</h2>
               )}
             </div>
           )}

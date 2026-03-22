@@ -1,14 +1,21 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Legacy | Gaines Boxing Club",
-  description:
-    "A 50-year legacy forged in the underground. Discover the story of Sam Gaines and how Gaines Boxing Club became a modern institution.",
-};
+import { useModal } from "@/components/ModalProvider";
+import JoinModalBody from "@/components/JoinModalBody";
 
 export default function LegacyPage() {
+  const { open, close } = useModal();
+
+  const openJoinModal = () => {
+    open({
+      subtitle: "Become a Member",
+      title: <>Join the <span style={{color:'#c14e01'}}>Club</span></>,
+      body: <JoinModalBody onClose={close} />,
+    });
+  };
+
   return (
     <>
       {/* Hero */}
@@ -30,7 +37,7 @@ export default function LegacyPage() {
       </section>
 
       {/* Founder Section */}
-      <section className="w-full bg-neutral-dark py-24 px-6 lg:px-20 border-y border-white/5">
+      <section id="founder" className="w-full bg-neutral-dark py-24 px-6 lg:px-20 border-y border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="w-full lg:w-1/2 relative">
@@ -86,12 +93,15 @@ export default function LegacyPage() {
                   <p className="text-slate-500 text-xs">Coaching</p>
                 </div>
               </div>
-              <button className="flex items-center gap-2 text-white font-bold bg-white/5 hover:bg-primary border border-white/10 hover:border-primary px-8 py-4 rounded-lg transition-all">
+              <Link
+                href="/legacy#founder"
+                className="flex items-center gap-2 text-white font-bold bg-white/5 hover:bg-primary border border-white/10 hover:border-primary px-8 py-4 rounded-lg transition-all w-fit"
+              >
                 <span>Read Full Biography</span>
                 <span className="material-symbols-outlined">
                   arrow_right_alt
                 </span>
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -208,7 +218,10 @@ export default function LegacyPage() {
             the elite today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <button className="bg-primary text-white px-10 py-4 rounded-lg font-black uppercase tracking-widest hover:scale-105 transition-transform glow-accent">
+            <button
+              onClick={openJoinModal}
+              className="bg-primary text-white px-10 py-4 rounded-lg font-black uppercase tracking-widest hover:scale-105 transition-transform glow-accent cursor-pointer"
+            >
               Start Training
             </button>
             <Link

@@ -9,8 +9,8 @@
   --color-accent-dark: #2a1b12;
   --color-footer-dark: #0c0806;
 
-  --font-display: "Lexend", sans-serif;
-  --font-sans: "Lexend", sans-serif;
+  --font-display: Lexend, sans-serif;
+  --font-sans: Lexend, sans-serif;
 
   --radius-DEFAULT: 0.5rem;
   --radius-lg: 0.5rem;
@@ -22,7 +22,7 @@ html {
 }
 
 body {
-  font-family: "Lexend", sans-serif;
+  font-family: Lexend, sans-serif;
 }
 
 ::selection {
@@ -129,7 +129,7 @@ body {
 }
 
 .gbc-modal-header h2 {
-  font-family: "Lexend", sans-serif;
+  font-family: Lexend, sans-serif;
   font-size: 1.75rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -139,7 +139,7 @@ body {
 }
 
 .gbc-modal-header .modal-subtitle {
-  font-family: "Lexend", sans-serif;
+  font-family: Lexend, sans-serif;
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -171,7 +171,7 @@ body {
 
 .gbc-form-group label {
   display: block;
-  font-family: "Lexend", sans-serif;
+  font-family: Lexend, sans-serif;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -189,7 +189,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 0.5rem;
   color: #e2e8f0;
-  font-family: "Lexend", sans-serif;
+  font-family: Lexend, sans-serif;
   font-size: 0.875rem;
   transition:
     border-color 0.2s ease,
@@ -215,7 +215,7 @@ body {
 }
 
 .gbc-btn-primary {
-  font-family: "Lexend", sans-serif;
+  font-family: Lexend, sans-serif;
   font-size: 0.8rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -236,7 +236,7 @@ body {
 }
 
 .gbc-btn-secondary {
-  font-family: "Lexend", sans-serif;
+  font-family: Lexend, sans-serif;
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;

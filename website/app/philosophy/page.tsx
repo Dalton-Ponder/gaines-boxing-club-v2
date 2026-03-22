@@ -21,7 +21,7 @@ export default function PhilosophyPage() {
             Beyond the ring, we forge character. Discover the uncompromising training standards that define Gaines Boxing Club.
           </p>
           <div className="flex justify-center gap-4">
-            <button className="bg-primary text-white px-8 py-4 rounded-lg font-bold uppercase tracking-widest text-sm hover:scale-105 transition-transform">Start Your Journey</button>
+            <Link href="/schedule" className="bg-primary text-white px-8 py-4 rounded-lg font-bold uppercase tracking-widest text-sm hover:scale-105 transition-transform inline-block">Start Your Journey</Link>
           </div>
         </div>
       </section>

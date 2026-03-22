@@ -2,7 +2,7 @@ services:
   # Next.js Frontend
   website:
     # Uses the image built and published by your GitHub Actions workflow
-    image: ghcr.io/dalton-ponder/gaines-boxing-club-v2:latest
+    image: ghcr.io/dalton-ponder/gaines-boxing-club-v2:${IMAGE_TAG:-latest}
     container_name: gaines-boxing-club-v2-website
     restart: unless-stopped
     ports:

@@ -11,7 +11,7 @@ export default function HomePage() {
   const openJoinModal = () => {
     open({
       subtitle: "Become a Member",
-      title: 'Join the <span style="color:#c14e01">Club</span>',
+      title: <>Join the <span style={{color:'#c14e01'}}>Club</span></>,
       body: <JoinModalBody onClose={close} />,
     });
   };

@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useModal } from "@/components/ModalProvider";
-import type { Metadata } from "next";
 
 export default function CoachesPage() {
   const { open } = useModal();
@@ -11,7 +10,7 @@ export default function CoachesPage() {
     const bios = {
       steve: {
         subtitle: "Head Coach",
-        title: 'Steve <span style="color:#c14e01">Thompson</span>',
+        title: <>Steve <span style={{color:'#c14e01'}}>Thompson</span></>,
         body: (
           <div>
             <p style={{ marginBottom: "1rem" }}>
@@ -115,7 +114,7 @@ export default function CoachesPage() {
       },
       jesse: {
         subtitle: "Legacy Coach",
-        title: 'Jesse <span style="color:#c14e01">Bryan</span>',
+        title: <>Jesse <span style={{color:'#c14e01'}}>Bryan</span></>,
         body: (
           <div>
             <p style={{ marginBottom: "1rem" }}>

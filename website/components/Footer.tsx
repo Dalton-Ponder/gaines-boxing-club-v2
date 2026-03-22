@@ -110,7 +110,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-slate-600 font-sans text-[10px] font-bold uppercase tracking-[0.2em]">
-            &copy; 2024 GAINES BOXING CLUB. ALL RIGHTS RESERVED.
+            &copy; {new Date().getFullYear()} GAINES BOXING CLUB. ALL RIGHTS RESERVED.
           </p>
           <div className="flex gap-6 font-sans">
             <a
