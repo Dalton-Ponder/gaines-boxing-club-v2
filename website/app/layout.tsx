@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
@@ -32,6 +32,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${lexend.variable} bg-background-dark font-sans text-slate-100 antialiased`}
+        suppressHydrationWarning
       >
         <ModalProvider>
           <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">

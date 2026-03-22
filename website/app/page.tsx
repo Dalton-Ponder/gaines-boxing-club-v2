@@ -64,6 +64,7 @@ export default function HomePage() {
                   src="/images/sam_gaines.png"
                   width={600}
                   height={600}
+                  priority
                 />
               </div>
               <div className="absolute -bottom-8 -right-8 bg-primary p-6 rounded-lg hidden md:block">
