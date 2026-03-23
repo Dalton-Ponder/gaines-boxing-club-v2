@@ -15,6 +15,16 @@ function sanitizeUrl(url: string, fallback = "#") {
   }
 }
 
+/**
+ * Strips any leading 'mailto:' prefix and validates the result as a
+ * basic email address. Returns the normalized address or null if invalid.
+ */
+function normalizeEmail(raw: string): string | null {
+  const stripped = raw.replace(/^mailto:/i, '').trim();
+  // Basic RFC-5322-inspired check: something@something.something
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(stripped) ? stripped : null;
+}
+
 export default async function Footer() {
   let siteSettings;
   try {
@@ -40,6 +50,7 @@ export default async function Footer() {
   // Display keeps the vanity letters for branding
   const phoneDisplay = siteSettings.phone || "(555) 012-GBC-LIONS";
   const emailDisplay = siteSettings.email || "frontdesk@gainesboxing.club";
+  const normalizedEmail = normalizeEmail(emailDisplay);
   const addressDisplay = siteSettings.address || "124 Industrial Way, North District";
 
   return (
@@ -127,9 +138,13 @@ export default async function Footer() {
                 <span className="material-symbols-outlined text-primary text-lg">
                   mail
                 </span>
-                <a href={`mailto:${emailDisplay}`} className="text-slate-500 hover:text-primary text-sm transition-colors">
-                  {emailDisplay}
-                </a>
+                {normalizedEmail ? (
+                  <a href={`mailto:${normalizedEmail}`} className="text-slate-500 hover:text-primary text-sm transition-colors">
+                    {normalizedEmail}
+                  </a>
+                ) : (
+                  <span className="text-slate-500 text-sm">{emailDisplay}</span>
+                )}
               </li>
             </ul>
           </div>

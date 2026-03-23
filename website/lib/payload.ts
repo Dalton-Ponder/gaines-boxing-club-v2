@@ -61,7 +61,9 @@ export const getSiteSettings = cache(async () => {
 })
 
 // -- Pages --
-export async function getPage(route: string) {
+// React cache() deduplicates calls within the same request lifecycle so
+// generateMetadata() and the page component share a single DB query.
+export const getPage = cache(async (route: string) => {
   const payload = await getPayloadClient()
   const result = await payload.find({
     collection: 'pages',
@@ -70,7 +72,7 @@ export async function getPage(route: string) {
     depth: 1,
   })
   return result.docs[0] ?? null
-}
+})
 
 // -- Coaches --
 export async function getCoaches(limit = 10) {

@@ -14,6 +14,8 @@ export async function generateMetadata(): Promise<Metadata> {
     title: page.seoTitle || 'Gaines Boxing Club',
     description: page.seoDescription || 'Experience the elite training of a 3-time Golden Gloves champion. Where your boxing journey truly begins.',
     openGraph: page.ogImage && typeof page.ogImage === 'object' && 'url' in page.ogImage
+      && typeof (page.ogImage as { url?: string }).url === 'string'
+      && (page.ogImage as { url: string }).url.trim() !== ''
       ? { images: [{ url: (page.ogImage as { url: string }).url }] }
       : undefined,
   };

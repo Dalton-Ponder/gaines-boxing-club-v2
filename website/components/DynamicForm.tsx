@@ -171,7 +171,7 @@ export function DynamicForm({
                   name={field.name}
                   required={field.required}
                   rows={4}
-                  value={formState[field.name] ?? ""}
+                  value={formState[field.name] ?? field.defaultValue ?? ""}
                   onChange={handleChange}
                   className={inputBaseClass}
                   placeholder={field.label ?? ""}
@@ -181,7 +181,7 @@ export function DynamicForm({
                   id={field.name}
                   name={field.name}
                   required={field.required}
-                  value={formState[field.name] ?? ""}
+                  value={formState[field.name] ?? field.defaultValue ?? ""}
                   onChange={handleChange}
                   className={inputBaseClass}
                 >
@@ -217,7 +217,7 @@ export function DynamicForm({
                   id={field.name}
                   name={field.name}
                   required={field.required}
-                  value={formState[field.name] ?? ""}
+                  value={formState[field.name] ?? field.defaultValue ?? ""}
                   onChange={handleChange}
                   className={inputBaseClass}
                   placeholder={field.label ?? ""}
