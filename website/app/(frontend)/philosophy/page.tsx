@@ -1,24 +1,53 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { getPhilosophyPillars, getPage, getSiteSettings } from "@/lib/payload";
+import { generateWebPageSchema, jsonLdScript } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
-  title: "Philosophy | Gaines Boxing Club",
-  description: "Beyond the ring, we forge character. Discover the uncompromising training standards that define Gaines Boxing Club.",
-};
+export const dynamic = 'force-dynamic';
 
-export default function PhilosophyPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPage('/philosophy');
+  if (!page) return { title: 'Philosophy | Gaines Boxing Club' };
+  return {
+    title: page.seoTitle || 'Philosophy | Gaines Boxing Club',
+    description: page.seoDescription || 'Beyond the ring, we forge character. Discover the uncompromising training standards that define Gaines Boxing Club.',
+  };
+}
+
+export default async function PhilosophyPage() {
+  const [pillars, siteSettings, pageData] = await Promise.all([
+    getPhilosophyPillars(),
+    getSiteSettings(),
+    getPage('/philosophy'),
+  ]);
+
+  const pageSchema = generateWebPageSchema(pageData, siteSettings, '/philosophy', 'Philosophy');
+  const pageJsonLd = jsonLdScript([pageSchema]);
+
   return (
     <>
+      {pageJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: pageJsonLd }}
+        />
+      )}
       {/* Hero */}
       <section className="relative flex min-h-[70vh] items-center justify-center px-4 overflow-hidden">
         <div className="absolute inset-0 z-0 bg-background-dark"></div>
         <div className="relative z-20 text-center max-w-4xl px-6">
-          <span className="inline-block text-primary font-bold tracking-[0.4em] uppercase mb-4 text-sm">Established MCMXCIV</span>
+          <span className="inline-block text-primary font-bold tracking-[0.4em] uppercase mb-4 text-sm">
+            {pageData?.heroTagline || "Established MCMLXXIV"}
+          </span>
           <h1 className="text-white text-6xl md:text-8xl font-black leading-tight tracking-tighter uppercase mb-6">
-            The Sweet <br /><span className="text-primary italic">Science</span>
+            {pageData?.heroHeading ? (
+              <span>{pageData.heroHeading}</span>
+            ) : (
+              <>The Sweet <br /><span className="text-primary italic">Science</span></>
+            )}
           </h1>
           <p className="text-slate-300 text-lg md:text-xl font-light leading-relaxed max-w-2xl mx-auto mb-10">
-            Beyond the ring, we forge character. Discover the uncompromising training standards that define Gaines Boxing Club.
+            {pageData?.heroSubheading || "Beyond the ring, we forge character. Discover the uncompromising training standards that define Gaines Boxing Club."}
           </p>
           <div className="flex justify-center gap-4">
             <Link href="/schedule" className="bg-primary text-white px-8 py-4 rounded-lg font-bold uppercase tracking-widest text-sm hover:scale-105 transition-transform inline-block">Start Your Journey</Link>
@@ -55,19 +84,16 @@ export default function PhilosophyPage() {
             <h2 className="text-white text-4xl font-black tracking-tighter uppercase">Training Experience</h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: "target", title: "Technical Precision", desc: "Master the nuances of footwork, leverage, and defense with our proprietary pedagogical approach to the sweet science." },
-              { icon: "bolt", title: "Physical Conditioning", desc: "Build an elite engine. Our curated high-intensity drills are designed to develop explosive power and metabolic longevity." },
-              { icon: "psychology", title: "Mental Fortitude", desc: "Develop the psychological edge. Training at Gaines builds the focus and resilience required to overcome any adversity." },
-              { icon: "groups", title: "Elite Community", desc: "Iron sharpens iron. Join a high-performance network of dedicated athletes, entrepreneurs, and professional strikers." },
-            ].map((card) => (
-              <div key={card.icon} className="group flex flex-col gap-6 rounded-lg border border-white/5 bg-neutral-dark p-8 transition-all hover:border-primary/50">
+            {pillars.map((pillar) => (
+              <div key={pillar.id} className="group flex flex-col gap-6 rounded-lg border border-white/5 bg-neutral-dark p-8 transition-all hover:border-primary/50">
                 <div className="text-primary">
-                  <span className="material-symbols-outlined text-4xl group-hover:scale-110 transition-transform">{card.icon}</span>
+                  <span className="material-symbols-outlined text-4xl group-hover:scale-110 transition-transform">
+                    {pillar.icon || "local_fire_department"}
+                  </span>
                 </div>
                 <div className="flex flex-col gap-3">
-                  <h4 className="text-white text-xl font-bold uppercase tracking-tight">{card.title}</h4>
-                  <p className="text-slate-400 text-sm leading-relaxed font-light">{card.desc}</p>
+                  <h4 className="text-white text-xl font-bold uppercase tracking-tight">{pillar.title}</h4>
+                  <p className="text-slate-400 text-sm leading-relaxed font-light">{pillar.description}</p>
                 </div>
               </div>
             ))}

@@ -4,7 +4,9 @@ import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { mcpPlugin } from '@payloadcms/plugin-mcp'
+import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import sharp from 'sharp'
+import { revalidateTag } from 'next/cache'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -19,6 +21,39 @@ if (!DATABASE_URI) {
   throw new Error('Missing required environment variable: DATABASE_URI')
 }
 
+// ---------------------------------------------------------------------------
+// Cache Invalidation Hooks
+// ---------------------------------------------------------------------------
+// After any collection document changes, purge the Next.js data cache tag
+// so Server Components re-fetch fresh data on the next request.
+const buildCollectionRevalidateHook = (slug: string) => {
+  const hook: import('payload').CollectionAfterChangeHook = async ({ doc }) => {
+    try {
+      revalidateTag(`payload-${slug}`, 'default')
+    } catch {
+      // revalidateTag may throw outside of a request context (e.g. during seed scripts).
+      // Silently ignore -- seed scripts don't need cache invalidation.
+    }
+    return doc
+  }
+  return hook
+}
+
+const buildGlobalRevalidateHook = (slug: string) => {
+  const hook: import('payload').GlobalAfterChangeHook = async ({ doc }) => {
+    try {
+      revalidateTag(`payload-${slug}`, 'default')
+    } catch {
+      // Same as above -- safe to ignore outside request context.
+    }
+    return doc
+  }
+  return hook
+}
+
+// ---------------------------------------------------------------------------
+// Payload Configuration
+// ---------------------------------------------------------------------------
 export default buildConfig({
   secret: PAYLOAD_SECRET,
 
@@ -26,13 +61,18 @@ export default buildConfig({
     pool: {
       connectionString: DATABASE_URI,
     },
+    schemaName: 'gaines_boxing_club__cms',
   }),
 
   editor: lexicalEditor(),
 
   sharp,
 
+  // -------------------------------------------------------------------------
+  // Collections
+  // -------------------------------------------------------------------------
   collections: [
+    // -- Users (built-in auth) --
     {
       slug: 'users',
       auth: true,
@@ -41,30 +81,415 @@ export default buildConfig({
       },
       fields: [],
     },
+
+    // -- Media (override built-in to require alt text) --
     {
       slug: 'media',
       upload: true,
+      hooks: {
+        afterChange: [buildCollectionRevalidateHook('media')],
+      },
       fields: [
         {
           name: 'alt',
           type: 'text',
+          required: true,
+          admin: {
+            description: 'Describe the image for accessibility (screen readers) and SEO.',
+          },
+        },
+      ],
+    },
+
+    // -- Coaches --
+    {
+      slug: 'coaches',
+      admin: {
+        useAsTitle: 'name',
+        defaultColumns: ['name', 'role', 'sortOrder'],
+      },
+      hooks: {
+        afterChange: [buildCollectionRevalidateHook('coaches')],
+      },
+      fields: [
+        { name: 'name', type: 'text', required: true },
+        { name: 'role', type: 'text', required: true },
+        {
+          name: 'title',
+          type: 'text',
+          admin: { description: 'Display rank, e.g. "Master Elite", "Legacy Coach"' },
+        },
+        {
+          name: 'subtitle',
+          type: 'text',
+          admin: { description: 'e.g. "Head Coach | Physical Prowess & Skill Development"' },
+        },
+        { name: 'shortBio', type: 'textarea', required: true },
+        { name: 'fullBio', type: 'richText' },
+        {
+          name: 'certifications',
+          type: 'array',
+          fields: [{ name: 'label', type: 'text', required: true }],
+        },
+        { name: 'image', type: 'upload', relationTo: 'media' },
+        { name: 'sortOrder', type: 'number', defaultValue: 0 },
+      ],
+    },
+
+    // -- Events --
+    {
+      slug: 'events',
+      admin: {
+        useAsTitle: 'title',
+        defaultColumns: ['title', 'tag', 'date', 'isFeatured'],
+      },
+      hooks: {
+        afterChange: [buildCollectionRevalidateHook('events')],
+      },
+      fields: [
+        { name: 'title', type: 'text', required: true },
+        {
+          name: 'tag',
+          type: 'select',
+          options: [
+            { label: 'Main Event', value: 'main-event' },
+            { label: 'Local Spar', value: 'local-spar' },
+            { label: 'Workshop', value: 'workshop' },
+            { label: 'Exhibition', value: 'exhibition' },
+          ],
+        },
+        { name: 'date', type: 'date', required: true },
+        { name: 'location', type: 'text' },
+        { name: 'description', type: 'textarea' },
+        { name: 'image', type: 'upload', relationTo: 'media' },
+        { name: 'ctaText', type: 'text', defaultValue: 'Details' },
+        {
+          name: 'ctaLink',
+          type: 'text',
+          admin: { description: 'URL for the CTA button. Leave empty if no link is needed.' },
+        },
+        { name: 'isFeatured', type: 'checkbox', defaultValue: false },
+      ],
+    },
+
+    // -- Quotes --
+    {
+      slug: 'quotes',
+      admin: {
+        useAsTitle: 'attribution',
+        defaultColumns: ['text', 'attribution', 'sortOrder'],
+      },
+      hooks: {
+        afterChange: [buildCollectionRevalidateHook('quotes')],
+      },
+      fields: [
+        { name: 'text', type: 'textarea', required: true },
+        { name: 'attribution', type: 'text', required: true },
+        { name: 'sortOrder', type: 'number', defaultValue: 0 },
+      ],
+    },
+
+    // -- Timeline Milestones --
+    {
+      slug: 'timeline-milestones',
+      admin: {
+        useAsTitle: 'title',
+        defaultColumns: ['year', 'title', 'sortOrder'],
+      },
+      hooks: {
+        afterChange: [buildCollectionRevalidateHook('timeline-milestones')],
+      },
+      fields: [
+        { name: 'year', type: 'text', required: true },
+        { name: 'title', type: 'text', required: true },
+        { name: 'description', type: 'textarea', required: true },
+        {
+          name: 'icon',
+          type: 'text',
+          admin: { description: 'Material Symbols icon name, e.g. "home", "workspace_premium"' },
+        },
+        { name: 'sortOrder', type: 'number', defaultValue: 0 },
+      ],
+    },
+
+    // -- Philosophy Pillars --
+    {
+      slug: 'philosophy-pillars',
+      admin: {
+        useAsTitle: 'title',
+        defaultColumns: ['title', 'sortOrder'],
+      },
+      hooks: {
+        afterChange: [buildCollectionRevalidateHook('philosophy-pillars')],
+      },
+      fields: [
+        {
+          name: 'icon',
+          type: 'text',
+          required: true,
+          admin: { description: 'Material Symbols icon name' },
+        },
+        { name: 'title', type: 'text', required: true },
+        { name: 'description', type: 'textarea', required: true },
+        { name: 'sortOrder', type: 'number', defaultValue: 0 },
+      ],
+    },
+
+    // -- Training Schedule --
+    {
+      slug: 'training-schedule',
+      admin: {
+        useAsTitle: 'day',
+        defaultColumns: ['day', 'startTime', 'endTime', 'sortOrder'],
+      },
+      hooks: {
+        afterChange: [buildCollectionRevalidateHook('training-schedule')],
+      },
+      fields: [
+        { name: 'day', type: 'text', required: true },
+        { name: 'startTime', type: 'text', required: true },
+        { name: 'endTime', type: 'text', required: true },
+        { name: 'description', type: 'text' },
+        { name: 'sortOrder', type: 'number', defaultValue: 0 },
+      ],
+    },
+
+    // -- Pages --
+    {
+      slug: 'pages',
+      admin: {
+        useAsTitle: 'label',
+        defaultColumns: ['route', 'label', 'seoTitle'],
+      },
+      hooks: {
+        afterChange: [buildCollectionRevalidateHook('pages')],
+      },
+      fields: [
+        { name: 'route', type: 'text', required: true, unique: true },
+        {
+          name: 'label',
+          type: 'text',
+          required: true,
+          admin: {
+            readOnly: true,
+            description: 'Auto-synced from navigation config. Do not edit manually.',
+          },
+        },
+        { name: 'seoTitle', type: 'text' },
+        { name: 'seoDescription', type: 'textarea' },
+        { name: 'ogImage', type: 'upload', relationTo: 'media' },
+        { name: 'heroHeading', type: 'text' },
+        { name: 'heroSubheading', type: 'text' },
+        { name: 'heroTagline', type: 'text' },
+        {
+          name: 'heroCta',
+          type: 'array',
+          fields: [
+            { name: 'label', type: 'text', required: true },
+            {
+              name: 'linkType',
+              type: 'select',
+              options: [
+                { label: 'Internal', value: 'internal' },
+                { label: 'External', value: 'external' },
+              ],
+              defaultValue: 'internal',
+            },
+            {
+              name: 'internalLink',
+              type: 'relationship',
+              relationTo: 'pages',
+              admin: {
+                condition: (_, siblingData) => siblingData?.linkType === 'internal',
+              },
+            },
+            {
+              name: 'externalUrl',
+              type: 'text',
+              admin: {
+                condition: (_, siblingData) => siblingData?.linkType === 'external',
+              },
+            },
+            {
+              name: 'style',
+              type: 'select',
+              options: [
+                { label: 'Primary', value: 'primary' },
+                { label: 'Secondary', value: 'secondary' },
+              ],
+              defaultValue: 'primary',
+              admin: {
+                description: 'Primary = solid black button, Secondary = outlined transparent button',
+              },
+            },
+          ],
         },
       ],
     },
   ],
+
+  // -------------------------------------------------------------------------
+  // Globals
+  // -------------------------------------------------------------------------
+  globals: [
+    {
+      slug: 'site-settings',
+      admin: {
+        group: 'Settings',
+      },
+      hooks: {
+        afterChange: [buildGlobalRevalidateHook('site-settings')],
+      },
+      fields: [
+        { name: 'siteName', type: 'text', defaultValue: 'Gaines Boxing Club' },
+        { name: 'tagline', type: 'textarea' },
+        { name: 'address', type: 'text' },
+        { name: 'phone', type: 'text' },
+        { name: 'email', type: 'text' },
+        {
+          name: 'socialLinks',
+          type: 'array',
+          fields: [
+            { name: 'platform', type: 'text', required: true },
+            { name: 'url', type: 'text', required: true },
+            { name: 'iconName', type: 'text', required: true },
+          ],
+        },
+        {
+          name: 'structuredData',
+          type: 'group',
+          label: 'Structured Data (SEO)',
+          admin: {
+            description: 'Fields used to generate JSON-LD structured data for search engines.',
+          },
+          fields: [
+            { name: 'organizationName', type: 'text' },
+            { name: 'organizationLogo', type: 'upload', relationTo: 'media' },
+            { name: 'foundingDate', type: 'text', admin: { description: 'e.g. "1974"' } },
+            { name: 'founderName', type: 'text' },
+            { name: 'streetAddress', type: 'text' },
+            { name: 'addressLocality', type: 'text', admin: { description: 'City' } },
+            { name: 'addressRegion', type: 'text', admin: { description: 'State abbreviation' } },
+            { name: 'postalCode', type: 'text' },
+            { name: 'country', type: 'text', defaultValue: 'US' },
+            { name: 'latitude', type: 'number' },
+            { name: 'longitude', type: 'number' },
+            {
+              name: 'businessHours',
+              type: 'array',
+              fields: [
+                { name: 'dayOfWeek', type: 'text', required: true },
+                { name: 'opens', type: 'text', required: true },
+                { name: 'closes', type: 'text', required: true },
+              ],
+            },
+            {
+              name: 'priceRange',
+              type: 'text',
+              admin: { description: 'e.g. "$$"' },
+            },
+          ],
+        },
+      ],
+    },
+  ],
+
+  // -------------------------------------------------------------------------
+  // Plugins
+  // -------------------------------------------------------------------------
   plugins: [
+    formBuilderPlugin({
+      fields: {
+        text: true,
+        textarea: true,
+        select: true,
+        email: true,
+        checkbox: true,
+        number: true,
+        message: true,
+      },
+      formOverrides: {
+        access: {
+          read: () => true,
+        },
+      },
+      formSubmissionOverrides: {
+        access: {
+          create: () => true,
+        },
+        // NOTE: Email transport is intentionally disabled for local dev.
+        // For production, enable a robust Email Transport (e.g., Resend via SMTP)
+        // so staff receive form submission notifications.
+      },
+    }),
     mcpPlugin({
       collections: {
-        posts: {
-          enabled: true,
-        },
+        coaches: { enabled: true },
+        events: { enabled: true },
+        quotes: { enabled: true },
+        'timeline-milestones': { enabled: true },
+        'philosophy-pillars': { enabled: true },
+        'training-schedule': { enabled: true },
+        pages: { enabled: true },
+        media: { enabled: true },
       },
       globals: {
         'site-settings': { enabled: { find: true, update: true } },
       },
     }),
   ],
+
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
+  },
+  onInit: async (payload) => {
+    // Only seed the MCP API key when explicitly enabled via env var
+    if (process.env.SEED_MCP_KEY !== 'true') return
+
+    const apiKey = process.env.PAYLOAD_MCP_API_KEY
+    if (!apiKey) {
+      payload.logger.warn('SEED_MCP_KEY is true but PAYLOAD_MCP_API_KEY is not set. Skipping API key seed.')
+      return
+    }
+    try {
+      const existing = await payload.find({
+        collection: 'payload-mcp-api-keys',
+        where: { apiKey: { equals: apiKey } },
+        limit: 1,
+      })
+      if (existing.docs.length === 0) {
+        // Find an existing user to attach the API key to
+        const adminUsers = await payload.find({ collection: 'users', limit: 1 })
+        if (adminUsers.docs.length === 0) {
+          payload.logger.warn('No users exist yet. Skipping MCP API key seed. Please register the first admin user then restart the server.')
+          return
+        }
+        
+        await payload.create({
+          collection: 'payload-mcp-api-keys',
+          data: {
+            name: 'Gemini Local Seed Key',
+            apiKey: apiKey,
+            user: adminUsers.docs[0].id,
+            hasFullAccess: false,
+            coaches_find: true, coaches_create: true, coaches_update: true, coaches_delete: true,
+            events_find: true, events_create: true, events_update: true, events_delete: true,
+            quotes_find: true, quotes_create: true, quotes_update: true, quotes_delete: true,
+            'timeline-milestones_find': true, 'timeline-milestones_create': true, 'timeline-milestones_update': true, 'timeline-milestones_delete': true,
+            'philosophy-pillars_find': true, 'philosophy-pillars_create': true, 'philosophy-pillars_update': true, 'philosophy-pillars_delete': true,
+            'training-schedule_find': true, 'training-schedule_create': true, 'training-schedule_update': true, 'training-schedule_delete': true,
+            pages_find: true, pages_create: true, pages_update: true, pages_delete: true,
+            media_find: true, media_create: true, media_update: true, media_delete: true,
+            forms_find: true, forms_create: true, forms_update: true, forms_delete: true,
+            'form-submissions_find': true, 'form-submissions_create': true, 'form-submissions_update': true, 'form-submissions_delete': true,
+            'site-settings_find': true, 'site-settings_update': true,
+          }
+        })
+        payload.logger.info('Successfully seeded Gemini Local Seed Key')
+      }
+    } catch (err) {
+      payload.logger.error('Failed to seed API key in onInit:')
+      console.error(err)
+    }
   },
 })
