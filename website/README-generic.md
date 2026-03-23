@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app), integrated with [Payload CMS](https://payloadcms.com/) for content management.
+# <PROJECT_NAME>
+
+This is a [Next.js](https://nextjs.org) and React project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app). It serves as the standard minimum infrastructure package for our centralized projects, coming pre-integrated with [Payload CMS](https://payloadcms.com/) for content management and powered by a shared PostgreSQL database.
 
 ## Getting Started
 
@@ -22,7 +24,7 @@ Navigation links defined in `lib/navigation.ts` are automatically synchronized w
 
 1. `lib/sync-pages.ts` reads `navLinks` from `lib/navigation.ts`.
 2. For each link, it checks if a `pages` document exists for that route.
-3. If missing, it creates a page with default SEO title (`Page Name | Gaines Boxing Club`).
+3. If missing, it creates a page with default SEO title (`Page Name | <PROJECT_NAME>`).
 4. If the label changed, only the label is updated -- SEO fields edited in the admin panel are never overwritten.
 
 **Triggering a sync:**
@@ -34,10 +36,9 @@ Navigation links defined in `lib/navigation.ts` are automatically synchronized w
 
 Every page outputs Schema.org JSON-LD structured data for search engine optimization:
 
-- **Global (in `layout.tsx`):** Organization, LocalBusiness, SportsActivityLocation, WebSite
+- **Global (in `layout.tsx`):** Organization, LocalBusiness, WebSite
 - **Per-page:** WebPage, BreadcrumbList
-- **Coaches page:** Person schema per coach
-- **Schedule page:** Event schema per event
+- **<PROJECT_SPECIFIC_PAGE>:** <ENTITY_SCHEMA> per <ENTITY> (e.g., Person schema per team member, Event schema per scheduled event)
 
 Data is sourced from the `site-settings` global (`structuredData` field group) in Payload CMS. Update the Organization name, address, geo coordinates, business hours, and logo in the admin panel to customize the structured data output.
 

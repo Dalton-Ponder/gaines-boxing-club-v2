@@ -1,37 +1,44 @@
 ---
-title: 'Static Content Migration to Payload CMS'
-slug: 'static-content-migration-payload-cms'
-created: '2026-03-22'
-status: 'in-progress'
+title: "Static Content Migration to Payload CMS"
+slug: "static-content-migration-payload-cms"
+created: "2026-03-22"
+status: "completed"
 stepsCompleted: [1, 2, 3, 4]
-tech_stack: ['Next.js 16', 'Payload CMS v3.80+', 'PostgreSQL', '@payloadcms/plugin-form-builder', 'schema-ld / JSON-LD']
+tech_stack:
+  [
+    "Next.js 16",
+    "Payload CMS v3.80+",
+    "PostgreSQL",
+    "@payloadcms/plugin-form-builder",
+    "schema-ld / JSON-LD",
+  ]
 files_to_modify:
-  - 'website/payload.config.ts'
-  - 'website/app/(frontend)/page.tsx'
-  - 'website/app/(frontend)/layout.tsx'
-  - 'website/app/(frontend)/coaches/page.tsx'
-  - 'website/app/(frontend)/legacy/page.tsx'
-  - 'website/app/(frontend)/legacy/layout.tsx'
-  - 'website/app/(frontend)/philosophy/page.tsx'
-  - 'website/app/(frontend)/schedule/page.tsx'
-  - 'website/components/Header.tsx'
-  - 'website/components/Footer.tsx'
-  - 'website/components/JoinModalBody.tsx'
-  - 'website/lib/navigation.ts'
-  - 'website/scripts/seed-content.ts'
-  - 'website/lib/payload.ts'
-  - 'website/lib/structured-data.ts'
-  - 'website/lib/sync-pages.ts'
-  - 'website/components/JoinModalTrigger.tsx'
-  - 'website/components/DynamicForm.tsx'
-  - 'website/components/CoachBioModal.tsx'
-  - 'website/README.md'
-  - 'docs/payload-cms-integration-guide.md'
+  - "website/payload.config.ts"
+  - "website/app/(frontend)/page.tsx"
+  - "website/app/(frontend)/layout.tsx"
+  - "website/app/(frontend)/coaches/page.tsx"
+  - "website/app/(frontend)/legacy/page.tsx"
+  - "website/app/(frontend)/legacy/layout.tsx"
+  - "website/app/(frontend)/philosophy/page.tsx"
+  - "website/app/(frontend)/schedule/page.tsx"
+  - "website/components/Header.tsx"
+  - "website/components/Footer.tsx"
+  - "website/components/JoinModalBody.tsx"
+  - "website/lib/navigation.ts"
+  - "website/scripts/seed-content.ts"
+  - "website/lib/payload.ts"
+  - "website/lib/structured-data.ts"
+  - "website/lib/sync-pages.ts"
+  - "website/components/JoinModalTrigger.tsx"
+  - "website/components/DynamicForm.tsx"
+  - "website/components/CoachBioModal.tsx"
+  - "website/README.md"
+  - "docs/payload-cms-integration-guide.md"
 code_patterns:
-  - 'Server Components with async data fetching via Payload Local API (getPayload)'
-  - 'Client sub-components for interactive elements (modals)'
-  - 'JSON-LD structured data injection via script tags in layout/page head'
-  - 'Payload collection/global definitions inline in payload.config.ts'
+  - "Server Components with async data fetching via Payload Local API (getPayload)"
+  - "Client sub-components for interactive elements (modals)"
+  - "JSON-LD structured data injection via script tags in layout/page head"
+  - "Payload collection/global definitions inline in payload.config.ts"
 test_patterns: []
 ---
 
@@ -100,23 +107,23 @@ Additionally, the site has zero structured data (JSON-LD), which severely limits
 
 ### Files to Reference
 
-| File | Purpose |
-| ---- | ------- |
-| `website/payload.config.ts` | Payload configuration -- add collections, globals, plugins here |
-| `website/app/(frontend)/layout.tsx` | Root frontend layout -- inject JSON-LD `<script>` tags here |
-| `website/app/(frontend)/page.tsx` | Home page -- 4 sections of hardcoded content |
-| `website/app/(frontend)/coaches/page.tsx` | Coaches page -- 2 coach profiles with bios/certs in modal data objects |
-| `website/app/(frontend)/legacy/page.tsx` | Legacy page -- Sam Gaines bio, stats, 4 timeline entries |
-| `website/app/(frontend)/philosophy/page.tsx` | Philosophy page -- statement, 4 pillars array, CTA |
-| `website/app/(frontend)/schedule/page.tsx` | Schedule page -- training hours, featured event, 3 fight cards |
-| `website/components/Footer.tsx` | Footer -- contact info (address, phone, email), tagline, social icons |
-| `website/components/Header.tsx` | Header -- uses `navLinks`, has "Join Club" modal trigger |
-| `website/components/JoinModalBody.tsx` | Join form -- to be replaced with dynamic form from form-builder |
-| `website/components/ModalProvider.tsx` | Modal context provider -- stays client-side, no content migration needed |
-| `website/app/(frontend)/legacy/layout.tsx` | Legacy sub-layout with Metadata export -- will be refactored or removed |
-| `website/lib/navigation.ts` | Hardcoded nav links array -- stays hardcoded, used as source for pages auto-sync |
-| `website/public/images/` | 8 static images to upload to Payload media collection |
-| `docs/payload-cms-integration-guide.md` | Living doc -- update registries on every collection/global added |
+| File                                         | Purpose                                                                          |
+| -------------------------------------------- | -------------------------------------------------------------------------------- |
+| `website/payload.config.ts`                  | Payload configuration -- add collections, globals, plugins here                  |
+| `website/app/(frontend)/layout.tsx`          | Root frontend layout -- inject JSON-LD `<script>` tags here                      |
+| `website/app/(frontend)/page.tsx`            | Home page -- 4 sections of hardcoded content                                     |
+| `website/app/(frontend)/coaches/page.tsx`    | Coaches page -- 2 coach profiles with bios/certs in modal data objects           |
+| `website/app/(frontend)/legacy/page.tsx`     | Legacy page -- Sam Gaines bio, stats, 4 timeline entries                         |
+| `website/app/(frontend)/philosophy/page.tsx` | Philosophy page -- statement, 4 pillars array, CTA                               |
+| `website/app/(frontend)/schedule/page.tsx`   | Schedule page -- training hours, featured event, 3 fight cards                   |
+| `website/components/Footer.tsx`              | Footer -- contact info (address, phone, email), tagline, social icons            |
+| `website/components/Header.tsx`              | Header -- uses `navLinks`, has "Join Club" modal trigger                         |
+| `website/components/JoinModalBody.tsx`       | Join form -- to be replaced with dynamic form from form-builder                  |
+| `website/components/ModalProvider.tsx`       | Modal context provider -- stays client-side, no content migration needed         |
+| `website/app/(frontend)/legacy/layout.tsx`   | Legacy sub-layout with Metadata export -- will be refactored or removed          |
+| `website/lib/navigation.ts`                  | Hardcoded nav links array -- stays hardcoded, used as source for pages auto-sync |
+| `website/public/images/`                     | 8 static images to upload to Payload media collection                            |
+| `docs/payload-cms-integration-guide.md`      | Living doc -- update registries on every collection/global added                 |
 
 ### Technical Decisions
 
@@ -262,7 +269,7 @@ Additionally, the site has zero structured data (JSON-LD), which severely limits
 13. **Implement Cache Invalidation Hooks**
     - File: `website/payload.config.ts`
     - Action: Add a specific `afterChange` hook to every collection and global defined above.
-    - Logic: The hook should call `revalidateTag(\`payload-${collectionSlug}\`)` from `next/cache` (e.g., `payload-coaches`, `payload-pages`). 
+    - Logic: The hook should call `revalidateTag(\`payload-${collectionSlug}\`)`from`next/cache`(e.g.,`payload-coaches`, `payload-pages`).
     - **Next.js 16 Mechanics**: Since Next 15+, fetch caching defaults have changed. When using Payload Local API (`getPayload`), explicitly wrap the local queries in React's `cache()` and explicit `unstable_cache` tags, or rely on explicit route segment cache configs (`export const revalidate = ...`) to ensure `revalidateTag` actually has cached data to purge. Document the observed caching behavior for Next 16 in the README.
 
 #### Acceptance Criteria
@@ -281,11 +288,11 @@ Additionally, the site has zero structured data (JSON-LD), which severely limits
 
 1. **Create seed script** (`website/scripts/seed-content.ts`)
    - Uses `fs.readFileSync` and native `FormData` (or `formdata-node`) to construct valid multipart boundaries for image uploads to `POST /api/media`.
-   - **Media Idempotency**: Before uploading an image, query `GET /api/media?where[filename][equals]=<filename>`. If it exists, use the existing ID; if not, upload it. Do *not* blindly clear the `media` collection, as that destroys client-uploaded assets.
+   - **Media Idempotency**: Before uploading an image, query `GET /api/media?where[filename][equals]=<filename>`. If it exists, use the existing ID; if not, upload it. Do _not_ blindly clear the `media` collection, as that destroys client-uploaded assets.
    - Clears existing target collections first (e.g., `DELETE /api/quotes`, `DELETE /api/philosophy-pillars`) to guarantee idempotency without relying on non-existent unique keys.
    - Seeds 2 coaches, 3 quotes, 4 timeline milestones, 4 philosophy pillars, 2 training schedules, 1 featured event, 3 fight card events, and 1 "Join the Club" form to their respective REST endpoints.
    - Updates `site-settings` global via `POST /api/globals/site-settings`.
-   - **Note**: Does *not* manually seed entries for `pages`. Page entries are generated purely by invoking `syncPages()` (Story 4).
+   - **Note**: Does _not_ manually seed entries for `pages`. Page entries are generated purely by invoking `syncPages()` (Story 4).
 
 2. **Add seed script to package.json**
    - Action: Add `"seed": "npx tsx --env-file=.env scripts/seed-content.ts"` to scripts. **Note**: Standalone Node scripts via `tsx` do not auto-load Next.js env files; the `--env-file` flag is strictly required to connect to Postgres.
@@ -369,7 +376,7 @@ Additionally, the site has zero structured data (JSON-LD), which severely limits
     - Action: Replace all hardcoded `<Image src="/images/..." />` patterns.
     - Logic: Map the fetched Payload media objects (e.g., `doc.image.url` and `doc.image.alt`) into Next.js `<Image>` components to prevent 404s when the static `public/images` folder is deprecated.
 
-10. **Update frontend layout SEO defaults & Fallbacks**
+11. **Update frontend layout SEO defaults & Fallbacks**
     - File: `website/app/(frontend)/layout.tsx` and `website/app/(frontend)/error.tsx`
     - Fetch `site-settings` global for default `Metadata` values (site name in title template)
     - **Resilience**: Implement a Next.js `error.tsx` boundary. If the PostgreSQL container stops responding, `getPayload()` SSR fetches will crash. This boundary prevents the entire application from going down without a fallback.
@@ -511,35 +518,40 @@ Additionally, the site has zero structured data (JSON-LD), which severely limits
 
 ### Dependencies
 
-| Package | Version | Purpose |
-|---------|---------|---------|
+| Package                           | Version | Purpose                                     |
+| --------------------------------- | ------- | ------------------------------------------- |
 | `@payloadcms/plugin-form-builder` | ^3.80.0 | CMS-driven form definitions and submissions |
-| `payload` | ^3.80.0 | Already installed |
-| `@payloadcms/db-postgres` | ^3.80.0 | Already installed |
+| `payload`                         | ^3.80.0 | Already installed                           |
+| `@payloadcms/db-postgres`         | ^3.80.0 | Already installed                           |
 
 No other new dependencies required. JSON-LD generation is pure TypeScript -- no schema.org library needed.
 
 ### Testing Strategy
 
 **Automated Verification (Seed Script):**
+
 - Run `npm run seed` and confirm exit code 0
 - Run `npm run seed` twice to verify idempotency
 
 **Visual Regression (Manual):**
+
 - Compare each page visually before and after migration -- content and layout must be identical
 - Test modal functionality on coaches and join flows
 - Test mobile hamburger menu still works (Header stays `"use client"`)
 
 **SSR Verification:**
+
 - `curl http://localhost:3000/` and verify content text appears in raw HTML
 - Repeat for all 5 routes
 
 **Structured Data Validation:**
+
 - Paste each page URL into [Google Rich Results Test](https://search.google.com/test/rich-results)
 - Paste into [Schema.org Validator](https://validator.schema.org/)
 - Verify: Organization, LocalBusiness, WebSite, WebPage, BreadcrumbList, Event, Person all pass without errors
 
 **CMS Round-Trip:**
+
 - Edit a coach bio in `/admin` -> verify change appears on the coaches page. **Note**: Perform a hard refresh (Cmd+Shift+R) to bypass Next.js Client Router Cache, otherwise you may see stale data despite `revalidateTag` working server-side.
 - Edit SEO title for `/philosophy` in `pages` collection -> verify `<title>` tag updates
 - Edit business hours in `site-settings` -> verify LocalBusiness JSON-LD updates
