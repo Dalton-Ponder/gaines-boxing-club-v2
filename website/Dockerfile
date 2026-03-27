@@ -11,8 +11,10 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json pnpm-lock.yaml ./
-RUN corepack enable pnpm && pnpm i --frozen-lockfile
+# NOTE: npm is used here intentionally. pnpm's hard-link/symlink architecture is
+# incompatible with Alpine-based Docker images (Coolify). pnpm is used locally only.
+COPY package.json package-lock.json ./
+RUN npm ci --legacy-peer-deps
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -25,7 +27,7 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN corepack enable pnpm && pnpm run build
+RUN npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner

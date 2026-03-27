@@ -393,7 +393,7 @@ services:
     volumes:
       - ./website:/app
       - /app/node_modules          # Anonymous volume preserves container node_modules
-    command: ["pnpm", "exec", "next", "dev", "--webpack"]
+    command: ["npx", "next", "dev", "--webpack"]
     networks:
       - shared
 
@@ -402,7 +402,9 @@ networks:
     external: true
 ```
 
-> Note: The `target: deps` build stage stops at dependency installation, skipping `next build`. The dev server command (`pnpm exec next dev --webpack`) handles compilation on the fly. The `--webpack` flag is used because Turbopack can panic with Docker volume mounts on Windows.
+> Note: The `target: deps` build stage stops at dependency installation, skipping `next build`. The dev server command (`npx next dev --webpack`) handles compilation on the fly. The `--webpack` flag is used because Turbopack can panic with Docker volume mounts on Windows.
+
+> **Important**: The Dockerfile uses `npm ci` even though the project uses pnpm locally. See [pnpm and Alpine Docker Incompatibility](#pnpm-and-alpine-docker-incompatibility) in Troubleshooting.
 
 ---
 
@@ -552,6 +554,22 @@ When implementing a new collection or global:
 
 **Fix**: Use the `--webpack` flag: `pnpm exec next dev --webpack`. Also set `WATCHPACK_POLLING=true` for reliable file change detection.
 
+### pnpm and Alpine Docker Incompatibility
+
+**Cause**: pnpm uses a content-addressable store with hard links and symlinks to populate `node_modules`. Alpine-based Docker images (used by Coolify) run on OverlayFS, which does not support cross-device hard links. This causes pnpm installs to fail silently or produce broken `node_modules` at build time.
+
+**Fix**: Use `npm ci` inside the Dockerfile instead of pnpm. The project maintains **two lockfiles**:
+- `pnpm-lock.yaml` — used locally (`pnpm install`, `pnpm run dev`, etc.)
+- `package-lock.json` — used exclusively inside Docker (`npm ci --legacy-peer-deps`)
+
+Both files are committed to the repository. When adding or upgrading a dependency, run both:
+```bash
+pnpm add <package>          # updates pnpm-lock.yaml
+npm install --legacy-peer-deps  # regenerates package-lock.json
+```
+
+The Dockerfile `COPY` explicitly names `package-lock.json` (not a glob) so the intent is unambiguous.
+
 ### `ServerFunctionsProvider requires a serverFunction prop`
 
 **Cause**: The `app/(payload)/layout.tsx` was a stub that did not wire up `handleServerFunctions`. Payload v3 requires the admin layout to provide a `serverFunction` prop to `RootLayout`.
@@ -624,3 +642,4 @@ app/
 | 2026-03-22 | Stories 4-6: Added `lib/sync-pages.ts` for nav-to-pages auto-sync. Added `lib/structured-data.ts` with 6 JSON-LD schema generators (Organization, WebSite, WebPage, BreadcrumbList, Event, Person). Injected global schemas in `layout.tsx`, per-page schemas in all 5 pages. Updated registries: promoted `pages`, `quotes`, `site-settings`, `forms`, `form-submissions` to Reusable; added actual project-specific collections (`coaches`, `events`, `timeline-milestones`, `philosophy-pillars`, `training-schedule`); added Plugins and Structured Data Schemas registries. |
 | 2026-03-22 | Code review remediation: Removed hardcoded API key from `GEMINI.md`, `payload.config.ts`, `seed-api-key.ts`, and `route.ts`. Key now sourced from `PAYLOAD_MCP_API_KEY` env var. `onInit` seeding gated behind `SEED_MCP_KEY=true`. Seed route switched from GET to POST with Bearer auth header. Added `ctaLink` text field to events collection. Sanitized JSON-LD output in `structured-data.ts` to prevent XSS. Removed `dangerouslySetInnerHTML` from `heroHeading` in 5 pages. Fixed `layout.tsx` undefined `settings`. Fixed philosophy year fallback MCMXCIV->MCMLXXIV. Created `.env.example`. |
 | 2026-03-27 | Updated guide to reflect the transition from `npm` to `pnpm` as the default package manager. |
+| 2026-03-27 | Reverted Docker to npm: pnpm hard-link/symlink architecture is incompatible with Alpine-based Docker images on Coolify. Dockerfile now uses `npm ci`; pnpm-lock.yaml is kept for local development. Both lockfiles coexist in the repo. Added Troubleshooting entry for this issue. |

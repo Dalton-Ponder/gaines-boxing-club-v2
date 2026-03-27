@@ -41,7 +41,7 @@ services:
       - ./website:/app
       - /app/node_modules
     # Run the Next.js dev server with webpack (Turbopack panics with Docker volume mounts)
-    command: ["pnpm", "exec", "next", "dev", "--webpack"]
+    command: ["npx", "next", "dev", "--webpack"]
     networks:
       - shared
 
