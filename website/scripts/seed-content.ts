@@ -1,7 +1,7 @@
 /**
  * Seed Script: Populates Payload CMS with all existing hardcoded content.
  *
- * Usage: npx tsx --env-file=.env scripts/seed-content.ts
+ * Usage: pnpm exec tsx --env-file=.env scripts/seed-content.ts
  */
 
 import path from 'path'

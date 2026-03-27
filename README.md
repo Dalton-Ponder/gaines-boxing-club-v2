@@ -71,14 +71,14 @@ gaines-boxing-club-v2/
 
 - Node.js 20+
 - A running PostgreSQL instance
-- npm
+- pnpm
 
 ### 1. Clone and Install
 
 ```bash
 git clone https://github.com/Dalton-Ponder/gaines-boxing-club-v2.git
 cd gaines-boxing-club-v2/website
-npm install
+pnpm install
 ```
 
 ### 2. Configure Environment
@@ -95,7 +95,7 @@ Edit `.env` and set:
 ### 3. Run the Dev Server
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 The site is available at `http://localhost:3000`. The Payload admin panel is at `http://localhost:3000/admin`.
@@ -103,7 +103,7 @@ The site is available at `http://localhost:3000`. The Payload admin panel is at 
 ### 4. Seed Content (Optional)
 
 ```bash
-npm run seed
+pnpm run seed
 ```
 
 This populates coaches, events, quotes, milestones, philosophy pillars, and schedule data from the seed script.
@@ -144,11 +144,11 @@ Payload uses `schemaName: 'gaines_boxing_club__cms'` in the Postgres adapter con
 
 | Command         | Description                             |
 | --------------- | --------------------------------------- |
-| `npm run dev`   | Start Next.js dev server                |
-| `npm run build` | Production build                        |
-| `npm run start` | Start production server                 |
-| `npm run lint`  | Run ESLint                              |
-| `npm run seed`  | Seed CMS content from script data       |
+| `pnpm run dev`   | Start Next.js dev server                |
+| `pnpm run build` | Production build                        |
+| `pnpm run start` | Start production server                 |
+| `pnpm run lint`  | Run ESLint                              |
+| `pnpm run seed`  | Seed CMS content from script data       |
 
 ## Documentation
 

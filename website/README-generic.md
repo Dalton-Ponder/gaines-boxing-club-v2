@@ -7,7 +7,7 @@ This is a [Next.js](https://nextjs.org) and React project bootstrapped with [`cr
 First, run the development server:
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -54,7 +54,7 @@ curl -X POST http://localhost:3000/api/seed \
 
 ### Verifying Structured Data
 
-1. Start the dev server: `npm run dev`
+1. Start the dev server: `pnpm run dev`
 2. Open any page and view source (Ctrl+U)
 3. Search for `application/ld+json` to find the JSON-LD script tags
 4. Copy the page URL and paste it into [Schema.org Validator](https://validator.schema.org/) or [Google Rich Results Test](https://search.google.com/test/rich-results)
@@ -62,7 +62,7 @@ curl -X POST http://localhost:3000/api/seed \
 ### TypeScript Check
 
 ```bash
-npx tsc --noEmit
+pnpm exec tsc --noEmit
 ```
 
 ## Learn More
