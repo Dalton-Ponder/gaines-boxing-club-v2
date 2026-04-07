@@ -5,6 +5,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
+import { s3Storage } from '@payloadcms/storage-s3'
 import sharp from 'sharp'
 import { revalidateTag } from 'next/cache'
 
@@ -85,7 +86,29 @@ export default buildConfig({
     // -- Media (override built-in to require alt text) --
     {
       slug: 'media',
-      upload: true,
+      upload: {
+        formatOptions: {
+          format: 'webp',
+          options: {
+            quality: 85,
+          },
+        },
+        imageSizes: [
+          {
+            name: 'thumbnail',
+            width: 400,
+            height: 300,
+            position: 'centre',
+            formatOptions: {
+              format: 'webp',
+              options: {
+                quality: 75,
+              },
+            },
+          },
+        ],
+        adminThumbnail: 'thumbnail',
+      },
       hooks: {
         afterChange: [buildCollectionRevalidateHook('media')],
       },
@@ -435,6 +458,28 @@ export default buildConfig({
       },
       globals: {
         'site-settings': { enabled: { find: true, update: true } },
+      },
+    }),
+    s3Storage({
+      collections: {
+        media: {
+          prefix: 'gaines-boxing-club-v2/public/images',
+          generateFileURL: ({ filename, prefix }) => {
+            const publicUrl = process.env.S3_PUBLIC_URL
+            return publicUrl ? `${publicUrl}/${prefix}/${filename}` : null
+          },
+        },
+      },
+      bucket: process.env.S3_BUCKET || '',
+      config: {
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+        },
+        region: process.env.S3_REGION || 'auto',
+        endpoint: process.env.S3_ENDPOINT || '',
+        // forcePathStyle is required for Cloudflare R2 and MinIO
+        forcePathStyle: true,
       },
     }),
   ],

@@ -6,11 +6,11 @@ import fs from 'fs'
 import path from 'path'
 import { syncPages } from '@/lib/sync-pages'
 
-const API_KEY = process.env.PAYLOAD_MCP_API_KEY
+const API_KEY = process.env.PAYLOAD_SECRET || process.env.PAYLOAD_MCP_API_KEY
 
 export async function POST(request: Request) {
   if (!API_KEY) {
-    return NextResponse.json({ error: 'Server misconfiguration: PAYLOAD_MCP_API_KEY is not set' }, { status: 401 })
+    return NextResponse.json({ error: 'Server misconfiguration: PAYLOAD_SECRET is not set' }, { status: 401 })
   }
 
   const authHeader = request.headers.get('authorization')
@@ -41,11 +41,15 @@ export async function POST(request: Request) {
 
     const filePath = path.join(imagesDir, filename)
     if (!fs.existsSync(filePath)) {
-      throw new Error(`File not found: ${filePath}`)
+      console.log(`  [skip-missing] ${filename} not found locally in public/images`)
+      return {}
     }
 
     const fileData = fs.readFileSync(filePath)
     
+    // Note: since we added the storage-s3 plugin to payload.config,
+    // this local buffer upload will be automatically intercepted by the plugin
+    // and pushed to Cloudflare R2 / S3 without bloat.
     const doc = await payload.create({
       collection: 'media',
       data: { alt: altText },
@@ -82,10 +86,50 @@ export async function POST(request: Request) {
       images[filename] = await uploadImage(payload, filename, alt, IMAGES_DIR)
     }
 
+    const steveBioLexical = {
+      root: {
+        type: 'root', format: '', indent: 0, version: 1,
+        children: [
+          {
+            type: 'paragraph', format: '', indent: 0, version: 1,
+            children: [{ type: 'text', text: 'Steve Thompson’s journey with the Gaines Boxing Club began at the age of 11, training under the watchful eye of Sam Gaines in the founder’s original basement gym. A product of New Bloomfield, Missouri, Steve spent his formative years absorbing the grit and technical pressure of the East St. Louis style. After concluding his own competitive fighting career at age 25, Steve stepped away from the ring for a decade before a call from his mentor changed his trajectory.', version: 1 }]
+          },
+          {
+            type: 'paragraph', format: '', indent: 0, version: 1,
+            children: [{ type: 'text', text: 'In 2015, Mr. Gaines asked Steve to return to the gym to help guide Jesse Bryan’s professional comeback. This marked Steve\'s official transition from fighter to coach. Under Sam’s direct mentorship in the barn gym on the Gaines property until 2019, Steve mastered the "no excuses" coaching style—learning to help athletes channel their internal battles into ring-ready productivity.', version: 1 }]
+          },
+          {
+            type: 'paragraph', format: '', indent: 0, version: 1,
+            children: [{ type: 'text', text: 'In the winter of 2019, Steve and Jesse took over the operations of Gaines Boxing Club, moving the legacy forward while maintaining a close advisory relationship with Mr. Gaines. For Steve, the ultimate reward is witnessing the week-by-week personal development of his students and the hard-won victories of new fighters entering the ring for the first time.', version: 1 }]
+          }
+        ]
+      }
+    };
+
+    const jesseBioLexical = {
+      root: {
+        type: 'root', format: '', indent: 0, version: 1,
+        children: [
+          {
+            type: 'paragraph', format: '', indent: 0, version: 1,
+            children: [{ type: 'text', text: 'Jesse Bryan’s life is a testament to the transformative power of boxing. Raised in Holts Summit, Missouri, Jesse faced a challenging upbringing marked by a broken home and personal struggles with anger. He found his calling when a friend suggested he try boxing, a move that provided the structure and discipline he needed to redirect his life.', version: 1 }]
+          },
+          {
+            type: 'paragraph', format: '', indent: 0, version: 1,
+            children: [{ type: 'text', text: 'Jesse turned professional in 2003, quickly amassing a record of 9-3-2 before taking a hiatus in 2005 to focus on his family. In 2017, he returned to professional competition with Steve Thompson by his side as his lead corner. This partnership eventually led Jesse to the pinnacle of the sport, including a world championship title fight and several televised bouts before his retirement from active competition in 2024.', version: 1 }]
+          },
+          {
+            type: 'paragraph', format: '', indent: 0, version: 1,
+            children: [{ type: 'text', text: 'Today, Jesse co-owns and operates Gaines Boxing Club alongside Steve, carrying on the traditions established by Sam Gaines. A man of deep faith, Jesse credits his Lord and Savior, Jesus Christ, for his redemption and success. He is dedicated to passing on the lessons of the ring to his students, supported by his wife of nearly 20 years, their two daughters, and his grandson.', version: 1 }]
+          }
+        ]
+      }
+    };
+
     // Coaches
     await clearCollection(payload, 'coaches')
-    await payload.create({ collection: 'coaches', data: { name: 'Steve Thompson', role: 'Head Coach', title: 'Master Elite', subtitle: 'Head Coach | Physical Prowess & Skill Development', shortBio: 'With over 20 years in the heavy-weight circuit, Steve brings a scientific approach to raw power. His training regimens are legendary for building both the body and the unbreakable spirit required for the championship rounds.', certifications: [{ label: 'USA Boxing Level 3 Coach' }, { label: '2x Regional Golden Gloves Finalist' }, { label: 'NSCA Certified Strength Coach' }], image: (images['coach_steve.png'] as Record<string, unknown>)?.id as string, sortOrder: 1 } })
-    await payload.create({ collection: 'coaches', data: { name: 'Jesse Bryan', role: 'Technical Lead', title: 'Legacy Coach', subtitle: 'Technical Lead | The Sweet Science', shortBio: 'A direct protege of Sam Gaines, Jesse is the guardian of the "Gaines Style." His focus is on the intricate dance of footwork and the precision of the counter-punch, keeping the club\'s technical DNA alive for the next generation.', certifications: [{ label: 'USA Boxing Level 2 Coach' }, { label: '41-6 Amateur Record' }, { label: 'Sam Gaines Personal Protege' }], image: (images['coach_jesse.png'] as Record<string, unknown>)?.id as string, sortOrder: 2 } })
+    await payload.create({ collection: 'coaches', data: { name: 'Steve Thompson', role: 'Professional Coach & Co-Owner', title: 'Master Elite', subtitle: 'Professional Coach & Co-Owner', shortBio: 'Steve Thompson’s journey with the Gaines Boxing Club began at the age of 11, training under the watchful eye of Sam Gaines. Today, he maintains the "no excuses" coaching style as co-owner.', fullBio: steveBioLexical as any, certifications: [{ label: 'USA Boxing Level 3 Coach' }], image: (images['coach_steve.png'] as Record<string, unknown>)?.id as string, sortOrder: 1 } })
+    await payload.create({ collection: 'coaches', data: { name: 'Jesse Bryan', role: 'Professional Coach & Co-Owner', title: 'Legacy Coach', subtitle: 'Professional Coach & Co-Owner', shortBio: 'Jesse turned professional in 2003, later returning to peak competition with Steve Thompson in his corner. Today, he co-owns the club and passes on lessons of the ring.', fullBio: jesseBioLexical as any, certifications: [{ label: 'USA Boxing Level 2 Coach' }], image: (images['coach_jesse.png'] as Record<string, unknown>)?.id as string, sortOrder: 2 } })
 
     // Events
     await clearCollection(payload, 'events')

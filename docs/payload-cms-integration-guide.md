@@ -19,6 +19,7 @@ This guide documents the process of adding Payload CMS (v3.80+) to an existing N
 - [Step 6: Create the PostgreSQL Schema](#step-6-create-the-postgresql-schema)
 - [Step 7: Docker Compose Configuration](#step-7-docker-compose-configuration)
 - [Step 8: First Run and Verification](#step-8-first-run-and-verification)
+- [Step 9: Cloud Storage (S3 / Cloudflare R2)](#step-9-cloud-storage-s3--cloudflare-r2)
 - [Reusable vs. Project-Specific Collections](#reusable-vs-project-specific-collections)
 - [Troubleshooting](#troubleshooting)
 - [Change Log](#change-log)
@@ -438,6 +439,122 @@ networks:
 
 ---
 
+## Step 9: Cloud Storage (S3 / Cloudflare R2)
+
+To prevent the Git repository from becoming bloated with large media files (images, videos), this project uses `@payloadcms/storage-s3` to offload `media` collection uploads to a cloud object storage provider, completely bypassing the local filesystem and repository.
+
+### Plugin Configuration
+
+The plugin is injected into the `plugins` array in `payload.config.ts`:
+
+```typescript
+import { s3Storage } from '@payloadcms/storage-s3'
+
+export default buildConfig({
+  // ...
+  plugins: [
+    s3Storage({
+      collections: {
+        media: {
+          prefix: 'your-tenant-slug/public/images', // Critical: Isolates files per project in a shared bucket
+          generateFileURL: ({ filename, prefix }) => {
+            const publicUrl = process.env.S3_PUBLIC_URL
+            return publicUrl ? `${publicUrl}/${prefix}/${filename}` : null
+          },
+        },
+      },
+      bucket: process.env.S3_BUCKET || '',
+      config: {
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+        },
+        region: process.env.S3_REGION || 'auto',
+        endpoint: process.env.S3_ENDPOINT || '',
+        forcePathStyle: true, // Required for Cloudflare R2, MinIO, and DigitalOcean Spaces
+      },
+    }),
+  ]
+})
+```
+
+### Environment Variables
+
+Add the following to your `.env` (and `.env.compose` / Coolify production env):
+
+```bash
+# Cloudflare R2 / AWS S3 Configuration
+S3_BUCKET=your-bucket-name
+S3_ACCESS_KEY_ID=your-access-key
+S3_SECRET_ACCESS_KEY=your-secret-key
+S3_REGION=auto # "auto" for Cloudflare R2, or e.g. "us-east-1" for AWS
+S3_ENDPOINT=https://<ACCOUNT_ID>.r2.cloudflarestorage.com # omit for standard AWS S3
+S3_PUBLIC_URL=https://pub-abcdef123.r2.dev # Public CDN domain (r2.dev or Custom Domain)
+```
+
+### Next.js Image Domain Whitelisting
+
+By default, the Next.js `<Image>` component blocks external URLs. You must add your chosen Cloudflare R2 domains to the `remotePatterns` configuration in `next.config.ts`:
+
+```typescript
+images: {
+  remotePatterns: [
+    {
+      protocol: "https",
+      hostname: "*.cloudflarestorage.com",
+    },
+    {
+      protocol: "https",
+      hostname: "*.r2.dev",
+    },
+  ],
+},
+```
+
+### Image Optimization (WebP Compression)
+
+To conserve object storage bucket space, Payload can be configured to automatically compress incoming image uploads into lightweight `.webp` files utilizing `sharp`.
+
+Modify the `media` collection's `upload` property to include `formatOptions`. **Note:** You must explicitly define `formatOptions` inside individual `imageSizes` as well, otherwise thumbnails may retain their heavy original format (e.g. sticking to `.png`), paradoxically making them larger than the fully compressed original image.
+
+```typescript
+export const Media: CollectionConfig = {
+  slug: 'media',
+  upload: {
+    formatOptions: {
+      format: 'webp',
+      options: { quality: 80 },
+    },
+    imageSizes: [
+      {
+        name: 'thumbnail',
+        width: 400,
+        height: 300,
+        position: 'centre',
+        formatOptions: { 
+          format: 'webp', 
+          options: { quality: 75 } 
+        },
+      },
+    ],
+    adminThumbnail: 'thumbnail', // Makes the CMS UI load fast
+  },
+}
+```
+
+### Gitignore Rules
+
+The local `/media` directory and the `/public/images` (legacy seed directory) must be explicitly added to `website/.gitignore` so they are not tracked in version control:
+
+```gitignore
+/media
+/public/images
+```
+
+> **Note on Seeding**: The `seed-content.ts` script gracefully handles the absence of files in `/public/images`. If you wipe the database locally, the seed script will simply skip media ingestion, allowing you to manually seed imagery pointing to the cloud bucket through the admin UI.
+
+---
+
 ## Reusable vs. Project-Specific Collections
 
 As Payload CMS is integrated into multiple projects, some collections, globals, and plugins will emerge as generic and reusable across all projects. These should be documented here as they are created so that they can be introduced into new projects as an out-of-the-box base set, to be extended or modified per-project as needed.
@@ -540,6 +657,15 @@ When implementing a new collection or global:
 
 **Fix**: Create the schema manually. See [Step 6](#step-6-create-the-postgresql-schema).
 
+### `self-signed certificate in certificate chain` during Local S3 Uploads
+
+**Cause**: The local network (Corporate firewall/VPN, Zscaler, Cloudflare WARP, or Antivirus Web Shields) is actively intercepting and decrypting SSL traffic. The strict AWS SDK underlying `@payloadcms/storage-s3` rejects the unrecognized proxy certificate and aborts the connection.
+
+**Fix**: Add the following to your `.env` to instruct Node.js to intentionally bypass strict TLS validation during local development:
+```bash
+NODE_TLS_REJECT_UNAUTHORIZED=0
+```
+
 ### `push` vs. Migrations Conflict
 
 **Cause**: Mixing `push: true` with migration files on the same database.
@@ -628,6 +754,15 @@ app/
     api/
 ```
 
+### `useUploadHandlers must be used within UploadHandlersProvider`
+
+**Cause**: Mismatched versions across `@payloadcms/*` packages. For example, if `@payloadcms/storage-s3` is at `3.81.0` but `@payloadcms/next` or `@payloadcms/ui` are at `3.80.0`, the newer plugin attempts to consume a React Context (`UploadHandlersProvider`) that doesn't exist yet in the older core packages.
+
+**Fix**: Ensure all Payload CMS packages are perfectly aligned on the same minor/patch version.
+1. Check versions: `npm ls | grep payloadcms`
+2. Update all packages to match: `pnpm i @payloadcms/storage-s3@3.80.0` (or update all others to match the newer one).
+3. Restart the Next.js development server.
+
 ---
 
 ## Change Log
@@ -643,3 +778,6 @@ app/
 | 2026-03-22 | Code review remediation: Removed hardcoded API key from `GEMINI.md`, `payload.config.ts`, `seed-api-key.ts`, and `route.ts`. Key now sourced from `PAYLOAD_MCP_API_KEY` env var. `onInit` seeding gated behind `SEED_MCP_KEY=true`. Seed route switched from GET to POST with Bearer auth header. Added `ctaLink` text field to events collection. Sanitized JSON-LD output in `structured-data.ts` to prevent XSS. Removed `dangerouslySetInnerHTML` from `heroHeading` in 5 pages. Fixed `layout.tsx` undefined `settings`. Fixed philosophy year fallback MCMXCIV->MCMLXXIV. Created `.env.example`. |
 | 2026-03-27 | Updated guide to reflect the transition from `npm` to `pnpm` as the default package manager. |
 | 2026-03-27 | Reverted Docker to npm: pnpm hard-link/symlink architecture is incompatible with Alpine-based Docker images on Coolify. Dockerfile now uses `npm ci`; pnpm-lock.yaml is kept for local development. Both lockfiles coexist in the repo. Added Troubleshooting entry for this issue. |
+| 2026-04-05 | Integrated `@payloadcms/storage-s3` plugin to offload media persistence to external buckets (Cloudflare R2 / AWS S3). Documented .gitignore guidelines to prevent Git bloat from `public/images/`. Made `seed-content.ts` fail gracefully if local seed assets are omitted from git. |
+| 2026-04-06 | Added `suppressHydrationWarning` to `RootLayout` in `app/(payload)/layout.tsx` to fix Next.js hydration mismatches on the `<html style...>` tag changes. Added `useUploadHandlers` mismatch troubleshooting guide when applying `@payloadcms/storage-s3`. |
+| 2026-04-06 | Documented Cloudflare R2 public URL mapping using `generateFileURL` inside `payload.config.ts`, added `S3_PUBLIC_URL` variable, added `next.config.ts` remote patterns, and implemented automatic WebP conversion in `upload.formatOptions` for original images and thumbnails. Added SSL interception bypass documentation (`NODE_TLS_REJECT_UNAUTHORIZED=0`). |

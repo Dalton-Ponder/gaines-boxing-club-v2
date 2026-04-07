@@ -11,7 +11,12 @@ services:
       - NODE_ENV=production
     networks:
       - coolify
+      - db-network
 
 networks:
   coolify:
     external: true
+    name: coolify
+  db-network:
+    external: true
+    name: db-network
