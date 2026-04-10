@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { navLinks } from "@/lib/navigation";
 import { getSiteSettings } from "@/lib/payload";
+import { Icon } from "@iconify/react";
 
 function sanitizeUrl(url: string, fallback = "#") {
   if (!url) return fallback;
@@ -14,6 +15,17 @@ function sanitizeUrl(url: string, fallback = "#") {
     return fallback;
   }
 }
+
+/**
+ * Resolves a stored icon name to a full Iconify icon ID.
+ * Accepts full Iconify IDs (e.g. "material-symbols:share") as-is,
+ * and converts legacy bare names (e.g. "share") to "material-symbols:share".
+ */
+function resolveIconName(name: string): string {
+  if (!name) return "material-symbols:circle";
+  return name.includes(":") ? name : `material-symbols:${name.replace(/_/g, "-")}`;
+}
+
 
 /**
  * Strips any leading 'mailto:' prefix and validates the result as a
@@ -60,12 +72,10 @@ export default async function Footer() {
           {/* Brand Column */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-6">
-              <span
-                className="material-symbols-outlined text-3xl text-primary"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                sports_martial_arts
-              </span>
+              <Icon
+                icon="material-symbols:sports-martial-arts"
+                className="text-3xl text-primary"
+              />
               <h2 className="font-display text-2xl font-black uppercase tracking-tighter text-white">
                 Gaines <span className="text-primary">Boxing</span>
               </h2>
@@ -86,7 +96,11 @@ export default async function Footer() {
                     target={isExternal ? "_blank" : undefined}
                     rel={isExternal ? "noopener noreferrer" : undefined}
                   >
-                    <span className="material-symbols-outlined text-xl" aria-hidden="true">{link.iconName}</span>
+                    <Icon
+                      icon={resolveIconName(link.iconName)}
+                      className="text-xl"
+                      aria-hidden="true"
+                    />
                   </a>
                 );
               })}
@@ -119,25 +133,19 @@ export default async function Footer() {
             </h5>
             <ul className="space-y-4 font-sans">
               <li className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary text-lg">
-                  location_on
-                </span>
+                <Icon icon="material-symbols:location-on" className="text-primary text-lg" />
                 <span className="text-slate-500 text-sm">
                   {addressDisplay}
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary text-lg">
-                  call
-                </span>
+                <Icon icon="material-symbols:call" className="text-primary text-lg" />
                 <a href={phoneHref} className="text-slate-500 hover:text-primary text-sm transition-colors">
                   {phoneDisplay}
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary text-lg">
-                  mail
-                </span>
+                <Icon icon="material-symbols:mail" className="text-primary text-lg" />
                 {normalizedEmail ? (
                   <a href={`mailto:${normalizedEmail}`} className="text-slate-500 hover:text-primary text-sm transition-colors">
                     {normalizedEmail}

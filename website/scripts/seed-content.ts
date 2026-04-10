@@ -110,9 +110,9 @@ async function seedGlobals(payload: any, images: Record<string, any>): Promise<v
     phone: '(555) 012-GBC-LIONS',
     email: 'frontdesk@gainesboxing.club',
     socialLinks: [
-      { platform: 'Share', url: '#', iconName: 'share' },
-      { platform: 'Community', url: '#', iconName: 'group' },
-      { platform: 'Gallery', url: '#', iconName: 'photo_camera' },
+      { platform: 'Share', url: '#', iconName: 'material-symbols:share' },
+      { platform: 'Community', url: '#', iconName: 'material-symbols:group' },
+      { platform: 'Gallery', url: '#', iconName: 'material-symbols:photo-camera' },
     ],
     structuredData: {
       organizationName: 'Gaines Boxing Club',
@@ -210,10 +210,10 @@ async function main(): Promise<void> {
 
   console.log('\n--- Seeding Philosophy Pillars ---')
   await clearCollection(payload, 'philosophy-pillars')
-  await payload.create({ collection: 'philosophy-pillars', data: { icon: 'target', title: 'Technical Precision', description: 'Master the nuances of footwork...', sortOrder: 1 } })
-  await payload.create({ collection: 'philosophy-pillars', data: { icon: 'bolt', title: 'Physical Conditioning', description: 'Build an elite engine...', sortOrder: 2 } })
-  await payload.create({ collection: 'philosophy-pillars', data: { icon: 'psychology', title: 'Mental Fortitude', description: 'Develop the psychological edge...', sortOrder: 3 } })
-  await payload.create({ collection: 'philosophy-pillars', data: { icon: 'groups', title: 'Elite Community', description: 'Iron sharpens iron...', sortOrder: 4 } })
+  await payload.create({ collection: 'philosophy-pillars', data: { icon: 'material-symbols:target', title: 'Technical Precision', description: 'Master the nuances of footwork...', sortOrder: 1 } })
+  await payload.create({ collection: 'philosophy-pillars', data: { icon: 'material-symbols:bolt', title: 'Physical Conditioning', description: 'Build an elite engine...', sortOrder: 2 } })
+  await payload.create({ collection: 'philosophy-pillars', data: { icon: 'material-symbols:psychology', title: 'Mental Fortitude', description: 'Develop the psychological edge...', sortOrder: 3 } })
+  await payload.create({ collection: 'philosophy-pillars', data: { icon: 'material-symbols:groups', title: 'Elite Community', description: 'Iron sharpens iron...', sortOrder: 4 } })
   console.log('  [created] Philosophy Pillars')
 
   console.log('\n--- Seeding Quotes ---')
@@ -224,8 +224,8 @@ async function main(): Promise<void> {
 
   console.log('\n--- Seeding Timeline ---')
   await clearCollection(payload, 'timeline-milestones')
-  await payload.create({ collection: 'timeline-milestones', data: { year: '1974', title: 'The Basement Era', description: 'Opened in a 400sq ft basement in the Southside.', icon: 'home', sortOrder: 1 } })
-  await payload.create({ collection: 'timeline-milestones', data: { year: '1988', title: 'Regional Domination', description: 'Produced first National Golden Gloves champion.', icon: 'workspace_premium', sortOrder: 2 } })
+  await payload.create({ collection: 'timeline-milestones', data: { year: '1974', title: 'The Basement Era', description: 'Opened in a 400sq ft basement in the Southside.', icon: 'material-symbols:home', sortOrder: 1 } })
+  await payload.create({ collection: 'timeline-milestones', data: { year: '1988', title: 'Regional Domination', description: 'Produced first National Golden Gloves champion.', icon: 'material-symbols:workspace-premium', sortOrder: 2 } })
   console.log('  [created] Timeline')
 
   console.log('\n--- Seeding Training Schedule ---')

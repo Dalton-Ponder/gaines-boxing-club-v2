@@ -319,7 +319,7 @@ export default buildConfig({
         {
           name: 'icon',
           type: 'text',
-          admin: { description: 'Material Symbols icon name, e.g. "home", "workspace_premium"' },
+          admin: { description: 'Iconify icon ID, e.g. "material-symbols:home-outline" or "material-symbols:workspace-premium". Browse icons at https://icon-sets.iconify.design/material-symbols/' },
         },
         { name: 'sortOrder', type: 'number', defaultValue: 0 },
       ],
@@ -340,7 +340,7 @@ export default buildConfig({
           name: 'icon',
           type: 'text',
           required: true,
-          admin: { description: 'Material Symbols icon name' },
+          admin: { description: 'Iconify icon ID, e.g. "material-symbols:target" or "material-symbols:bolt". Browse icons at https://icon-sets.iconify.design/material-symbols/' },
         },
         { name: 'title', type: 'text', required: true },
         { name: 'description', type: 'textarea', required: true },
@@ -439,6 +439,45 @@ export default buildConfig({
         },
       ],
     },
+
+    // -- Alert Banners --
+    {
+      slug: 'alert-banners',
+      admin: {
+        useAsTitle: 'copy',
+        defaultColumns: ['copy', 'icon', 'isActive'],
+        description: 'Short announcement banners displayed at the top of every page. Banners alternate background colors, starting with Kiln Orange.',
+      },
+      hooks: {
+        afterChange: [buildCollectionRevalidateHook('alert-banners')],
+      },
+      fields: [
+        {
+          name: 'icon',
+          type: 'text',
+          admin: {
+            description: 'Iconify icon ID, e.g. "material-symbols:notifications" or "material-symbols:campaign". Browse icons at https://icon-sets.iconify.design/material-symbols/',
+          },
+        },
+        {
+          name: 'copy',
+          type: 'textarea',
+          required: true,
+          admin: {
+            description: 'The banner message text displayed to site visitors.',
+          },
+        },
+        {
+          name: 'isActive',
+          type: 'checkbox',
+          defaultValue: true,
+          admin: {
+            description: 'When unchecked, this banner will not be shown on the website.',
+          },
+        },
+        { name: 'sortOrder', type: 'number', defaultValue: 0 },
+      ],
+    },
   ],
 
   // -------------------------------------------------------------------------
@@ -465,7 +504,12 @@ export default buildConfig({
           fields: [
             { name: 'platform', type: 'text', required: true },
             { name: 'url', type: 'text', required: true },
-            { name: 'iconName', type: 'text', required: true },
+            {
+              name: 'iconName',
+              type: 'text',
+              required: true,
+              admin: { description: 'Iconify icon ID, e.g. "material-symbols:share" or "mdi:facebook". Browse all icon sets at https://icon-sets.iconify.design/' },
+            },
           ],
         },
         {
@@ -545,6 +589,7 @@ export default buildConfig({
         'training-schedule': { enabled: true },
         pages: { enabled: true },
         media: { enabled: true },
+        'alert-banners': { enabled: true },
       },
       globals: {
         'site-settings': { enabled: { find: true, update: true } },
@@ -618,6 +663,7 @@ export default buildConfig({
             forms_find: true, forms_create: true, forms_update: true, forms_delete: true,
             'form-submissions_find': true, 'form-submissions_create': true, 'form-submissions_update': true, 'form-submissions_delete': true,
             'site-settings_find': true, 'site-settings_update': true,
+            'alert-banners_find': true, 'alert-banners_create': true, 'alert-banners_update': true, 'alert-banners_delete': true,
           }
         })
         payload.logger.info('Successfully seeded Gemini Local Seed Key')

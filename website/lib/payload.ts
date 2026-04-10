@@ -155,6 +155,18 @@ export async function getForm(title: string) {
   return result.docs[0] ?? null
 }
 
+// -- Alert Banners --
+export async function getAlertBanners() {
+  const payload = await getPayloadClient()
+  const result = await payload.find({
+    collection: 'alert-banners',
+    where: { isActive: { equals: true } },
+    limit: 10,
+    sort: 'sortOrder',
+  })
+  return result.docs
+}
+
 // -- Media --
 export async function getMedia(filename: string) {
   const payload = await getPayloadClient()

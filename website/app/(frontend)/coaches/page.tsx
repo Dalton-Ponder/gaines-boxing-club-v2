@@ -4,6 +4,7 @@ import { getCoaches, getQuotes, getPage, getForm, getSiteSettings, getImageUrl }
 import { JoinClubButton } from "@/components/JoinClubButton";
 import { CoachBioModalButton } from "@/components/CoachBioModalButton";
 import { generateWebPageSchema, generatePersonSchema, jsonLdScript } from "@/lib/structured-data";
+import { Icon } from "@iconify/react";
 
 export const dynamic = 'force-dynamic';
 
@@ -77,7 +78,7 @@ export default async function CoachesPage() {
                     <div className="absolute inset-0 bg-linear-to-t from-card-dark via-transparent to-transparent z-10"></div>
                     <Image
                       alt={coachImage.alt || coach.name}
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
                       src={coachImage.url}
                       fill
                       sizes="(max-width: 768px) 100vw, 50vw"
@@ -89,9 +90,10 @@ export default async function CoachesPage() {
                         <p className="text-primary text-sm font-bold tracking-widest uppercase">
                           {coach.title || coach.role}
                         </p>
-                        <span className="material-symbols-outlined text-primary/40">
-                          {coach.sortOrder === 1 ? 'military_tech' : 'history_edu'}
-                        </span>
+                        <Icon
+                          icon={coach.sortOrder === 1 ? 'material-symbols:military-tech' : 'material-symbols:history-edu'}
+                          className="text-primary/40 text-2xl"
+                        />
                       </div>
                       <h3 className="text-white text-3xl font-black uppercase italic group-hover:text-primary transition-colors">
                         {coach.name}
@@ -108,9 +110,7 @@ export default async function CoachesPage() {
                       className="flex items-center gap-2 text-white font-bold text-sm uppercase tracking-wider group/btn w-fit mt-2 cursor-pointer"
                     >
                       View Full Bio
-                      <span className="material-symbols-outlined text-primary group-hover/btn:translate-x-1 transition-transform">
-                        arrow_forward
-                      </span>
+                      <Icon icon="material-symbols:arrow-forward" className="text-primary group-hover/btn:translate-x-1 transition-transform" />
                     </CoachBioModalButton>
                   </div>
                   <div className="absolute -bottom-1 -right-1 w-24 h-24 bg-primary/10 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>

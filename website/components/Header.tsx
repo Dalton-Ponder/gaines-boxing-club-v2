@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Icon } from "@iconify/react";
 import { navLinks } from "@/lib/navigation";
 import { JoinClubButton, type FormDataProp } from "@/components/JoinClubButton";
 
@@ -11,16 +12,14 @@ export default function Header({ formData }: { formData?: FormDataProp }) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 z-50 w-full border-b border-primary bg-background-dark/95 backdrop-blur-md px-6 md:px-20 py-4">
+    <header className="w-full border-b border-primary bg-background-dark/95 backdrop-blur-md px-6 md:px-20 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link
             href="/"
             className="flex gap-1 items-center hover:opacity-80 transition-opacity"
           >
-            <span className="material-symbols-outlined text-primary text-3xl">
-              sports_martial_arts
-            </span>
+            <Icon icon="material-symbols:sports-martial-arts" className="text-primary text-3xl" />
             <h2 className="font-display text-xl font-extrabold tracking-tighter uppercase italic text-white">
               Gaines <span className="text-primary">Boxing</span>
             </h2>
@@ -59,11 +58,7 @@ export default function Header({ formData }: { formData?: FormDataProp }) {
             aria-controls="mobile-nav"
             aria-label="Toggle navigation menu"
           >
-            <span
-              className="material-symbols-outlined text-white text-xl"
-            >
-              {isMobileOpen ? "close" : "menu"}
-            </span>
+            <Icon icon={isMobileOpen ? "material-symbols:close" : "material-symbols:menu"} className="text-white text-xl" />
           </button>
         </div>
       </div>

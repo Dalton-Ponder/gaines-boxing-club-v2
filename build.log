@@ -1,56 +1,56 @@
-#1 [internal] load local bake definitions
-#1 reading from stdin 592B done
-#1 DONE 0.0s
+(node:46076) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48088) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48616) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+Γû▓ Next.js 16.2.2 (Turbopack)
+- Environments: .env
 
-#2 [internal] load build definition from Dockerfile
-#2 transferring dockerfile: 2.30kB done
-#2 DONE 0.0s
-
-#3 resolve image config for docker-image://docker.io/docker/dockerfile:1
-#3 DONE 0.8s
-
-#4 docker-image://docker.io/docker/dockerfile:1@sha256:4a43a54dd1fedceb30ba47e76cfcf2b47304f4161c0caeac2db1c61804ea3c91
-#4 resolve docker.io/docker/dockerfile:1@sha256:4a43a54dd1fedceb30ba47e76cfcf2b47304f4161c0caeac2db1c61804ea3c91 0.0s done
-#4 CACHED
-
-#5 [internal] load metadata for docker.io/library/node:20-alpine
-#5 DONE 0.9s
-
-#6 [internal] load .dockerignore
-#6 transferring context: 178B done
-#6 DONE 0.0s
-
-#7 [base 1/1] FROM docker.io/library/node:20-alpine@sha256:b88333c42c23fbd91596ebd7fd10de239cedab9617de04142dde7315e3bc0afa
-#7 resolve docker.io/library/node:20-alpine@sha256:b88333c42c23fbd91596ebd7fd10de239cedab9617de04142dde7315e3bc0afa 0.0s done
-#7 DONE 0.0s
-
-#8 [internal] load build context
-#8 transferring context: 72B done
-#8 DONE 0.0s
-
-#9 [deps 1/4] RUN apk add --no-cache libc6-compat
-#9 CACHED
-
-#10 [deps 2/4] WORKDIR /app
-#10 CACHED
-
-#11 [deps 3/4] COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
-#11 CACHED
-
-#12 [deps 4/4] RUN   if [ -f package-lock.json ]; then npm ci --legacy-peer-deps;   elif [ -f yarn.lock ]; then yarn --frozen-lockfile;   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile;   else echo "Lockfile not found." && exit 1;   fi
-#12 CACHED
-
-#13 exporting to image
-#13 exporting layers done
-#13 exporting manifest sha256:83e271e2e36d134089eb89dbf6a33db218d099079d526b3e8ad7932badfebb08 done
-#13 exporting config sha256:fb94b2ed408b12f5cbe5d36701c316d5b78b9dba63102d1cd3afb9d3e2895322 done
-#13 exporting attestation manifest sha256:24ce7b1e63805ed97c7750d6f5d061d7b15707fead0f52d2b079411992938f10
-#13 exporting attestation manifest sha256:24ce7b1e63805ed97c7750d6f5d061d7b15707fead0f52d2b079411992938f10 0.0s done
-#13 exporting manifest list sha256:42cfde04d15d308e710b30dee68ec8df5c5cc5e478f260a0593a16b3e213a49b 0.0s done
-#13 naming to docker.io/library/gaines-boxing-club-v2-website:latest done
-#13 unpacking to docker.io/library/gaines-boxing-club-v2-website:latest done
-#13 DONE 0.1s
-
-#14 resolving provenance for metadata file
-#14 DONE 0.0s
- gaines-boxing-club-v2-website  Built
+(node:48616) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+  Creating an optimized production build ...
+(node:48616) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38952) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49352) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30004) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:56668) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49352) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:56800) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31968) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28132) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27776) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25984) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3444) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20128) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:59300) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+Γ£ô Compiled successfully in 7.0s
+  Running TypeScript ...
+(node:36492) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+Failed to type check.
+System.Management.Automation.RemoteException
+.next/dev/types/app/(payload)/api/[...slug]/route.ts:5:15
+Type error: Module '"next/dist/build/segment-config/app/app-segment-config.js"' has no exported member 'PrefetchForTypeCheckInternal'.
+System.Management.Automation.RemoteException
+  [90m3 |[0m [36mimport[0m [36mtype[0m { [33mNextRequest[0m } [36mfrom[0m [32m'next/server.js'[0m
+  [90m4 |[0m
+[31m[1m>[0m [90m5 |[0m [36mimport[0m [36mtype[0m { [33mPrefetchForTypeCheckInternal[0m } [36mfrom[0m [32m'next/dist/build/segment-config/app/app-s...[0m
+  [90m  |[0m               [31m[1m^[0m
+  [90m6 |[0m
+  [90m7 |[0m [36mtype[0m [33mTEntry[0m = [36mtypeof[0m [36mimport[0m([32m'../../../../../../../app/(payload)/api/[...slug]/route.js'[0m)
+  [90m8 |[0m
+Next.js build worker exited with code: 1 and signal: null

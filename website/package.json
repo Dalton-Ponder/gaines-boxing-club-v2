@@ -10,6 +10,7 @@
     "seed": "tsx scripts/seed-content.ts"
   },
   "dependencies": {
+    "@iconify/react": "^6.0.2",
     "@payloadcms/db-postgres": "^3.81.0",
     "@payloadcms/next": "^3.81.0",
     "@payloadcms/plugin-form-builder": "^3.81.0",

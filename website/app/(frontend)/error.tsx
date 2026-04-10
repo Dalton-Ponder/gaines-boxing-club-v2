@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Icon } from "@iconify/react";
 
 export default function FrontendError({
   error,
@@ -11,9 +12,7 @@ export default function FrontendError({
 }) {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">
-      <span className="material-symbols-outlined text-primary text-6xl mb-6">
-        error_outline
-      </span>
+      <Icon icon="material-symbols:error-outline" className="text-primary text-6xl mb-6" />
       <h1 className="font-display text-4xl font-black uppercase tracking-tighter text-white mb-4">
         Something Went Wrong
       </h1>

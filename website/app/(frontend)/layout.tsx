@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import React from "react";
+import React, { Suspense } from "react";
 import { Lexend } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ModalProvider from "@/components/ModalProvider";
+import UtilityBar from "@/components/UtilityBar";
 import { getSiteSettings } from "@/lib/payload";
 import {
   generateOrganizationSchema,
@@ -47,10 +48,6 @@ export default async function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-          rel="stylesheet"
-        />
         {globalJsonLd && (
           <script
             type="application/ld+json"
@@ -64,8 +61,18 @@ export default async function RootLayout({
       >
         <ModalProvider>
           <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
-            <Header formData={joinForm} />
-            <main className="flex-1 pt-[104px]">{children}</main>
+            {/* Fixed top chrome: UtilityBar stacked above the main nav Header */}
+            <div className="fixed top-0 left-0 right-0 z-50 flex flex-col bg-background-dark">
+              <Suspense fallback={null}>
+                <UtilityBar />
+              </Suspense>
+              <Header formData={joinForm} />
+            </div>
+            {/*
+              Static offset: schedule bar (~32px) + at most 1-2 alert banners (~64px) + header (~72px)
+              If the number of banners changes heavily, update this value.
+            */}
+            <main className="flex-1 pt-[160px]">{children}</main>
             <Footer />
           </div>
         </ModalProvider>

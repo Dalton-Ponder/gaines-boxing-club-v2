@@ -5,6 +5,13 @@ import { getTimeline, getPage, getForm, getSiteSettings, getMedia } from "@/lib/
 import { JoinClubButton } from "@/components/JoinClubButton";
 import { FounderBioModalButton } from "@/components/FounderBioModalButton";
 import { generateWebPageSchema, jsonLdScript } from "@/lib/structured-data";
+import { Icon } from "@iconify/react";
+
+/** Resolves a CMS icon name to an Iconify icon ID. Handles both full IDs and legacy bare names. */
+function resolveIconName(name: string): string {
+  if (!name) return "material-symbols:star";
+  return name.includes(":") ? name : `material-symbols:${name.replace(/_/g, "-")}`;
+}
 
 export const dynamic = 'force-dynamic';
 
@@ -66,7 +73,7 @@ export default async function LegacyPage() {
               <div className="aspect-4/5 bg-card-dark rounded-lg overflow-hidden border border-white/10 relative">
                 <Image
                   alt={samGainesImage?.alt || "Sam Gaines Legacy"}
-                  className="w-full h-full object-cover grayscale contrast-125"
+                  className="w-full h-full object-cover contrast-125 transition-all duration-700"
                   src={samGainesImage?.url || "/images/sam_gaines.png"}
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
@@ -116,9 +123,7 @@ export default async function LegacyPage() {
               </div>
               <FounderBioModalButton className="flex items-center gap-2 text-white font-bold bg-white/5 hover:bg-primary border border-white/10 hover:border-primary px-8 py-4 rounded-lg transition-all w-fit cursor-pointer">
                 <span>Read Full Biography</span>
-                <span className="material-symbols-outlined">
-                  arrow_right_alt
-                </span>
+                <Icon icon="material-symbols:arrow-right-alt" className="text-xl" />
               </FounderBioModalButton>
             </div>
           </div>
@@ -152,9 +157,7 @@ export default async function LegacyPage() {
                       </p>
                     </div>
                     <div className="size-10 bg-primary rounded-full flex items-center justify-center glow-accent border-4 border-background-dark z-10 mx-auto md:mx-0">
-                      <span className="material-symbols-outlined text-white text-sm">
-                        {milestone.icon || "star"}
-                      </span>
+                      <Icon icon={resolveIconName(milestone.icon || "star")} className="text-white text-sm" />
                     </div>
                     <div className="flex-1 hidden md:block"></div>
                   </div>

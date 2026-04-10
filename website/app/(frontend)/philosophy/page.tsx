@@ -2,6 +2,13 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getPhilosophyPillars, getPage, getSiteSettings } from "@/lib/payload";
 import { generateWebPageSchema, jsonLdScript } from "@/lib/structured-data";
+import { Icon } from "@iconify/react";
+
+/** Resolves a CMS icon name to an Iconify icon ID. Handles both full IDs and legacy bare names. */
+function resolveIconName(name: string): string {
+  if (!name) return "material-symbols:local-fire-department";
+  return name.includes(":") ? name : `material-symbols:${name.replace(/_/g, "-")}`;
+}
 
 export const dynamic = 'force-dynamic';
 
@@ -87,9 +94,10 @@ export default async function PhilosophyPage() {
             {pillars.map((pillar) => (
               <div key={pillar.id} className="group flex flex-col gap-6 rounded-lg border border-white/5 bg-neutral-dark p-8 transition-all hover:border-primary/50">
                 <div className="text-primary">
-                  <span className="material-symbols-outlined text-4xl group-hover:scale-110 transition-transform">
-                    {pillar.icon || "local_fire_department"}
-                  </span>
+                  <Icon
+                    icon={resolveIconName(pillar.icon || "local-fire-department")}
+                    className="text-4xl group-hover:scale-110 transition-transform"
+                  />
                 </div>
                 <div className="flex flex-col gap-3">
                   <h4 className="text-white text-xl font-bold uppercase tracking-tight">{pillar.title}</h4>

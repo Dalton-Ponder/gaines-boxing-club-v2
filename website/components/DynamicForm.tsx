@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { Icon } from "@iconify/react";
 
 type FormField = {
   name: string;
@@ -110,9 +111,7 @@ export function DynamicForm({
 
     return (
       <div className="text-center py-8">
-        <span className="material-symbols-outlined text-primary text-5xl mb-4 block">
-          check_circle
-        </span>
+        <Icon icon="material-symbols:check-circle" className="text-primary text-5xl mb-4 block" />
         <p className="text-lg font-semibold text-white mb-2">
           {confirmationText}
         </p>

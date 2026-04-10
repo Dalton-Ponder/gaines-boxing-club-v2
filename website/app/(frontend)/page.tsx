@@ -85,7 +85,7 @@ export default async function HomePage() {
               <div className="overflow-hidden rounded-xl border border-white/10">
                 <Image
                   alt={samGainesImage?.alt || "Sam Gaines Legacy"}
-                  className="w-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                  className="w-full object-cover transition-all duration-700"
                   src={getImageUrl(samGainesImage, "/images/sam_gaines.png").url}
                   width={600}
                   height={600}
@@ -155,7 +155,7 @@ export default async function HomePage() {
                   <div className="aspect-4/5 overflow-hidden rounded-lg mb-6">
                     <Image
                       alt={coachImage.alt || coach.name}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="h-full w-full object-cover transition-all duration-700 group-hover:scale-110"
                       src={coachImage.url}
                       width={500}
                       height={625}

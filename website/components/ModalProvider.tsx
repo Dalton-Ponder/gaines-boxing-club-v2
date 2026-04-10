@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
+import { Icon } from "@iconify/react";
 
 interface ModalOptions {
   title?: React.ReactNode;
@@ -72,12 +73,7 @@ export default function ModalProvider({
             aria-label="Close modal"
             onClick={close}
           >
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: "20px" }}
-            >
-              close
-            </span>
+            <Icon icon="material-symbols:close" style={{ fontSize: "20px" }} />
           </button>
           {(options.subtitle || options.title) && (
             <div className="gbc-modal-header">

@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { getEvents, getTrainingSchedule, getPage, getSiteSettings, getSafeImageUrl } from "@/lib/payload";
 import { generateWebPageSchema, generateEventSchema, jsonLdScript } from "@/lib/structured-data";
+import { Icon } from "@iconify/react";
 
 export const dynamic = 'force-dynamic';
 
@@ -60,7 +61,7 @@ export default async function SchedulePage() {
           <div className="bg-card-dark border border-primary/20 glow-accent rounded-lg p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-4">
-                <span className="material-symbols-outlined text-primary">schedule</span>
+                <Icon icon="material-symbols:schedule" className="text-primary" />
                 <h2 className="text-2xl font-bold uppercase tracking-tight text-white">Training Hours</h2>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
@@ -77,7 +78,7 @@ export default async function SchedulePage() {
             <div className="w-full md:w-auto">
               <button type="button" className="w-full md:w-auto bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest px-10 py-5 rounded-lg transition-all flex items-center justify-center gap-3">
                 Book a Session
-                <span className="material-symbols-outlined">trending_flat</span>
+                <Icon icon="material-symbols:trending-flat" />
               </button>
             </div>
           </div>
@@ -104,7 +105,7 @@ export default async function SchedulePage() {
                 }
                 return (
                   <div 
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" 
+                    className="absolute inset-0 bg-cover bg-center transition-all duration-700 group-hover:scale-105" 
                     style={{ 
                       backgroundImage: `linear-gradient(to right, rgba(18, 11, 7, 1) 20%, rgba(18, 11, 7, 0.4) 100%), url('${eventImage}')` 
                     }}
@@ -154,7 +155,7 @@ export default async function SchedulePage() {
                 <p className="text-slate-500 font-medium">Upcoming local matches and sparring sessions</p>
               </div>
               <button type="button" className="text-primary text-sm font-bold uppercase tracking-widest flex items-center gap-2 hover:gap-4 transition-all cursor-pointer">
-                View Archive <span className="material-symbols-outlined">east</span>
+                View Archive <Icon icon="material-symbols:east" />
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -164,7 +165,7 @@ export default async function SchedulePage() {
                   <div key={event.id} className="bg-card-dark border border-white/5 hover:border-primary/40 rounded-lg overflow-hidden flex flex-col transition-all group">
                     <div className="h-48 overflow-hidden relative">
                       <Image 
-                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" 
+                        className="w-full h-full object-cover transition-all duration-500" 
                         src={safeUrl} 
                         alt={event.title} 
                         fill 

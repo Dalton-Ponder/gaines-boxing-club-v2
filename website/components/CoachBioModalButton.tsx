@@ -2,6 +2,7 @@
 
 import { useModal } from "@/components/ModalProvider";
 import React from "react";
+import { Icon } from "@iconify/react";
 
 export function CoachBioModalButton({
   coach,
@@ -104,12 +105,10 @@ export function CoachBioModalButton({
                       gap: "0.5rem",
                     }}
                   >
-                    <span
-                      className="material-symbols-outlined"
+                    <Icon
+                      icon="material-symbols:verified"
                       style={{ fontSize: "16px", color: "#c14e01" }}
-                    >
-                      verified
-                    </span>{" "}
+                    />{" "}
                     {cert.label}
                   </li>
                 ))}
