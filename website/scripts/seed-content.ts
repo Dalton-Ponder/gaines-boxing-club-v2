@@ -33,10 +33,13 @@ async function clearCollection(payload: BasePayload, slug: string): Promise<void
 
 import fs from 'fs'
 
+type GenerationType = 'organic' | 'enhanced' | 'generated'
+
 async function uploadImage(
   payload: any,
   filename: string,
   altText: string,
+  generationType: GenerationType = 'organic',
 ): Promise<any> {
   const existing = await payload.find({
     collection: 'media',
@@ -58,11 +61,11 @@ async function uploadImage(
 
   const doc = await payload.create({
     collection: 'media',
-    data: { alt: altText },
+    data: { alt: altText, generationType },
     filePath: filePath,
   })
 
-  console.log(`  [uploaded] ${filename} -> id: ${doc.id}`)
+  console.log(`  [uploaded] ${filename} (${generationType}) -> id: ${doc.id}`)
   return doc
 }
 
@@ -74,19 +77,23 @@ async function seedMedia(payload: any): Promise<Record<string, any>> {
   console.log('\n--- Uploading Images ---')
   const images: Record<string, any> = {}
 
-  const uploads: [string, string][] = [
-    ['sam_gaines.png', 'Sam Gaines, founder of Gaines Boxing Club'],
-    ['coach_steve.png', 'Head coach Steve Thompson'],
-    ['coach_jesse.png', 'Legacy coach Jesse Bryan'],
-    ['event_main.png', 'Golden Gloves Qualifier main event'],
-    ['event_fight.png', 'Heavyweight Rumble local spar event'],
-    ['event_workshop.png', 'Master Footwork workshop'],
-    ['event_exhibition.png', 'Young Bloods VII exhibition match'],
-    ['gbc_logo.png', 'Gaines Boxing Club logo'],
+  // Declare the provenance of each image here.
+  // organic   = original photography, no AI involvement
+  // enhanced  = composite of real photo + AI-generated elements
+  // generated = fully synthetic, produced by an AI model
+  const uploads: [string, string, GenerationType][] = [
+    ['sam_gaines.png',        'Sam Gaines, founder of Gaines Boxing Club', 'organic'],
+    ['coach_steve.png',       'Head coach Steve Thompson',                 'organic'],
+    ['coach_jesse.png',       'Legacy coach Jesse Bryan',                  'organic'],
+    ['event_main.png',        'Golden Gloves Qualifier main event',         'organic'],
+    ['event_fight.png',       'Heavyweight Rumble local spar event',        'organic'],
+    ['event_workshop.png',    'Master Footwork workshop',                   'organic'],
+    ['event_exhibition.png',  'Young Bloods VII exhibition match',          'organic'],
+    ['gbc_logo.png',          'Gaines Boxing Club logo',                   'generated'],
   ]
 
-  for (const [filename, alt] of uploads) {
-    images[filename] = await uploadImage(payload, filename, alt)
+  for (const [filename, alt, generationType] of uploads) {
+    images[filename] = await uploadImage(payload, filename, alt, generationType)
   }
 
   return images

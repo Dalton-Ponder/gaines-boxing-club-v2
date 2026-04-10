@@ -1,4 +1,6 @@
 import path from 'path'
+import os from 'os'
+import fs from 'fs'
 import { fileURLToPath } from 'url'
 import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
@@ -8,6 +10,8 @@ import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { s3Storage } from '@payloadcms/storage-s3'
 import sharp from 'sharp'
 import { revalidateTag } from 'next/cache'
+import type { GenerationType } from './lib/image-provenance'
+import { processImageMetadata, readAndClean } from './lib/image-provenance'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -83,7 +87,7 @@ export default buildConfig({
       fields: [],
     },
 
-    // -- Media (override built-in to require alt text) --
+    // -- Media (override built-in to require alt text + AI provenance) --
     {
       slug: 'media',
       upload: {
@@ -111,6 +115,68 @@ export default buildConfig({
       },
       hooks: {
         afterChange: [buildCollectionRevalidateHook('media')],
+        beforeChange: [
+          // ---------------------------------------------------------------
+          // Image Provenance Hook
+          // Runs BEFORE the file is persisted to S3 (or local disk).
+          // Handles:
+          //   organic   -> scrub GPS + serial EXIF tags (privacy)
+          //   enhanced  -> inject IPTC DigitalSourceType (compositeWithTrainedAlgorithmicMedia)
+          //   generated -> inject IPTC DigitalSourceType (trainedAlgorithmicMedia)
+          // ---------------------------------------------------------------
+          async ({ data, req }) => {
+            const generationType = (data.generationType ?? 'organic') as GenerationType
+
+            // Only process when an actual file is being uploaded.
+            // req.file is the multer file object (set by Payload's upload middleware).
+            type MulFileShape = { path?: string; buffer?: Buffer; size?: number; originalname?: string }
+            const file = (req as unknown as { file?: MulFileShape }).file
+            if (!file?.path && !file?.buffer) return data
+
+            let sourcePath: string | null = null
+            let createdTmp = false
+
+            try {
+              if (file.path) {
+                // Standard case: multer wrote the file to disk
+                sourcePath = file.path
+              } else if (file.buffer) {
+                // Memory-buffered upload: write to a temp file first
+                const tmpDir = os.tmpdir()
+                sourcePath = path.join(tmpDir, `payload-upload-${Date.now()}-${file.originalname ?? 'img'}`)
+                fs.writeFileSync(sourcePath, file.buffer)
+                createdTmp = true
+              }
+
+              if (!sourcePath) return data
+
+              const processedPath = await processImageMetadata(sourcePath, generationType)
+              const processedBuffer = await readAndClean(processedPath)
+
+              // Patch the multer file object so Payload/S3 plugin receives the
+              // metadata-scrubbed buffer in place of the original.
+              type MulFileShape = { path?: string; buffer?: Buffer; size?: number; originalname?: string }
+              ;(req as unknown as { file: MulFileShape }).file = {
+                ...file,
+                buffer: processedBuffer,
+                size: processedBuffer.length,
+                // Clear path: tell Payload to use the buffer, not re-read from disk
+                path: undefined,
+              }
+            } catch (err) {
+              // Non-fatal: log the error but do not block the upload.
+              // An upload with unmodified metadata is vastly preferable to a
+              // dropped upload from a processing failure.
+              console.error('[image-provenance] beforeChange hook failed, uploading without metadata changes:', err)
+            } finally {
+              if (createdTmp && sourcePath) {
+                try { fs.unlinkSync(sourcePath) } catch { /* best-effort cleanup */ }
+              }
+            }
+
+            return data
+          },
+        ],
       },
       fields: [
         {
@@ -119,6 +185,30 @@ export default buildConfig({
           required: true,
           admin: {
             description: 'Describe the image for accessibility (screen readers) and SEO.',
+          },
+        },
+        {
+          name: 'generationType',
+          type: 'select',
+          defaultValue: 'organic',
+          required: true,
+          options: [
+            {
+              label: 'Organic (Original Photography)',
+              value: 'organic',
+            },
+            {
+              label: 'AI Enhanced (Hybrid)',
+              value: 'enhanced',
+            },
+            {
+              label: 'AI Generated (Synthetic)',
+              value: 'generated',
+            },
+          ],
+          admin: {
+            description:
+              'Declare the provenance of this image. Sets IPTC DigitalSourceType metadata and drives Schema.org ImageObject properties (2026 AI Transparency Standard).',
           },
         },
       ],
@@ -465,8 +555,8 @@ export default buildConfig({
         media: {
           prefix: 'gaines-boxing-club-v2/public/images',
           generateFileURL: ({ filename, prefix }) => {
-            const publicUrl = process.env.S3_PUBLIC_URL
-            return publicUrl ? `${publicUrl}/${prefix}/${filename}` : null
+            const publicUrl = process.env.S3_PUBLIC_URL ?? ''
+            return publicUrl ? `${publicUrl}/${prefix}/${filename}` : `/images/${filename}`
           },
         },
       },

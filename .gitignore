@@ -11,3 +11,4 @@ docker-compose.override.yml
 
 # Debug / seed output
 seed_error*.txt
+agent_review.json

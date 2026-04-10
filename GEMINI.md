@@ -1,59 +1,62 @@
-# Gaines Boxing Club V2 -- AI Agent Instructions
+# Project Memory & Architecture Governance
 
-## Living Documentation: Payload CMS Integration Guide
+You are equipped with a Knowledge Graph Memory MCP (`memory`) and an Architecture Decision Record (ADR) Skill (`architecture`). You must use these tools proactively to maintain project memory and institutional knowledge.
 
-The file `docs/payload-cms-integration-guide.md` is a **living document** that must be kept accurate and current as work continues on the Payload CMS integration.
+## 1. Context Retrieval (Reading ADR)
 
-### Rules
+Before starting a new task or when encountering unfamiliar components, you must consult our established memory:
 
-1. **Update on every relevant change.** Any time you make a modification that relates to Payload CMS, the PostgreSQL database, Docker configuration, environment variables, or schema isolation, you must update the guide to reflect the change.
+- **ADRs**: If working on core architecture or wondering _why_ a specific technology/pattern was chosen, read the relevant files in the `docs/adr/` directory to align with previous decisions.
 
-2. **What counts as a relevant change:**
-   - Adding, removing, or modifying Payload collections, globals, or plugins in `payload.config.ts`
-   - Changing `postgresAdapter` options (connection, schema, push/migration settings)
-   - Updating `next.config.ts` in ways that affect Payload (e.g., `withPayload` options)
-   - Modifying Docker Compose files, Dockerfile build stages, or container commands
-   - Adding or changing environment variables consumed by Payload
-   - Encountering and resolving new errors (add to the Troubleshooting section)
-   - Changing the migration strategy (push vs. migration files)
-   - Onboarding a new project to the shared database (add its schema to the convention table)
-   - Implementing a new collection or global that could be reusable across projects
+## 2. Memory Use Instructions
 
-3. **How to update:**
-   - Add new sections or subsections as needed. Do not remove existing content unless it is factually incorrect.
-   - Append a row to the **Change Log** table at the bottom of the guide with the date and a brief description of what changed.
-   - If a troubleshooting issue is resolved by a code change, document both the problem and the fix.
+Follow these steps for each interaction:
 
-4. **Schema naming convention.** All Payload CMS projects sharing a database use the pattern `[tenantId]__cms` for their `schemaName`. Do not deviate from this convention without explicit user approval.
+1. User Identification:
+   - You should assume that you are interacting with default_user
+   - If you have not identified default_user, proactively try to do so.
 
-5. **Accuracy over brevity.** The guide is a reference for onboarding future projects. Include exact commands, SQL statements, and config snippets. Do not use vague placeholders when concrete values are known.
+2. Memory Retrieval:
+   - Always begin your chat by saying only "Remembering..." and retrieve all relevant information from your knowledge graph
+   - Always refer to your knowledge graph as your "memory"
 
-6. **Track reusable collections.** When implementing a new Payload collection, global, or plugin, classify it using the rules in the **Reusable vs. Project-Specific Collections** section of the guide:
-   - If it is domain-agnostic (e.g., `hero`, `blog`, `navigation`, `seo`), add it to the Reusable Collections Registry.
-   - If it is unique to the current project's domain (e.g., `trainers`, `classes`, `programs` for a boxing gym), add it to the Project-Specific Collections Registry.
-   - Never omit this step. The registry is the mechanism for propagating common content models to new projects.
+3. Memory
+   - While conversing with the user, be attentive to any new information that falls into these categories:
+     a) Basic Identity (age, gender, location, job title, education level, etc.)
+     b) Behaviors (interests, habits, etc.)
+     c) Preferences (communication style, preferred language, etc.)
+     d) Goals (goals, targets, aspirations, etc.)
+     e) Relationships (personal and professional relationships up to 3 degrees of separation)
 
----
+4. Memory Update:
+   - If any new information was gathered during the interaction, update your memory as follows:
+     a) Create entities for recurring organizations, people, and significant events
+     b) Connect them to the current entities using relations
+     c) Store facts about them as observations
 
-## Payload CMS REST API Access
+## 3. Architecture Decision Records (Writing ADRs)
 
-The local Payload CMS instance at `http://localhost:3000` exposes a full REST API. The API key is stored in the project's `.env` file (gitignored) under the `PAYLOAD_MCP_API_KEY` variable. See `website/.env.example` for reference.
+Whenever we make a significant technical decision (e.g., choosing a new framework, changing the database schema, defining a new system boundary, or selecting a new API pattern), you MUST trigger the ADR Skill to document it.
 
-### Rules
+- **Action**: Pause and propose creating a new ADR. Once the user agrees, follow your ADR skill template to generate a markdown file in the `docs/adr/` directory.
+- **Include**: Context (the problem being solved), Decision (the specific technology/pattern chosen), and Consequences (trade-offs, constraints, and long-term impacts).
+- **Format**: Ensure automated sequential numbering (e.g., `docs/adr/0004-use-zustand-for-state.md`) and properly track the lifecycle (Proposed, Accepted, Superseded).
 
-1. **Use the environment variable for all local API calls.** Every request to `http://localhost:3000/api/...` must include the header:
+## 4. Design & UI Governance (DESIGN.md)
 
-   ```text
-   Authorization: Bearer $PAYLOAD_MCP_API_KEY
-   ```
+If a `DESIGN.md` file exists in the root of the project, you MUST strictly adhere to it for all design tokens, layout structures, and branding guidelines.
 
-2. **Prefer the REST API over browser automation** when creating, updating, or seeding content. Use `Invoke-RestMethod` in PowerShell or `curl` commands.
+- **Strict Adherence**: Do not invent new colors, spacing, or UI patterns that conflict with this document.
+- **Permission Required**: If a task requires modifying the `DESIGN.md` document itself, or if an implementation must stray from the established design guidelines, you MUST ask for and receive explicit user permission before proceeding.
 
-3. **Common endpoints:**
-   - `GET    /api/<collection>` -- list documents
-   - `POST   /api/<collection>` -- create a document
-   - `PATCH  /api/<collection>/<id>` -- update a document
-   - `DELETE /api/<collection>/<id>` -- delete a document
-   - `POST   /api/media` -- upload a file (multipart/form-data)
+## Workflow Triggers
 
-4. **Base URL is always `http://localhost:3000`** for the local development environment. Do not hardcode a production URL.
+**At the START of a task:**
+
+- _Do I need context on this component?_ -> Call `search_nodes` in the graph or read `docs/adr/`.
+- _Does this involve UI/frontend work?_ -> Read `DESIGN.md` (if it exists) to ensure compliance.
+
+**At the END of a task:**
+
+1. _Did we learn something new or build a distinct implementation?_ -> Call `create_entities` / `add_observations` to update the graph.
+2. _Did we make a fundamental architectural choice or pivot?_ -> Propose generating an ADR file.

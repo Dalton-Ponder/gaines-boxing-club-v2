@@ -21,6 +21,7 @@ This guide documents the process of adding Payload CMS (v3.80+) to an existing N
 - [Step 8: First Run and Verification](#step-8-first-run-and-verification)
 - [Step 9: Cloud Storage (S3 / Cloudflare R2)](#step-9-cloud-storage-s3--cloudflare-r2)
 - [Reusable vs. Project-Specific Collections](#reusable-vs-project-specific-collections)
+- [Image Provenance & AI Transparency (C2PA / IPTC)](#image-provenance--ai-transparency-c2pa--iptc)
 - [Troubleshooting](#troubleshooting)
 - [Change Log](#change-log)
 
@@ -763,6 +764,21 @@ app/
 2. Update all packages to match: `pnpm i @payloadcms/storage-s3@3.80.0` (or update all others to match the newer one).
 3. Restart the Next.js development server.
 
+### Hydration Mismatch: `aria-describedby` IDs differ between server and client (Admin Panel)
+
+**Symptom**: Console warning on any Payload admin list view (e.g., `/admin/collections/media`):
+```
+A tree hydrated but some attributes of the server rendered HTML didn't match the client properties.
+  + aria-describedby="_R_mkql7inebn5ripkr9etb_"
+  - aria-describedby="_R_2qjakuatpesneb6jd9etb_"
+```
+
+**Cause**: Payload's admin column selector uses `@dnd-kit/core`'s `DndContext` to make columns drag-and-drop reorderable. `DndContext` generates `aria-describedby` IDs using an internal counter. That counter starts from a different value during SSR vs. client hydration, producing mismatched IDs. This is baked into Payload's compiled admin bundle and is a known upstream issue with `@dnd-kit` + Next.js SSR.
+
+**Impact**: None. The mismatch is on accessibility hint attributes for drag handle screen reader descriptions. The admin UI is fully functional. React does not attempt to patch it.
+
+**Fix**: None available without patching Payload's internals. Safely ignore this warning. You can confirm the field list rendered in the pill selector to verify your custom fields are registering correctly -- `generationType` should appear alongside `filename`, `alt`, and the other media fields.
+
 ---
 
 ## Change Log
@@ -780,4 +796,143 @@ app/
 | 2026-03-27 | Reverted Docker to npm: pnpm hard-link/symlink architecture is incompatible with Alpine-based Docker images on Coolify. Dockerfile now uses `npm ci`; pnpm-lock.yaml is kept for local development. Both lockfiles coexist in the repo. Added Troubleshooting entry for this issue. |
 | 2026-04-05 | Integrated `@payloadcms/storage-s3` plugin to offload media persistence to external buckets (Cloudflare R2 / AWS S3). Documented .gitignore guidelines to prevent Git bloat from `public/images/`. Made `seed-content.ts` fail gracefully if local seed assets are omitted from git. |
 | 2026-04-06 | Added `suppressHydrationWarning` to `RootLayout` in `app/(payload)/layout.tsx` to fix Next.js hydration mismatches on the `<html style...>` tag changes. Added `useUploadHandlers` mismatch troubleshooting guide when applying `@payloadcms/storage-s3`. |
-| 2026-04-06 | Documented Cloudflare R2 public URL mapping using `generateFileURL` inside `payload.config.ts`, added `S3_PUBLIC_URL` variable, added `next.config.ts` remote patterns, and implemented automatic WebP conversion in `upload.formatOptions` for original images and thumbnails. Added SSL interception bypass documentation (`NODE_TLS_REJECT_UNAUTHORIZED=0`). |
+| 2026-04-07 | Added `generationType` select field to the `media` collection. Implemented `beforeChange` hook using `exiftool-vendored` for server-side IPTC DigitalSourceType injection (enhanced, generated) and GPS/serial metadata scrubbing (organic). Created `lib/image-provenance.ts` utility module with `processImageMetadata`, `readAndClean`, and `getImageSEOProperties`. Added Image Provenance & AI Transparency section to this guide. |
+
+---
+
+## Image Provenance & AI Transparency (C2PA / IPTC)
+
+This section documents the automated image metadata injection system introduced to comply with 2026 AI transparency standards, including IPTC Digital Source Types and Schema.org `ImageObject` provenance properties.
+
+### Overview
+
+Every image uploaded to the `media` collection carries a `generationType` field that declares its origin. Based on that declaration, a `beforeChange` hook automatically modifies the image's embedded metadata before it is persisted to S3 -- removing sensitive EXIF data for original photography or injecting IPTC Digital Source Type URIs for AI-generated content.
+
+### The `generationType` Field
+
+Added to `payload.config.ts` inside the `media` collection's `fields` array:
+
+```typescript
+{
+  name: 'generationType',
+  type: 'select',
+  defaultValue: 'organic',
+  required: true,
+  options: [
+    { label: 'Organic (Original Photography)', value: 'organic' },
+    { label: 'AI Enhanced (Hybrid)',            value: 'enhanced' },
+    { label: 'AI Generated (Synthetic)',         value: 'generated' },
+  ],
+}
+```
+
+| Value       | Meaning                                   | Metadata Action                                                                                          |
+|-------------|-------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| `organic`   | Original photography, no AI generation    | Strip GPS (`GPS*`), camera/lens serial numbers, and `MakerNote` tags (GDPR / privacy compliance)         |
+| `enhanced`  | Composite of real capture + AI elements   | Set `XMP-iptcExt:DigitalSourceType` to `compositeWithTrainedAlgorithmicMedia`                            |
+| `generated` | Fully synthetic, no original capture      | Set `XMP-iptcExt:DigitalSourceType` to `trainedAlgorithmicMedia`                                         |
+
+### IPTC Digital Source Type URIs
+
+The IPTC Digital Source Type controlled vocabulary is defined at `https://cv.iptc.org/newscodes/digitalsourcetype/`.
+
+| Value       | IPTC URI                                                                                       |
+|-------------|-----------------------------------------------------------------------------------------------|
+| `enhanced`  | `http://cv.iptc.org/newscodes/digitalsourcetype/compositeWithTrainedAlgorithmicMedia`         |
+| `generated` | `http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia`                      |
+
+### Implementation: `lib/image-provenance.ts`
+
+The core logic lives in `website/lib/image-provenance.ts`. It exports three symbols.
+
+#### `processImageMetadata(sourcePath, type)`
+
+Runs exiftool against a temp copy of the uploaded file. Returns the path to the processed copy.
+
+- **Path traversal protection**: rejects any `sourcePath` outside of `os.tmpdir()` or the `./media` directory.
+- **Non-blocking on failure**: all exiftool errors are caught and logged; the upload is never aborted.
+- **Temp copy pattern**: never mutates the source file; works on a disposable copy.
+
+#### `readAndClean(tmpPath)`
+
+Reads the processed file into a `Buffer` and deletes the temp copy. Cleanup is best-effort -- failure is non-fatal.
+
+#### `getImageSEOProperties(mediaDoc)`
+
+A pure utility function for the frontend. Accepts a hydrated Payload media document and returns:
+
+```typescript
+{
+  url: string | null           // Media URL (ready for Next.js <Image src>)
+  accessibleAlt: string        // Alt text with provenance prefix (e.g. "[AI Generated] ...")
+  rawAlt: string               // Alt text without prefix
+  label: string                // Human-readable label ("AI Generated (Synthetic)")
+  schemaOrg: object            // Schema.org ImageObject properties for JSON-LD
+  generationType: GenerationType  // Resolved type (never null; defaults to 'organic')
+}
+```
+
+### Dependency: `exiftool-vendored`
+
+Added as a production dependency:
+
+```bash
+pnpm add exiftool-vendored
+npm install --legacy-peer-deps   # regenerate package-lock.json for Docker
+```
+
+`exiftool-vendored` ships a platform-specific ExifTool binary (including a Linux/Alpine-compatible build) and invokes it as a child process, so it does not block the Node.js event loop.
+
+### Frontend Usage: `getImageSEOProperties`
+
+Use this function wherever a media document is rendered to ensure Schema.org `ImageObject` structured data reflects correct AI provenance:
+
+```typescript
+import { getImageSEOProperties } from '@/lib/image-provenance'
+import type { Media } from '@/payload-types'
+
+// Build Schema.org JSON-LD
+function buildImageJsonLd(mediaDoc: Media) {
+  const seo = getImageSEOProperties(mediaDoc)
+  return { '@type': 'ImageObject', ...seo.schemaOrg }
+}
+
+// Accessible alt text in JSX
+<Image
+  src={mediaDoc.url ?? ''}
+  alt={getImageSEOProperties(mediaDoc).accessibleAlt}
+  width={mediaDoc.width ?? 1200}
+  height={mediaDoc.height ?? 630}
+/>
+```
+
+The `accessibleAlt` string automatically prepends the provenance prefix:
+
+| `generationType` | Alt text example                                   |
+|------------------|----------------------------------------------------|
+| `organic`        | `Coach Gaines in the ring`                         |
+| `enhanced`       | `[AI Enhanced] Coach Gaines in the ring`           |
+| `generated`      | `[AI Generated] illustration of a boxer`           |
+
+### Hook Lifecycle with S3 Storage
+
+The `beforeChange` hook fires before Payload writes or uploads the file. With `@payloadcms/storage-s3`, the upload to R2/S3 happens after the hook chain completes, so the metadata-scrubbed/injected buffer is what lands in the bucket.
+
+```
+Upload Request
+     |
+     v
+[beforeChange hook: exiftool processes buffer]
+     |
+     v
+[Payload / S3 plugin: uploads modified buffer to R2]
+     |
+     v
+[afterChange hook: revalidateTag('payload-media')]
+```
+
+### Security Notes
+
+- **Path traversal**: `processImageMetadata` resolves the path with `path.resolve()` and rejects anything outside `os.tmpdir()` or `./media`.
+- **Non-fatal errors**: any exiftool failure logs a warning but does not abort the upload.
+- **No secret exposure**: no API keys or credentials are touched by the metadata pipeline.
