@@ -12,7 +12,7 @@ import {
   generateWebSiteSchema,
   jsonLdScript,
 } from "@/lib/structured-data";
-import { getForm } from "@/lib/payload";
+import { getForm, getImageUrl, getTrainingSchedule } from "@/lib/payload";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -39,7 +39,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const joinForm = await getForm("Join the Club");
-  const settings = await getSiteSettings();
+  const [settings, trainingSchedule] = await Promise.all([
+    getSiteSettings(),
+    getTrainingSchedule()
+  ]);
+  const logo = getImageUrl(settings.logo, "");
 
   const orgSchema = generateOrganizationSchema(settings);
   const webSiteSchema = generateWebSiteSchema(settings);
@@ -66,11 +70,18 @@ export default async function RootLayout({
               <Suspense fallback={null}>
                 <UtilityBar />
               </Suspense>
-              <Header formData={joinForm} />
+              <Header 
+                formData={joinForm} 
+                logo={logo.url ? logo : undefined}
+                siteName={settings.siteName}
+                trainingSchedule={trainingSchedule}
+              />
             </div>
             {/*
-              Static offset: schedule bar (~32px) + at most 1-2 alert banners (~64px) + header (~72px)
-              If the number of banners changes heavily, update this value.
+              Static offset:
+              - Header: ~100px (py-3 + logo + schedule combo)
+              - Utility (Banners): Variable, but usually minimized ~32px
+              Total: ~132px-140px
             */}
             <main className="flex-1 pt-[160px]">{children}</main>
             <Footer />

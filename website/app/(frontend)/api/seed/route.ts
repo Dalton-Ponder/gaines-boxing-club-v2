@@ -79,11 +79,27 @@ export async function POST(request: Request) {
       ['event_fight.png', 'Heavyweight Rumble local spar event'],
       ['event_workshop.png', 'Master Footwork workshop'],
       ['event_exhibition.png', 'Young Bloods VII exhibition match'],
-      ['gbc_logo.png', 'Gaines Boxing Club logo'],
+      ['gbc_logo.webp', 'Gaines Boxing Club logo'],
     ]
 
     for (const [filename, alt] of uploads) {
       images[filename] = await uploadImage(payload, filename, alt, IMAGES_DIR)
+    }
+
+    // The logo may already exist in Payload/R2 with a hashed filename (e.g. gbc_logo-abc123.webp).
+    // If the direct filename lookup returned empty, fall back to searching by alt text.
+    if (!images['gbc_logo.webp']?.id) {
+      const logoByAlt = await payload.find({
+        collection: 'media',
+        where: { alt: { equals: 'Gaines Boxing Club logo' } },
+        limit: 1,
+      })
+      if (logoByAlt.docs.length > 0) {
+        images['gbc_logo.webp'] = logoByAlt.docs[0]
+        console.log(`  [logo-found] Located logo via alt text: ${(logoByAlt.docs[0] as Record<string, unknown>).filename}`)
+      } else {
+        console.warn('  [logo-missing] gbc_logo.webp not found in Payload. Upload it in the admin and re-run seed, or manually link it in Site Settings.')
+      }
     }
 
     const steveBioLexical = {
@@ -168,6 +184,7 @@ export async function POST(request: Request) {
       slug: 'site-settings',
       data: {
         siteName: 'Gaines Boxing Club',
+        logo: (images['gbc_logo.webp'] as Record<string, unknown>)?.id as string,
         tagline: 'Building legacy through discipline, grit, and the relentless pursuit of excellence in the underground boxing circuit.',
         address: '124 Industrial Way, North District',
         phone: '(555) 012-GBC-LIONS',

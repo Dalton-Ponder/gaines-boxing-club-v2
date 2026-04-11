@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { navLinks } from "@/lib/navigation";
-import { getSiteSettings } from "@/lib/payload";
+import { getSiteSettings, getImageUrl } from "@/lib/payload";
 import { Icon } from "@iconify/react";
+import Image from "next/image";
 
 function sanitizeUrl(url: string, fallback = "#") {
   if (!url) return fallback;
@@ -72,13 +73,31 @@ export default async function Footer() {
           {/* Brand Column */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-6">
-              <Icon
-                icon="material-symbols:sports-martial-arts"
-                className="text-3xl text-primary"
-              />
-              <h2 className="font-display text-2xl font-black uppercase tracking-tighter text-white">
-                Gaines <span className="text-primary">Boxing</span>
-              </h2>
+              {(() => {
+                const logo = getImageUrl(siteSettings.logo, "");
+                return logo.url ? (
+                  <div className="relative h-[76px] w-[218px] md:h-[88px] md:w-[284px]">
+                    <Image
+                      src={logo.url}
+                      alt={logo.alt || siteSettings.siteName || "Gaines Boxing Club"}
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                ) : (
+                  <h2 className="font-display text-2xl font-black uppercase tracking-tighter text-white underline decoration-primary decoration-4 underline-offset-4">
+                    {siteSettings.siteName ? (
+                      <>
+                        {siteSettings.siteName.split(' ')[0]} <span className="text-primary">{siteSettings.siteName.split(' ').slice(1).join(' ')}</span>
+                      </>
+                    ) : (
+                      <>
+                        Gaines <span className="text-primary">Boxing</span>
+                      </>
+                    )}
+                  </h2>
+                );
+              })()}
             </div>
             <p className="text-slate-500 max-w-sm mb-8 italic font-sans text-sm">
               &quot;{tagline}&quot;

@@ -498,6 +498,7 @@ export default buildConfig({
         { name: 'address', type: 'text' },
         { name: 'phone', type: 'text' },
         { name: 'email', type: 'text' },
+        { name: 'logo', type: 'upload', relationTo: 'media' },
         {
           name: 'socialLinks',
           type: 'array',

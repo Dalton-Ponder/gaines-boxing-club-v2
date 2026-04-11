@@ -26,7 +26,7 @@ export default async function UtilityBar() {
       {/* Training Schedule Utility Bar                                        */}
       {/* ------------------------------------------------------------------ */}
       {schedule.length > 0 && (
-        <div className="w-full bg-background-dark border-b border-white/10 px-4 py-1.5">
+        <div className="w-full bg-background-dark border-b border-white/10 px-4 py-1.5 md:hidden">
           <div className="mx-auto max-w-7xl flex items-center justify-center gap-1 flex-wrap">
             <span className="flex items-center gap-1 text-[#C04E01] text-xs font-bold uppercase tracking-widest mr-2 shrink-0">
               <Icon
