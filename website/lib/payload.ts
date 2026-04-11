@@ -100,6 +100,21 @@ export async function getEvents() {
   return { featured, regular, all: all.docs }
 }
 
+// -- Single Event --
+export async function getEvent(id: string) {
+  const payload = await getPayloadClient()
+  try {
+    return await payload.findByID({
+      collection: 'events',
+      id,
+      depth: 1,
+    })
+  } catch {
+    return null
+  }
+}
+
+
 // -- Quotes --
 export async function getQuotes(limit = 10) {
   const payload = await getPayloadClient()

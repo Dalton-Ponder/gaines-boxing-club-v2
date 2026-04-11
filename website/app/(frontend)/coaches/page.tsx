@@ -1,10 +1,11 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { Metadata } from "next";
-import { getCoaches, getQuotes, getPage, getForm, getSiteSettings, getImageUrl } from "@/lib/payload";
-import { JoinClubButton } from "@/components/JoinClubButton";
+import { getCoaches, getQuotes, getPage, getSiteSettings, getImageUrl } from "@/lib/payload";
 import { CoachBioModalButton } from "@/components/CoachBioModalButton";
 import { generateWebPageSchema, generatePersonSchema, jsonLdScript } from "@/lib/structured-data";
 import { Icon } from "@iconify/react";
+
 
 export const dynamic = 'force-dynamic';
 
@@ -18,15 +19,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CoachesPage() {
-  const [coaches, quotes, joinForm, siteSettings, pageData] = await Promise.all([
+  const [coaches, quotes, siteSettings, pageData] = await Promise.all([
     getCoaches(),
     getQuotes(2),
-    getForm('Join the Club'),
     getSiteSettings(),
     getPage('/coaches'),
   ]);
 
-  const quote = quotes[1] ?? quotes[0];
+  const quote = quotes[1] ?? quotes[0] ?? null;
   const pageSchema = generateWebPageSchema(pageData, siteSettings, '/coaches', 'Coaches');
   const personSchemas = coaches.map((c) => generatePersonSchema(c));
   const pageJsonLd = jsonLdScript([pageSchema, ...personSchemas]);
@@ -78,7 +78,7 @@ export default async function CoachesPage() {
                     <div className="absolute inset-0 bg-linear-to-t from-card-dark via-transparent to-transparent z-10"></div>
                     <Image
                       alt={coachImage.alt || coach.name}
-                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                      className="w-full h-full object-cover object-top transition-all duration-700 group-hover:scale-105"
                       src={coachImage.url}
                       fill
                       sizes="(max-width: 768px) 100vw, 50vw"
@@ -90,10 +90,6 @@ export default async function CoachesPage() {
                         <p className="text-primary text-sm font-bold tracking-widest uppercase">
                           {coach.title || coach.role}
                         </p>
-                        <Icon
-                          icon={coach.sortOrder === 1 ? 'material-symbols:military-tech' : 'material-symbols:history-edu'}
-                          className="text-primary/40 text-2xl"
-                        />
                       </div>
                       <h3 className="text-white text-3xl font-black uppercase italic group-hover:text-primary transition-colors">
                         {coach.name}
@@ -122,23 +118,27 @@ export default async function CoachesPage() {
       </section>
 
       {/* Quote CTA */}
-      <section className="w-full bg-background-dark py-24 px-6 lg:px-20 text-center">
-        <div className="max-w-4xl mx-auto">
-          <div className="p-10 rounded-2xl bg-linear-to-b from-primary/10 to-transparent border border-primary/10 relative overflow-hidden">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-primary/20 blur-[80px]"></div>
-            <h4 className="text-white text-2xl font-bold mb-4 italic">
-              &quot;{quote?.text || "True champions are built in the shadows."}&quot;
-            </h4>
-            <p className="text-slate-400 mb-8">&mdash; {quote?.attribution || "Sam Gaines"}</p>
-            <JoinClubButton
-              formData={joinForm}
-              className="bg-white text-background-dark px-10 py-4 rounded-lg font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-xl cursor-pointer"
-            >
-              Train with the best
-            </JoinClubButton>
+      {quote && quote.text && (
+        <section className="w-full bg-background-dark py-24 px-6 lg:px-20 text-center">
+          <div className="max-w-4xl mx-auto">
+            <div className="p-10 rounded-2xl bg-linear-to-b from-primary/10 to-transparent border border-primary/10 relative overflow-hidden">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-primary/20 blur-[80px]"></div>
+              <h4 className="text-white text-2xl font-bold mb-4 italic">
+                &quot;{quote.text}&quot;
+              </h4>
+              {quote.attribution && (
+                <p className="text-slate-400 mb-8">-- {quote.attribution}</p>
+              )}
+              <Link
+                href="/schedule"
+                className="inline-flex items-center justify-center w-full sm:w-auto min-w-[200px] h-14 rounded-lg bg-primary px-8 font-display text-sm font-black uppercase tracking-widest text-white hover:scale-105 transition-transform glow-accent cursor-pointer"
+              >
+                Train with the Best
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </>
   );
 }

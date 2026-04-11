@@ -279,9 +279,46 @@ export default buildConfig({
         {
           name: 'ctaLink',
           type: 'text',
-          admin: { description: 'URL for the CTA button. Leave empty if no link is needed.' },
+          admin: { description: 'URL or tel: link for the CTA button. Leave empty if no link is needed.' },
         },
         { name: 'isFeatured', type: 'checkbox', defaultValue: false },
+        {
+          name: 'doorsOpen',
+          type: 'text',
+          admin: { description: 'e.g. "6:00 PM"' },
+        },
+        {
+          name: 'fightsStart',
+          type: 'text',
+          admin: { description: 'e.g. "7:00 PM"' },
+        },
+        {
+          name: 'fightCard',
+          type: 'textarea',
+          admin: { description: 'List each bout, one per line. e.g. "Fighter A vs Fighter B"' },
+        },
+        {
+          name: 'amenities',
+          type: 'array',
+          admin: { description: 'Things available at the event (bar, food, etc.)' },
+          fields: [{ name: 'amenity', type: 'text', required: true }],
+        },
+        {
+          name: 'pricing',
+          type: 'array',
+          admin: { description: 'Ticket tiers for the event' },
+          fields: [
+            { name: 'tier', type: 'text', required: true, admin: { description: 'e.g. "Tier 1 (VIP)"' } },
+            { name: 'location', type: 'text', required: true, admin: { description: 'e.g. "Ringside"' } },
+            { name: 'price', type: 'text', required: true, admin: { description: 'e.g. "$75"' } },
+          ],
+        },
+        {
+          name: 'sponsors',
+          type: 'array',
+          admin: { description: 'Event sponsors' },
+          fields: [{ name: 'name', type: 'text', required: true }],
+        },
       ],
     },
 

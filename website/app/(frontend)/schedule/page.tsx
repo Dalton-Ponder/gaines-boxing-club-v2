@@ -1,8 +1,11 @@
 import Image from "next/image";
 import type { Metadata } from "next";
-import { getEvents, getTrainingSchedule, getPage, getSiteSettings, getSafeImageUrl } from "@/lib/payload";
+import { getEvents, getTrainingSchedule, getPage, getSiteSettings, getSafeImageUrl, getForm } from "@/lib/payload";
 import { generateWebPageSchema, generateEventSchema, jsonLdScript } from "@/lib/structured-data";
 import { Icon } from "@iconify/react";
+import { BookSessionButton } from "@/components/BookSessionButton";
+import { EventDetailsModalButton } from "@/components/EventDetailsModalButton";
+import { ExpandableText } from "@/components/ExpandableText";
 
 export const dynamic = 'force-dynamic';
 
@@ -16,11 +19,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function SchedulePage() {
-  const [trainingHours, { featured: featuredEvent, regular: regularEvents, all: allEvents }, siteSettings, pageData] = await Promise.all([
+  const [trainingHours, { featured: featuredEvent, regular: regularEvents, all: allEvents }, siteSettings, pageData, bookSessionForm] = await Promise.all([
     getTrainingSchedule(),
     getEvents(),
     getSiteSettings(),
     getPage('/schedule'),
+    getForm('Book a Session'),
   ]);
 
   const pageSchema = generateWebPageSchema(pageData, siteSettings, '/schedule', 'Schedule & Events');
@@ -69,17 +73,14 @@ export default async function SchedulePage() {
                   <div key={session.id} className="border-l-4 border-primary pl-4">
                     <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">{session.day}</p>
                     <p className="text-3xl font-black text-white tracking-tighter italic">
-                      {session.startTime} &mdash; {session.endTime}
+                      {session.startTime} - {session.endTime}
                     </p>
                   </div>
                 ))}
               </div>
             </div>
             <div className="w-full md:w-auto">
-              <button type="button" className="w-full md:w-auto bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest px-10 py-5 rounded-lg transition-all flex items-center justify-center gap-3">
-                Book a Session
-                <Icon icon="material-symbols:trending-flat" />
-              </button>
+              <BookSessionButton formData={bookSessionForm} />
             </div>
           </div>
         </section>
@@ -130,15 +131,31 @@ export default async function SchedulePage() {
                     <span className="text-xl font-bold text-white uppercase">{featuredEvent.location}</span>
                   </div>
                 </div>
-                {featuredEvent.ctaLink ? (
-                  <a href={featuredEvent.ctaLink} className="bg-white hover:bg-slate-200 text-black font-black uppercase tracking-widest px-8 py-4 rounded transition-all inline-block">
-                    {featuredEvent.ctaText || 'Register to Attend'}
-                  </a>
-                ) : (
-                  <button type="button" className="bg-white hover:bg-slate-200 text-black font-black uppercase tracking-widest px-8 py-4 rounded transition-all">
-                    {featuredEvent.ctaText || 'Register to Attend'}
-                  </button>
-                )}
+                <div className="flex flex-wrap items-center gap-4">
+                  <EventDetailsModalButton 
+                    event={featuredEvent} 
+                    className="inline-flex items-center justify-center w-full sm:w-auto min-w-[180px] h-14 rounded-lg border border-white/10 hover:bg-white/5 font-display text-sm font-black uppercase tracking-widest text-white transition-all"
+                  >
+                    View Details
+                  </EventDetailsModalButton>
+
+                  {(() => {
+                    // Build tel: link from ctaLink field (field already stores the tel: href directly)
+                    const ctaHref = featuredEvent.ctaLink ?? null;
+                    if (ctaHref) {
+                      return (
+                        <a href={ctaHref} className="inline-flex items-center justify-center w-full sm:w-auto min-w-[180px] h-14 rounded-lg bg-primary px-8 font-display text-sm font-black uppercase tracking-widest text-white hover:scale-105 transition-transform glow-accent">
+                          {featuredEvent.ctaText || 'Get Tickets'}
+                        </a>
+                      );
+                    }
+                    return (
+                      <button type="button" className="inline-flex items-center justify-center w-full sm:w-auto min-w-[180px] h-14 rounded-lg bg-primary px-8 font-display text-sm font-black uppercase tracking-widest text-white hover:scale-105 transition-transform glow-accent">
+                        {featuredEvent.ctaText || 'Get Tickets'}
+                      </button>
+                    );
+                  })()}
+                </div>
               </div>
             </div>
           </div>
@@ -180,17 +197,20 @@ export default async function SchedulePage() {
                         </span>
                       </div>
                       <h4 className="text-xl font-bold text-white uppercase mb-2">{event.title}</h4>
-                      <p className="text-slate-500 text-sm mb-6 line-clamp-2">{event.description}</p>
-                      <div className="mt-auto">
-                        {event.ctaLink ? (
-                          <a href={event.ctaLink} className="w-full border border-white/10 hover:border-primary hover:text-primary py-2 text-xs font-black uppercase tracking-widest transition-all block text-center">
-                            {event.ctaText || 'Details'}
-                          </a>
-                        ) : (
-                          <button type="button" className="w-full border border-white/10 hover:border-primary hover:text-primary py-2 text-xs font-black uppercase tracking-widest transition-all cursor-pointer">
-                            {event.ctaText || 'Details'}
-                          </button>
-                        )}
+                      <ExpandableText text={event.description || ''} clamp={2} className="mb-6" colorClass="text-slate-500" />
+                      <div className="mt-auto grid grid-cols-2 gap-2">
+                        <EventDetailsModalButton
+                          event={event}
+                          className="border border-white/10 hover:border-primary hover:text-primary py-2 text-xs font-black uppercase tracking-widest transition-all block text-center"
+                        >
+                          Quick Look
+                        </EventDetailsModalButton>
+                        <a
+                          href={event.ctaLink || `/events/${event.id}`}
+                          className="bg-primary text-white py-2 text-xs font-black uppercase tracking-widest transition-all block text-center hover:scale-[1.02]"
+                        >
+                          {event.ctaText || 'Details'}
+                        </a>
                       </div>
                     </div>
                   </div>

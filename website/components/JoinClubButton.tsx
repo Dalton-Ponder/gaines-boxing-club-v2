@@ -52,8 +52,9 @@ export function JoinClubButton({
 
   return (
     <button
+      type="button"
       onClick={openJoinModal}
-      className={className || "w-full sm:w-auto min-w-[200px] h-14 rounded-lg bg-primary px-8 font-display text-sm font-black uppercase tracking-widest text-white hover:scale-105 transition-transform glow-accent cursor-pointer"}
+      className={className || "w-full sm:w-auto min-w-[200px] h-14 rounded-lg bg-primary px-8 font-display text-sm font-black uppercase tracking-widest text-white hover:scale-105 transition-transform glow-accent cursor-pointer flex items-center justify-center gap-3"}
     >
       {children}
     </button>

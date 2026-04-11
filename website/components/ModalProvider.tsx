@@ -36,12 +36,16 @@ export default function ModalProvider({
   const open = useCallback((opts: ModalOptions) => {
     setOptions(opts);
     setIsOpen(true);
+    // Measure the scrollbar width before hiding it so content doesn't jump
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.paddingRight = `${scrollbarWidth}px`;
     document.body.style.overflow = "hidden";
   }, []);
 
   const close = useCallback(() => {
     setIsOpen(false);
     document.body.style.overflow = "";
+    document.body.style.paddingRight = "";
   }, []);
 
   useEffect(() => {
