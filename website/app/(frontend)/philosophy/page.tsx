@@ -57,7 +57,12 @@ export default async function PhilosophyPage() {
             {pageData?.heroSubheading || "Beyond the ring, we forge character. Discover the uncompromising training standards that define Gaines Boxing Club."}
           </p>
           <div className="flex justify-center gap-4">
-            <Link href="/schedule" className="bg-primary text-white px-8 py-4 rounded-lg font-bold uppercase tracking-widest text-sm hover:scale-105 transition-transform inline-block">Start Your Journey</Link>
+            <Link
+              href="/schedule"
+              className="inline-flex items-center justify-center w-full sm:w-auto min-w-[200px] h-14 rounded-lg bg-primary px-8 font-display text-sm font-black uppercase tracking-widest text-white hover:scale-105 transition-transform glow-accent"
+            >
+              Start Your Journey
+            </Link>
           </div>
         </div>
       </section>
@@ -68,7 +73,7 @@ export default async function PhilosophyPage() {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-white text-4xl md:text-6xl font-black leading-[1.1] tracking-tighter mb-8">
-                Not just fitness&mdash;<br /><span className="text-primary">a thrilling journey</span> <br />of self-discovery.
+                Not just fitness.<br /><span className="text-primary">A thrilling journey</span> <br />of self-discovery.
               </h2>
             </div>
             <div className="space-y-6">
@@ -115,7 +120,12 @@ export default async function PhilosophyPage() {
         <div className="relative z-10 max-w-3xl mx-auto">
           <h2 className="text-white text-4xl md:text-5xl font-black leading-tight tracking-tighter uppercase mb-6">Ready to start your legacy?</h2>
           <p className="text-slate-400 text-lg mb-10 max-w-xl mx-auto font-light">Join the elite ranks of Gaines Boxing Club today and experience the difference of professional-grade training.</p>
-          <Link href="/schedule" className="bg-primary text-white px-12 py-5 rounded-lg font-black uppercase tracking-[0.2em] text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 inline-block">View Schedule</Link>
+          <Link
+            href="/schedule"
+            className="inline-flex items-center justify-center w-full sm:w-auto min-w-[200px] h-14 rounded-lg bg-primary px-8 font-display text-sm font-black uppercase tracking-widest text-white hover:scale-105 transition-transform glow-accent"
+          >
+            View Schedule
+          </Link>
         </div>
       </section>
     </>

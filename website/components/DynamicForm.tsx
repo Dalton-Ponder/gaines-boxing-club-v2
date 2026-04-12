@@ -182,11 +182,12 @@ export function DynamicForm({
                   required={field.required}
                   value={formState[field.name] ?? field.defaultValue ?? ""}
                   onChange={handleChange}
-                  className={inputBaseClass}
+                  className={`${inputBaseClass} [color-scheme:dark]`}
+                  style={{ backgroundColor: '#111111', color: '#e2e8f0' }}
                 >
-                  <option value="">Select...</option>
+                  <option value="" style={{ backgroundColor: '#1a1a1a', color: '#e2e8f0' }}>Select...</option>
                   {field.options?.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
+                    <option key={opt.value} value={opt.value} style={{ backgroundColor: '#1a1a1a', color: '#e2e8f0' }}>
                       {opt.label}
                     </option>
                   ))}

@@ -279,9 +279,61 @@ export default buildConfig({
         {
           name: 'ctaLink',
           type: 'text',
-          admin: { description: 'URL for the CTA button. Leave empty if no link is needed.' },
+          admin: { description: 'URL or tel: link for the CTA button. Leave empty if no link is needed.' },
+          validate: (value: string | null | undefined) => {
+            if (!value) return true; // Empty is allowed
+            try {
+              const parsed = new URL(value, 'http://localhost');
+              const allowedSchemes = ['http:', 'https:', 'mailto:', 'tel:'];
+              if (!allowedSchemes.includes(parsed.protocol)) {
+                return `URL scheme "${parsed.protocol}" is not allowed. Only http:, https:, mailto:, and tel: are permitted.`;
+              }
+              return true;
+            } catch {
+              // If it doesn't parse as a URL, check if it's a relative path
+              if (value.startsWith('/')) return true;
+              return 'Invalid URL format. Please provide a valid URL or relative path.';
+            }
+          },
         },
         { name: 'isFeatured', type: 'checkbox', defaultValue: false },
+        {
+          name: 'doorsOpen',
+          type: 'text',
+          admin: { description: 'e.g. "6:00 PM"' },
+        },
+        {
+          name: 'fightsStart',
+          type: 'text',
+          admin: { description: 'e.g. "7:00 PM"' },
+        },
+        {
+          name: 'fightCard',
+          type: 'textarea',
+          admin: { description: 'List each bout, one per line. e.g. "Fighter A vs Fighter B"' },
+        },
+        {
+          name: 'amenities',
+          type: 'array',
+          admin: { description: 'Things available at the event (bar, food, etc.)' },
+          fields: [{ name: 'amenity', type: 'text', required: true }],
+        },
+        {
+          name: 'pricing',
+          type: 'array',
+          admin: { description: 'Ticket tiers for the event' },
+          fields: [
+            { name: 'tier', type: 'text', required: true, admin: { description: 'e.g. "Tier 1 (VIP)"' } },
+            { name: 'location', type: 'text', required: true, admin: { description: 'e.g. "Ringside"' } },
+            { name: 'price', type: 'text', required: true, admin: { description: 'e.g. "$75"' } },
+          ],
+        },
+        {
+          name: 'sponsors',
+          type: 'array',
+          admin: { description: 'Event sponsors' },
+          fields: [{ name: 'name', type: 'text', required: true }],
+        },
       ],
     },
 

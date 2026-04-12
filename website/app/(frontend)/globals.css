@@ -17,9 +17,7 @@
   --radius-xl: 0.75rem;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+
 
 body {
   font-family: Lexend, sans-serif;

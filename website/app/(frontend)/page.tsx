@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getCoaches, getQuotes, getPhilosophyPillars, getSiteSettings, getPage, getForm, getMedia, getImageUrl } from "@/lib/payload";
 import { JoinClubButton } from "@/components/JoinClubButton";
 import { generateWebPageSchema, generatePersonSchema, jsonLdScript } from "@/lib/structured-data";
+import { ExpandableText } from "@/components/ExpandableText";
 
 export const dynamic = 'force-dynamic';
 
@@ -80,12 +81,12 @@ export default async function HomePage() {
       <section className="w-full bg-neutral-dark py-24 px-6 lg:px-20 border-y border-white/5">
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="relative">
+            <div className="group relative">
               <div className="absolute -top-4 -left-4 w-24 h-24 border-t-2 border-l-2 border-primary"></div>
               <div className="overflow-hidden rounded-xl border border-white/10">
                 <Image
                   alt={samGainesImage?.alt || "Sam Gaines Legacy"}
-                  className="w-full object-cover transition-all duration-700"
+                  className="w-full object-cover transition-all duration-700 group-hover:scale-105"
                   src={getImageUrl(samGainesImage, "/images/sam_gaines.png").url}
                   width={600}
                   height={600}
@@ -121,14 +122,16 @@ export default async function HomePage() {
                 body and the mind, refined over decades of professional combat.
               </p>
               
-              {quote && (
+              {quote && quote.text && (
                 <div className="pt-6 border-t border-white/10">
                   <blockquote className="font-display text-xl font-medium italic text-slate-200">
                     &quot;{quote.text}&quot;
                   </blockquote>
-                  <p className="mt-2 font-display text-sm font-bold uppercase tracking-widest text-primary">
-                    &mdash; {quote.attribution}
-                  </p>
+                  {quote.attribution && (
+                    <p className="mt-2 font-display text-sm font-bold uppercase tracking-widest text-primary">
+                      -- {quote.attribution}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
@@ -147,30 +150,32 @@ export default async function HomePage() {
               Meet Our Elite Coaches
             </h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {coaches.map((coach) => {
               const coachImage = getImageUrl(coach.image, '/images/coach_steve.png');
               return (
-                <div key={coach.id} className="group relative overflow-hidden rounded-xl border border-white/5 bg-neutral-dark p-6 transition-all hover:border-primary/50">
-                  <div className="aspect-4/5 overflow-hidden rounded-lg mb-6">
+                <div key={coach.id} className="group relative overflow-hidden rounded-xl border border-white/5 bg-neutral-dark p-4 transition-all hover:border-primary/50">
+                  <div className="aspect-square overflow-hidden rounded-lg mb-4">
                     <Image
                       alt={coachImage.alt || coach.name}
-                      className="h-full w-full object-cover transition-all duration-700 group-hover:scale-110"
+                      className="h-full w-full object-cover object-top transition-all duration-700 group-hover:scale-110"
                       src={coachImage.url}
-                      width={500}
-                      height={625}
+                      width={300}
+                      height={300}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <h4 className="font-display text-2xl font-black uppercase text-white">
+                  <div className="space-y-1">
+                    <h4 className="font-display text-lg font-black uppercase text-white">
                       {coach.name}
                     </h4>
-                    <p className="font-display text-xs font-bold uppercase tracking-widest text-primary">
+                    <p className="font-display text-[10px] font-bold uppercase tracking-widest text-primary">
                       {coach.subtitle || coach.role}
                     </p>
-                    <p className="font-sans text-sm text-slate-500 leading-relaxed line-clamp-2">
-                      {coach.shortBio}
-                    </p>
+                    <ExpandableText 
+                      text={coach.shortBio || ''} 
+                      clamp={2} 
+                      colorClass="text-slate-500 text-xs" 
+                    />
                   </div>
                 </div>
               );

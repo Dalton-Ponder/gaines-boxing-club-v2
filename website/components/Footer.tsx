@@ -8,7 +8,7 @@ function sanitizeUrl(url: string, fallback = "#") {
   if (!url) return fallback;
   try {
     const parsed = new URL(url, 'http://localhost');
-    if (['http:', 'https:', 'mailto:'].includes(parsed.protocol) || url.startsWith('/')) {
+    if (['http:', 'https:', 'mailto:', 'tel:'].includes(parsed.protocol) || url.startsWith('/')) {
       return url;
     }
     return fallback;
@@ -153,9 +153,14 @@ export default async function Footer() {
             <ul className="space-y-4 font-sans">
               <li className="flex items-center gap-3">
                 <Icon icon="material-symbols:location-on" className="text-primary text-lg" />
-                <span className="text-slate-500 text-sm">
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(addressDisplay)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-slate-500 hover:text-primary text-sm transition-colors"
+                >
                   {addressDisplay}
-                </span>
+                </a>
               </li>
               <li className="flex items-center gap-3">
                 <Icon icon="material-symbols:call" className="text-primary text-lg" />
