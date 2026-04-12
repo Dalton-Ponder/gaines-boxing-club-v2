@@ -1,16 +1,13 @@
 import { NextResponse } from 'next/server'
-import { getPayload } from 'payload'
 import type { BasePayload } from 'payload'
-import config from '@payload-config'
 import fs from 'fs'
 import path from 'path'
 import { syncPages } from '@/lib/sync-pages'
 
 export const dynamic = 'force-dynamic'
 
-const API_KEY = process.env.PAYLOAD_SECRET || process.env.PAYLOAD_MCP_API_KEY
-
 export async function POST(request: Request) {
+  const API_KEY = process.env.PAYLOAD_SECRET || process.env.PAYLOAD_MCP_API_KEY
   if (!API_KEY) {
     return NextResponse.json({ error: 'Server misconfiguration: PAYLOAD_SECRET is not set' }, { status: 401 })
   }
@@ -69,6 +66,8 @@ export async function POST(request: Request) {
     // Step 0: Sync pages from navLinks before seeding content
     await syncPages()
 
+    const { getPayload } = await import('payload')
+    const { default: config } = await import('@payload-config')
     const payload = await getPayload({ config })
     const IMAGES_DIR = path.resolve(process.cwd(), 'public', 'images')
 
