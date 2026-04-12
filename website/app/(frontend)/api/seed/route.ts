@@ -6,6 +6,8 @@ import fs from 'fs'
 import path from 'path'
 import { syncPages } from '@/lib/sync-pages'
 
+export const dynamic = 'force-dynamic'
+
 const API_KEY = process.env.PAYLOAD_SECRET || process.env.PAYLOAD_MCP_API_KEY
 
 export async function POST(request: Request) {
