@@ -149,11 +149,7 @@ export default async function SchedulePage() {
                         </a>
                       );
                     }
-                    return (
-                      <button type="button" className="inline-flex items-center justify-center w-full sm:w-auto min-w-[180px] h-14 rounded-lg bg-primary px-8 font-display text-sm font-black uppercase tracking-widest text-white hover:scale-105 transition-transform glow-accent">
-                        {featuredEvent.ctaText || 'Get Tickets'}
-                      </button>
-                    );
+                    return null;
                   })()}
                 </div>
               </div>

@@ -1,14 +1,20 @@
 async function run() {
+  const apiKey = process.env.PAYLOAD_MCP_API_KEY;
+  if (!apiKey) {
+    console.error('Missing required environment variable: PAYLOAD_MCP_API_KEY');
+    return;
+  }
+
   const url = 'http://localhost:3000/api/pages';
-  const headers = { 
-    'Authorization': 'payload-mcp-api-keys d78a32cdc8ac805fdfd5621edc9eb654a7e4eb582e50a77054addfa0c93c0cca7'
+  const headers = {
+    'Authorization': `payload-mcp-api-keys ${apiKey}`
   };
   try {
     const res = await fetch(url, { headers });
     if (!res.ok) {
         console.error('Failed to GET Pages', res.status, res.statusText);
         // Let's try to query another way, what if it's just Bearer auth
-        const res2 = await fetch(url, { headers: { 'Authorization': 'Bearer d78a32cdc8ac805fdfd5621edc9eb654a7e4eb582e50a77054addfa0c93c0cca7' }});
+        const res2 = await fetch(url, { headers: { 'Authorization': `Bearer ${apiKey}` }});
         if (!res2.ok) {
            console.error('Failed Bearer too', res2.status, res2.statusText);
            // try with no auth

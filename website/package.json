@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "NODE_OPTIONS='--require ./scripts/preload-env.cjs' next dev",
+    "build": "NODE_OPTIONS='--require ./scripts/preload-env.cjs' next build",
+    "start": "NODE_OPTIONS='--require ./scripts/preload-env.cjs' next start",
     "lint": "eslint",
-    "seed": "tsx scripts/seed-content.ts"
+    "seed": "NODE_OPTIONS='--require ./scripts/preload-env.cjs' tsx scripts/seed-content.ts"
   },
   "dependencies": {
     "@iconify/react": "^6.0.2",

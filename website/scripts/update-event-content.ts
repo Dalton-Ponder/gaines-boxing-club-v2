@@ -145,12 +145,23 @@ async function main() {
   // 3. Update alert banners - remove em dashes, friendlier tone
   // -------------------------------------------------------------------------
   console.log('Checking alert banners for em dashes...')
-  const banners = await payload.find({
-    collection: 'alert-banners',
-    limit: 50,
-  })
+  const allBanners = [];
+  let bannerPage = 1;
+  let bannerHasMore = true;
+  const bannerLimit = 50;
 
-  for (const banner of banners.docs) {
+  while (bannerHasMore) {
+    const banners = await payload.find({
+      collection: 'alert-banners',
+      limit: bannerLimit,
+      page: bannerPage,
+    });
+    allBanners.push(...banners.docs);
+    bannerHasMore = banners.hasNextPage;
+    bannerPage++;
+  }
+
+  for (const banner of allBanners) {
     const original = banner.copy as string
     if (!original) continue
     // Replace em dash and its HTML entity variants
@@ -172,12 +183,23 @@ async function main() {
   // 4. Update pages - remove em dashes
   // -------------------------------------------------------------------------
   console.log('Checking pages for em dashes...')
-  const pages = await payload.find({
-    collection: 'pages',
-    limit: 50,
-  })
+  const allPages = [];
+  let pagePage = 1;
+  let pageHasMore = true;
+  const pageLimit = 50;
 
-  for (const page of pages.docs) {
+  while (pageHasMore) {
+    const pages = await payload.find({
+      collection: 'pages',
+      limit: pageLimit,
+      page: pagePage,
+    });
+    allPages.push(...pages.docs);
+    pageHasMore = pages.hasNextPage;
+    pagePage++;
+  }
+
+  for (const page of allPages) {
     const fields = ['heroHeading', 'heroSubheading', 'heroTagline', 'seoTitle', 'seoDescription'] as const
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updates: Record<string, string> = {}

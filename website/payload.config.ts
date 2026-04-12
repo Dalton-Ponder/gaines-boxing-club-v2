@@ -280,6 +280,21 @@ export default buildConfig({
           name: 'ctaLink',
           type: 'text',
           admin: { description: 'URL or tel: link for the CTA button. Leave empty if no link is needed.' },
+          validate: (value: string | null | undefined) => {
+            if (!value) return true; // Empty is allowed
+            try {
+              const parsed = new URL(value, 'http://localhost');
+              const allowedSchemes = ['http:', 'https:', 'mailto:', 'tel:'];
+              if (!allowedSchemes.includes(parsed.protocol)) {
+                return `URL scheme "${parsed.protocol}" is not allowed. Only http:, https:, mailto:, and tel: are permitted.`;
+              }
+              return true;
+            } catch {
+              // If it doesn't parse as a URL, check if it's a relative path
+              if (value.startsWith('/')) return true;
+              return 'Invalid URL format. Please provide a valid URL or relative path.';
+            }
+          },
         },
         { name: 'isFeatured', type: 'checkbox', defaultValue: false },
         {

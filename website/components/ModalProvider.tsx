@@ -32,10 +32,16 @@ export default function ModalProvider({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [options, setOptions] = useState<ModalOptions>({});
+  const prevStylesRef = React.useRef<{ paddingRight: string; overflow: string } | null>(null);
 
   const open = useCallback((opts: ModalOptions) => {
     setOptions(opts);
     setIsOpen(true);
+    // Preserve existing inline styles before overwriting
+    prevStylesRef.current = {
+      paddingRight: document.body.style.paddingRight,
+      overflow: document.body.style.overflow,
+    };
     // Measure the scrollbar width before hiding it so content doesn't jump
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     document.body.style.paddingRight = `${scrollbarWidth}px`;
@@ -44,8 +50,12 @@ export default function ModalProvider({
 
   const close = useCallback(() => {
     setIsOpen(false);
-    document.body.style.overflow = "";
-    document.body.style.paddingRight = "";
+    // Restore previous inline styles
+    if (prevStylesRef.current) {
+      document.body.style.overflow = prevStylesRef.current.overflow;
+      document.body.style.paddingRight = prevStylesRef.current.paddingRight;
+      prevStylesRef.current = null;
+    }
   }, []);
 
   useEffect(() => {
