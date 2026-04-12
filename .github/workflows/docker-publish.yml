@@ -65,6 +65,8 @@ jobs:
           build-args: |
             BUILD_ID=${{ github.sha }}
             NEXT_PUBLIC_SITE_URL=${{ vars.NEXT_PUBLIC_SITE_URL }}
+            PAYLOAD_SECRET=${{ secrets.PAYLOAD_SECRET }}
+            DATABASE_URI=${{ secrets.DATABASE_URI }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
