@@ -22,14 +22,6 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Payload CMS initializes on module load and requires these at build time
-# (during next build's page-data collection phase). They are scoped to this
-# builder stage only and are NOT present in the final runner image.
-ARG PAYLOAD_SECRET
-ARG DATABASE_URI
-ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
-ENV DATABASE_URI=${DATABASE_URI}
-
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
