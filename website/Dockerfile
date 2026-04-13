@@ -46,6 +46,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
+# Write a tiny node healthcheck script to avoid wget/IPv6/Alpine idiosyncrasies
+RUN echo "const http = require('http'); const req = http.request('http://127.0.0.1:3000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => { process.exit(1); }); req.end();" > /app/healthcheck.js && chown nextjs:nodejs /app/healthcheck.js
+
 USER nextjs
 
 EXPOSE 3000
@@ -54,7 +57,7 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1
+  CMD node /app/healthcheck.js || exit 1
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
