@@ -1,8 +1,12 @@
 services:
   # Next.js Frontend
   website:
-    # Uses the image built and published by your GitHub Actions workflow
-    image: ghcr.io/dalton-ponder/gaines-boxing-club-v2:${IMAGE_TAG:-latest}
+    # Uses the image built and published by your GitHub Actions workflow.
+    # COOLIFY_BRANCH is injected automatically by Coolify into every docker compose
+    # invocation, so no extra env var configuration is needed in the Coolify dashboard.
+    # dev  -> ghcr.io/.../gaines-boxing-club-v2:dev
+    # main -> ghcr.io/.../gaines-boxing-club-v2:main
+    image: ghcr.io/dalton-ponder/gaines-boxing-club-v2:${COOLIFY_BRANCH:-latest}
     container_name: gaines-boxing-club-v2-website
     restart: unless-stopped
     ports:
