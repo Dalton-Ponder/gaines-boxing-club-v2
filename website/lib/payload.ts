@@ -1,5 +1,4 @@
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+
 import { cache } from 'react'
 
 // ---------------------------------------------------------------------------
@@ -10,6 +9,8 @@ import { cache } from 'react'
 // ---------------------------------------------------------------------------
 
 async function getPayloadClient() {
+  const { getPayload } = await import('payload')
+  const { default: configPromise } = await import('@payload-config')
   return getPayload({ config: configPromise })
 }
 

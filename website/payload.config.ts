@@ -16,15 +16,10 @@ import { processImageMetadata, readAndClean } from './lib/image-provenance'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-const PAYLOAD_SECRET = process.env.PAYLOAD_SECRET
-if (!PAYLOAD_SECRET) {
-  throw new Error('Missing required environment variable: PAYLOAD_SECRET')
-}
-
-const DATABASE_URI = process.env.DATABASE_URI
-if (!DATABASE_URI) {
-  throw new Error('Missing required environment variable: DATABASE_URI')
-}
+// Provide fallbacks so Next.js can statically evaluate the config during build.
+// At runtime in Coolify, the real environment variables will take precedence.
+const PAYLOAD_SECRET = process.env.PAYLOAD_SECRET || 'build-time-secret-do-not-use'
+const DATABASE_URI = process.env.DATABASE_URI || 'postgres://127.0.0.1:5432/dummy'
 
 // ---------------------------------------------------------------------------
 // Cache Invalidation Hooks

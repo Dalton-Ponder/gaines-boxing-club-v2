@@ -1,5 +1,4 @@
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+
 import { navLinks } from '@/lib/navigation'
 
 // ---------------------------------------------------------------------------
@@ -11,6 +10,8 @@ import { navLinks } from '@/lib/navigation'
 // ---------------------------------------------------------------------------
 
 export async function syncPages() {
+  const { getPayload } = await import('payload')
+  const { default: configPromise } = await import('@payload-config')
   const payload = await getPayload({ config: configPromise })
 
   for (const link of navLinks) {
